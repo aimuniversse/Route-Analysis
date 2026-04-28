@@ -3,65 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Route Analysis</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Include marked.js for markdown parsing -->
+    <title>Route Analysis Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         :root {
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --border-color: #e2e8f0;
-            --accent-primary: #2563eb;
-            --accent-hover: #1d4ed8;
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
+            --bg-dark: #050505;
+            --glass-bg: rgba(20, 20, 25, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --accent-1: #6366f1; /* Indigo */
+            --accent-2: #a855f7; /* Purple */
+            --accent-3: #ec4899; /* Pink */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Outfit', sans-serif;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-primary);
+            background-color: var(--bg-dark);
+            color: var(--text-main);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 2rem;
+            padding: 4rem 2rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Background Glows */
+        body::before, body::after {
+            content: '';
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: -1;
+            opacity: 0.4;
+            animation: float 20s infinite alternate ease-in-out;
+        }
+
+        body::before {
+            background: var(--accent-1);
+            top: -200px;
+            left: -200px;
+        }
+
+        body::after {
+            background: var(--accent-3);
+            bottom: -200px;
+            right: -200px;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(100px, 50px) scale(1.2); }
+            100% { transform: translate(-50px, 100px) scale(0.8); }
         }
 
         .header {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
+            animation: fadeInDown 1s ease-out;
         }
 
         .header h1 {
-            font-size: 2.5rem;
+            font-size: 3.5rem;
             font-weight: 700;
-            color: var(--text-primary);
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin-bottom: 0.5rem;
+            letter-spacing: -1px;
         }
 
         .header p {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            font-weight: 300;
         }
 
         .search-container {
             display: flex;
-            gap: 0.5rem;
+            gap: 1rem;
             width: 100%;
-            max-width: 700px;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            border-radius: 8px;
-            background: var(--card-bg);
-            padding: 0.5rem;
+            max-width: 800px;
+            margin-bottom: 3rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            padding: 0.75rem;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeInUp 1s ease-out 0.2s both;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .search-container:focus-within {
+            transform: translateY(-2px);
+            box-shadow: 0 30px 60px -12px rgba(99, 102, 241, 0.2);
+            border-color: rgba(99, 102, 241, 0.3);
         }
 
         input {
@@ -70,173 +120,293 @@
             font-size: 1.1rem;
             background: transparent;
             border: none;
-            color: var(--text-primary);
+            color: var(--text-main);
             outline: none;
         }
 
+        input::placeholder {
+            color: #64748b;
+        }
+
         button {
-            padding: 0.75rem 2rem;
+            padding: 0.75rem 2.5rem;
             font-size: 1.1rem;
             font-weight: 600;
             color: white;
-            background: var(--accent-primary);
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
             border: none;
-            border-radius: 6px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 20px -10px var(--accent-1);
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: all 0.5s ease;
         }
 
         button:hover {
-            background: var(--accent-hover);
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px -10px var(--accent-1);
+        }
+
+        button:hover::before {
+            left: 100%;
         }
 
         button:disabled {
-            background: var(--text-secondary);
+            background: #334155;
+            color: #94a3b8;
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
+        }
+
+        .loader-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            margin: 4rem 0;
+            animation: fadeIn 0.5s ease-out;
         }
 
         .loader {
-            display: none;
-            width: 40px;
-            height: 40px;
-            border: 4px solid var(--border-color);
-            border-bottom-color: var(--accent-primary);
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,255,255,0.1);
             border-radius: 50%;
-            animation: rotation 1s linear infinite;
-            margin: 3rem auto;
+            border-top-color: var(--accent-2);
+            animation: spin 1s ease-in-out infinite;
         }
 
-        @keyframes rotation {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .loader-text {
+            color: var(--accent-2);
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            animation: pulseText 2s infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulseText {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .error-msg {
+            color: #fca5a5;
+            background: rgba(127, 29, 29, 0.2);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            padding: 1.25rem 2rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            display: none;
+            text-align: center;
+            width: 100%;
+            max-width: 800px;
+            backdrop-filter: blur(8px);
+            animation: fadeIn 0.3s ease-out;
         }
 
         .results-container {
             display: none;
             width: 100%;
             max-width: 900px;
-            margin-top: 1rem;
+            margin-top: 2rem;
+            animation: slideUp 0.6s ease-out forwards;
         }
 
-        .error-msg {
-            color: #dc2626;
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            margin-top: 1rem;
-            display: none;
-            text-align: center;
-            width: 100%;
-            max-width: 700px;
-            font-weight: 500;
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        /* Markdown Typography Styles for User Friendly UI */
         .report-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 3rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 3.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
         }
 
+        .report-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
+        }
+
+        /* Prose / Markdown Styling */
         .prose {
-            line-height: 1.75;
-            color: var(--text-primary);
-            font-size: 1.05rem;
+            line-height: 1.8;
+            color: #e2e8f0;
+            font-size: 1.1rem;
         }
 
-        .prose p {
-            margin-top: 1.25em;
-            margin-bottom: 1.25em;
-        }
-
-        .prose h1, .prose h2, .prose h3 {
-            color: var(--text-primary);
+        .prose h1 {
+            font-size: 2.5rem;
             font-weight: 700;
-            margin-top: 2em;
-            margin-bottom: 1em;
-            line-height: 1.3;
+            background: linear-gradient(to right, #fff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2rem;
+            text-align: center;
         }
 
-        .prose h1 { font-size: 2.25rem; }
-        .prose h2 { font-size: 1.5rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; }
-        .prose h3 { font-size: 1.25rem; }
+        .prose h2 {
+            font-size: 1.5rem;
+            color: #fff;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .prose h2::before {
+            content: '';
+            display: block;
+            width: 24px;
+            height: 4px;
+            background: var(--accent-2);
+            border-radius: 2px;
+        }
+
+        .prose h3 {
+            font-size: 1.25rem;
+            color: #94a3b8;
+            margin-top: 1.5rem;
+        }
+
+        .prose p { margin-bottom: 1.25rem; }
         
         .prose strong {
+            color: #fff;
             font-weight: 600;
-            color: #111827;
+            background: rgba(255,255,255,0.05);
+            padding: 0.1em 0.3em;
+            border-radius: 4px;
         }
 
         .prose ul, .prose ol {
-            margin-top: 1.25em;
-            margin-bottom: 1.25em;
-            padding-left: 1.625em;
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
         }
 
-        .prose li {
-            margin-top: 0.5em;
-            margin-bottom: 0.5em;
-        }
+        .prose li { margin-bottom: 0.5rem; }
+        .prose li::marker { color: var(--accent-2); }
 
         .prose table {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 2em;
-            margin-bottom: 2em;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 2rem 0;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
         }
 
         .prose th, .prose td {
-            border: 1px solid var(--border-color);
-            padding: 0.75rem 1rem;
+            padding: 1rem 1.25rem;
             text-align: left;
+            border-bottom: 1px solid var(--glass-border);
         }
 
         .prose th {
-            background-color: #f1f5f9;
+            background: rgba(255,255,255,0.05);
             font-weight: 600;
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
         }
-        
+
+        .prose tr:last-child td { border-bottom: none; }
+        .prose tr:hover td { background: rgba(255,255,255,0.02); }
+
         .copy-btn-container {
             display: flex;
             justify-content: flex-end;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
-        
+
         .copy-btn {
-            background: #e2e8f0;
-            color: #475569;
-            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 0.6rem 1.25rem;
             font-size: 0.9rem;
-            border-radius: 4px;
-            font-weight: 600;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
+
         .copy-btn:hover {
-            background: #cbd5e1;
-            color: #0f172a;
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-1px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2.5rem; }
+            .report-card { padding: 2rem; }
+            .search-container { flex-direction: column; }
+            button { width: 100%; }
         }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>Route Analysis</h1>
-        <p>Demographic & transport route intelligence</p>
+        <h1>Route Intelligence</h1>
+        <p>AI-Powered Demographic & Transport Analytics</p>
     </div>
 
     <div class="search-container">
-        <input type="text" id="routeInput" placeholder="Enter route (e.g., Delhi to Agra)" />
+        <input type="text" id="routeInput" placeholder="Enter route (e.g., Delhi to Agra)" autocomplete="off" />
         <button id="searchBtn">Analyze Route</button>
     </div>
 
-    <div class="loader" id="loader"></div>
+    <div class="loader-container" id="loader">
+        <div class="loader"></div>
+        <div class="loader-text">Analyzing Route Data...</div>
+    </div>
+    
     <div class="error-msg" id="errorMsg"></div>
 
     <div class="results-container" id="resultsContainer">
-        <!-- Results will be injected here via JavaScript -->
+        <!-- Results injected here -->
     </div>
 
     <script>
@@ -249,7 +419,6 @@
             const query = document.getElementById('routeInput').value.trim();
             if (!query) return;
 
-            // UI State updates
             const container = document.getElementById('resultsContainer');
             const loader = document.getElementById('loader');
             const errorMsg = document.getElementById('errorMsg');
@@ -258,10 +427,12 @@
             container.style.display = 'none';
             container.innerHTML = '';
             errorMsg.style.display = 'none';
-            loader.style.display = 'block';
+            loader.style.display = 'flex';
             searchBtn.disabled = true;
+            searchBtn.innerHTML = 'Processing...';
 
             try {
+                // Connect frontend with backend correctly via the /testing/ endpoint
                 const response = await fetch(`/testing/?route=${encodeURIComponent(query)}`);
                 const result = await response.json();
 
@@ -272,11 +443,12 @@
                 renderResults(result.data);
 
             } catch (err) {
-                errorMsg.textContent = "Error: " + err.message;
+                errorMsg.textContent = "Analysis Failed: " + err.message;
                 errorMsg.style.display = 'block';
             } finally {
                 loader.style.display = 'none';
                 searchBtn.disabled = false;
+                searchBtn.innerHTML = 'Analyze Route';
             }
         }
 
@@ -284,38 +456,47 @@
             if (!data) return;
             const container = document.getElementById('resultsContainer');
             
-            // Format the text using marked.js to make it look like a beautiful report
-            // We'll process the data slightly so the "1. Section" lines act as h2 headers
-            
-            // Convert "1. Something" to "## 1. Something" so markdown renders it as headers
+            // Format text for markdown
             let processedData = data.replace(/^(\d+\.\s+.*)$/gm, '## $1');
-            
-            // Convert "ROUTE NAME: ..." to "<h1>ROUTE NAME: ...</h1>"
             processedData = processedData.replace(/^(ROUTE NAME:.*)$/m, '# $1');
 
             const htmlContent = marked.parse(processedData);
 
             container.innerHTML = `
                 <div class="copy-btn-container">
-                    <button class="copy-btn" onclick="copyRawText()">📋 Copy Raw Text</button>
+                    <button class="copy-btn" onclick="copyRawText()">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                        Copy Report
+                    </button>
                 </div>
                 <div class="report-card prose">
                     ${htmlContent}
                 </div>
             `;
             
-            // Store raw text for copying
             window.rawLLMText = data;
-            
             container.style.display = 'block';
+            
+            // Smooth scroll to results
+            setTimeout(() => {
+                container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
         }
         
         function copyRawText() {
             if (window.rawLLMText) {
                 navigator.clipboard.writeText(window.rawLLMText).then(() => {
                     const btn = document.querySelector('.copy-btn');
-                    btn.textContent = '✅ Copied!';
-                    setTimeout(() => btn.textContent = '📋 Copy Raw Text', 2000);
+                    const originalHtml = btn.innerHTML;
+                    btn.innerHTML = '<svg width="16" height="16" fill="none" stroke="#4ade80" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg> Copied!';
+                    btn.style.color = '#4ade80';
+                    btn.style.borderColor = '#4ade80';
+                    
+                    setTimeout(() => {
+                        btn.innerHTML = originalHtml;
+                        btn.style.color = '';
+                        btn.style.borderColor = '';
+                    }, 2000);
                 });
             }
         }
