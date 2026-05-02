@@ -3,503 +3,322 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Route Analysis Intelligence</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <title>Route Analysis UI (Testing)</title>
     <style>
-        :root {
-            --bg-dark: #050505;
-            --glass-bg: rgba(20, 20, 25, 0.6);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --accent-1: #6366f1; /* Indigo */
-            --accent-2: #a855f7; /* Purple */
-            --accent-3: #ec4899; /* Pink */
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Outfit', sans-serif;
-        }
-
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 4rem 2rem;
-            position: relative;
-            overflow-x: hidden;
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
         }
-
-        /* Ambient Background Glows */
-        body::before, body::after {
-            content: '';
-            position: fixed;
-            width: 600px;
-            height: 600px;
-            border-radius: 50%;
-            filter: blur(120px);
-            z-index: -1;
-            opacity: 0.4;
-            animation: float 20s infinite alternate ease-in-out;
-        }
-
-        body::before {
-            background: var(--accent-1);
-            top: -200px;
-            left: -200px;
-        }
-
-        body::after {
-            background: var(--accent-3);
-            bottom: -200px;
-            right: -200px;
-            animation-delay: -10s;
-        }
-
-        @keyframes float {
-            0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(100px, 50px) scale(1.2); }
-            100% { transform: translate(-50px, 100px) scale(0.8); }
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 3rem;
-            animation: fadeInDown 1s ease-out;
-        }
-
-        .header h1 {
-            font-size: 3.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
-            letter-spacing: -1px;
-        }
-
-        .header p {
-            color: var(--text-muted);
-            font-size: 1.2rem;
-            font-weight: 300;
-        }
-
-        .search-container {
-            display: flex;
-            gap: 1rem;
-            width: 100%;
-            max-width: 800px;
-            margin-bottom: 3rem;
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            padding: 0.75rem;
-            border-radius: 16px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            animation: fadeInUp 1s ease-out 0.2s both;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .search-container:focus-within {
-            transform: translateY(-2px);
-            box-shadow: 0 30px 60px -12px rgba(99, 102, 241, 0.2);
-            border-color: rgba(99, 102, 241, 0.3);
-        }
-
-        input {
-            flex: 1;
-            padding: 1rem 1.5rem;
-            font-size: 1.1rem;
-            background: transparent;
-            border: none;
-            color: var(--text-main);
-            outline: none;
-        }
-
-        input::placeholder {
-            color: #64748b;
-        }
-
-        button {
-            padding: 0.75rem 2.5rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: white;
-            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 20px -10px var(--accent-1);
-        }
-
-        button::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: all 0.5s ease;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 25px -10px var(--accent-1);
-        }
-
-        button:hover::before {
-            left: 100%;
-        }
-
-        button:disabled {
-            background: #334155;
-            color: #94a3b8;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .loader-container {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.5rem;
-            margin: 4rem 0;
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        .loader {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(255,255,255,0.1);
-            border-radius: 50%;
-            border-top-color: var(--accent-2);
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        .loader-text {
-            color: var(--accent-2);
-            font-weight: 500;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            animation: pulseText 2s infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        @keyframes pulseText {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .error-msg {
-            color: #fca5a5;
-            background: rgba(127, 29, 29, 0.2);
-            border: 1px solid rgba(248, 113, 113, 0.3);
-            padding: 1.25rem 2rem;
-            border-radius: 12px;
-            margin-top: 1rem;
-            display: none;
-            text-align: center;
-            width: 100%;
-            max-width: 800px;
-            backdrop-filter: blur(8px);
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .results-container {
-            display: none;
-            width: 100%;
+        .container {
             max-width: 900px;
-            margin-top: 2rem;
-            animation: slideUp 0.6s ease-out forwards;
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .report-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 3.5rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .report-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; height: 4px;
-            background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
-        }
-
-        /* Prose / Markdown Styling */
-        .prose {
-            line-height: 1.8;
-            color: #e2e8f0;
-            font-size: 1.1rem;
-        }
-
-        .prose h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            background: linear-gradient(to right, #fff, #cbd5e1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .prose h2 {
-            font-size: 1.5rem;
-            color: #fff;
-            margin-top: 2.5rem;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .prose h2::before {
-            content: '';
-            display: block;
-            width: 24px;
-            height: 4px;
-            background: var(--accent-2);
-            border-radius: 2px;
-        }
-
-        .prose h3 {
-            font-size: 1.25rem;
-            color: #94a3b8;
-            margin-top: 1.5rem;
-        }
-
-        .prose p { margin-bottom: 1.25rem; }
-        
-        .prose strong {
-            color: #fff;
-            font-weight: 600;
-            background: rgba(255,255,255,0.05);
-            padding: 0.1em 0.3em;
-            border-radius: 4px;
-        }
-
-        .prose ul, .prose ol {
-            margin-bottom: 1.5rem;
-            padding-left: 1.5rem;
-        }
-
-        .prose li { margin-bottom: 0.5rem; }
-        .prose li::marker { color: var(--accent-2); }
-
-        .prose table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin: 2rem 0;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid var(--glass-border);
-        }
-
-        .prose th, .prose td {
-            padding: 1rem 1.25rem;
-            text-align: left;
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .prose th {
-            background: rgba(255,255,255,0.05);
-            font-weight: 600;
-            color: #fff;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 1px;
-        }
-
-        .prose tr:last-child td { border-bottom: none; }
-        .prose tr:hover td { background: rgba(255,255,255,0.02); }
-
-        .copy-btn-container {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 1.5rem;
-        }
-
-        .copy-btn {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--glass-border);
-            color: var(--text-main);
-            padding: 0.6rem 1.25rem;
-            font-size: 0.9rem;
+            margin: 0 auto;
+            background: #fff;
+            padding: 25px;
             border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        h1 {
+            text-align: center;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+        .form-section {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            font-size: 16px;
         }
-
-        .copy-btn:hover {
-            background: rgba(255,255,255,0.1);
-            transform: translateY(-1px);
+        button:hover {
+            background-color: #2980b9;
         }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header h1 { font-size: 2.5rem; }
-            .report-card { padding: 2rem; }
-            .search-container { flex-direction: column; }
-            button { width: 100%; }
+        #loading {
+            display: none;
+            color: #e67e22;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .error {
+            background: #e74c3c;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .section {
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        ul {
+            line-height: 1.6;
+            padding-left: 20px;
+        }
+        .card-grid {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .card {
+            flex: 1;
+            min-width: 250px;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #eee;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>Route Intelligence</h1>
-        <p>AI-Powered Demographic & Transport Analytics</p>
+<div class="container">
+    <h1>Route Analysis Testing UI</h1>
+
+    <div class="form-section">
+        <form method="GET" action="{% url 'index' %}" onsubmit="document.getElementById('loading').style.display='block';">
+            <div class="form-group">
+                <label for="source">Source City (Required):</label>
+                <input type="text" id="source" name="source" value="{{ source_input }}" required placeholder="e.g., Chennai">
+            </div>
+            <div class="form-group">
+                <label for="destination">Destination City (Required):</label>
+                <input type="text" id="destination" name="destination" value="{{ dest_input }}" required placeholder="e.g., Coimbatore">
+            </div>
+            <div class="form-group">
+                <label for="via">Via City (Optional):</label>
+                <input type="text" id="via" name="via" value="{{ via_input }}" placeholder="e.g., Salem">
+            </div>
+            <button type="submit">Analyze Route</button>
+            <div id="loading">Loading analysis data...</div>
+        </form>
     </div>
 
-    <div class="search-container">
-        <input type="text" id="routeInput" placeholder="Enter route (e.g., Delhi to Agra)" autocomplete="off" />
-        <button id="searchBtn">Analyze Route</button>
+    {% if error %}
+    <div class="error">
+        <strong>Error:</strong> {{ error }}
     </div>
+    {% endif %}
 
-    <div class="loader-container" id="loader">
-        <div class="loader"></div>
-        <div class="loader-text">Analyzing Route Data...</div>
-    </div>
-    
-    <div class="error-msg" id="errorMsg"></div>
-
-    <div class="results-container" id="resultsContainer">
-        <!-- Results injected here -->
-    </div>
-
-    <script>
-        document.getElementById('searchBtn').addEventListener('click', analyzeRoute);
-        document.getElementById('routeInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') analyzeRoute();
-        });
-
-        async function analyzeRoute() {
-            const query = document.getElementById('routeInput').value.trim();
-            if (!query) return;
-
-            const container = document.getElementById('resultsContainer');
-            const loader = document.getElementById('loader');
-            const errorMsg = document.getElementById('errorMsg');
-            const searchBtn = document.getElementById('searchBtn');
-
-            container.style.display = 'none';
-            container.innerHTML = '';
-            errorMsg.style.display = 'none';
-            loader.style.display = 'flex';
-            searchBtn.disabled = true;
-            searchBtn.innerHTML = 'Processing...';
-
-            try {
-                // Connect frontend with backend correctly via the /testing/ endpoint
-                const response = await fetch(`/testing/?route=${encodeURIComponent(query)}`);
-                const result = await response.json();
-
-                if (result.error) {
-                    throw new Error(result.error);
-                }
-
-                renderResults(result.data);
-
-            } catch (err) {
-                errorMsg.textContent = "Analysis Failed: " + err.message;
-                errorMsg.style.display = 'block';
-            } finally {
-                loader.style.display = 'none';
-                searchBtn.disabled = false;
-                searchBtn.innerHTML = 'Analyze Route';
-            }
-        }
-
-        function renderResults(data) {
-            if (!data) return;
-            const container = document.getElementById('resultsContainer');
-            
-            // Format text for markdown
-            let processedData = data.replace(/^(\d+\.\s+.*)$/gm, '## $1');
-            processedData = processedData.replace(/^(ROUTE NAME:.*)$/m, '# $1');
-
-            const htmlContent = marked.parse(processedData);
-
-            container.innerHTML = `
-                <div class="copy-btn-container">
-                    <button class="copy-btn" onclick="copyRawText()">
-                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                        Copy Report
-                    </button>
-                </div>
-                <div class="report-card prose">
-                    ${htmlContent}
-                </div>
-            `;
-            
-            window.rawLLMText = data;
-            container.style.display = 'block';
-            
-            // Smooth scroll to results
-            setTimeout(() => {
-                container.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 100);
-        }
+    {% if has_data %}
+    <div class="results">
         
-        function copyRawText() {
-            if (window.rawLLMText) {
-                navigator.clipboard.writeText(window.rawLLMText).then(() => {
-                    const btn = document.querySelector('.copy-btn');
-                    const originalHtml = btn.innerHTML;
-                    btn.innerHTML = '<svg width="16" height="16" fill="none" stroke="#4ade80" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg> Copied!';
-                    btn.style.color = '#4ade80';
-                    btn.style.borderColor = '#4ade80';
-                    
-                    setTimeout(() => {
-                        btn.innerHTML = originalHtml;
-                        btn.style.color = '';
-                        btn.style.borderColor = '';
-                    }, 2000);
-                });
-            }
-        }
-    </script>
+        <!-- 1. ROUTE SUMMARY -->
+        <div class="section">
+            <h2>1. Route Summary</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <strong>Path:</strong> {{ route_summary.path }}
+                </div>
+                <div class="card">
+                    <strong>Total Distance:</strong> {{ route_summary.total_distance }} km
+                </div>
+                <div class="card">
+                    <strong>Estimated Time:</strong> {{ route_summary.estimated_time }} hours
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. POPULATION DATA -->
+        <div class="section">
+            <h2>2. Population Data</h2>
+            <ul>
+                <li><strong>Source ({{ population_data.source.name }}):</strong> {{ population_data.source.count }}</li>
+                <li><strong>Destination ({{ population_data.destination.name }}):</strong> {{ population_data.destination.count }}</li>
+                {% if population_data.via %}
+                <li><strong>Via ({{ population_data.via.name }}):</strong> {{ population_data.via.count }}</li>
+                {% endif %}
+            </ul>
+        </div>
+
+        <!-- 3. AREA SEGMENTATION -->
+        <div class="section">
+            <h2>3. Area Segmentation</h2>
+            <ul>
+                <li><strong>Job & Business Areas:</strong> {{ area_segmentation.job_business_areas|join:", " }}</li>
+                <li><strong>Student Areas:</strong> {{ area_segmentation.student_areas|join:", " }}</li>
+                <li><strong>Tourist Areas:</strong> {{ area_segmentation.tourist_areas|join:", " }}</li>
+            </ul>
+        </div>
+
+        <!-- 4. VISITOR DATA -->
+        <div class="section">
+            <h2>4. Visitor Data</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Place Name</th>
+                        <th>Yearly Visitors</th>
+                        <th>Daily Visitors</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for v in visitor_data %}
+                    <tr>
+                        <td>{{ v.place_name }}</td>
+                        <td>{{ v.yearly }}</td>
+                        <td>{{ v.daily }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 5. DEMAND DISTRIBUTION -->
+        <div class="section">
+            <h2>5. Demand Distribution</h2>
+            <ul>
+                {% for state_data in demand_distribution %}
+                <li>
+                    <strong>{{ state_data.state }} ({{ state_data.percentage }}%)</strong>
+                    <ul>
+                        {% for city in state_data.cities %}
+                        <li>{{ city.name }}: {{ city.percentage }}%</li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- 6. DISTANCE DETAILS -->
+        <div class="section">
+            <h2>6. Distance Details</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Segment</th>
+                        <th>Distance (km)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for d in distance_details %}
+                    <tr>
+                        <td>{{ d.segment }}</td>
+                        <td>{{ d.distance_km }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 7. TRANSPORT DISTRIBUTION -->
+        <div class="section">
+            <h2>7. Transport Distribution</h2>
+            <ul>
+                <li><strong>Bus:</strong> {{ transport_distribution.bus }}%</li>
+                <li><strong>Train:</strong> {{ transport_distribution.train }}%</li>
+                <li><strong>Car:</strong> {{ transport_distribution.car }}%</li>
+                <li><strong>Taxi:</strong> {{ transport_distribution.taxi }}%</li>
+                <li><strong>Flight:</strong> {{ transport_distribution.flight }}%</li>
+            </ul>
+        </div>
+
+        <!-- 8. PARCEL / LOGISTICS DATA -->
+        <div class="section">
+            <h2>8. Parcel / Logistics Data</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <strong>Movement Share:</strong>
+                    <ul>
+                        <li>Bus: {{ logistics_services.parcel_movement.bus }}%</li>
+                        <li>Train: {{ logistics_services.parcel_movement.train }}%</li>
+                        <li>Courier: {{ logistics_services.parcel_movement.courier }}%</li>
+                        <li>Taxi: {{ logistics_services.parcel_movement.taxi }}%</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <strong>Modes Used:</strong>
+                    <ul>
+                        {% for mode in logistics_services.modes_used %}
+                        <li>{{ mode }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 9. TRANSPORT SCHEDULE -->
+        <div class="section">
+            <h2>9. Transport Schedule</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Bus (Trips/Day)</th>
+                        <th>Train (Trips/Day)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in transport_schedule %}
+                    <tr>
+                        <td>{{ s.from }}</td>
+                        <td>{{ s.to }}</td>
+                        <td>{{ s.bus_trips }}</td>
+                        <td>{{ s.train_trips }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 10. SUGGESTED ROUTES -->
+        <div class="section">
+            <h2>10. Suggested Routes</h2>
+            {% for r in suggested_routes %}
+            <div class="card" style="margin-bottom: 15px;">
+                <strong>Option {{ r.option }}:</strong> {{ r.path }}<br>
+                <span style="color: #666; font-size: 0.9em;">Distance: {{ r.distance }} km | Est. Time: {{ r.time }} hours</span>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+    {% endif %}
+
+</div>
+
 </body>
 </html>

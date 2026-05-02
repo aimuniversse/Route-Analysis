@@ -1,336 +1,132 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from openai import OpenAI
-# from .models import 
-import os
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework import status, permissions
+from django.db.models import Q
+from collections import deque
 import json
+import re
 
-from .models import *
-
-# ✅ NVIDIA Client (Secured)
-client = OpenAI(
-    api_key=os.environ.get("NVIDIA_API_KEY"),
-    base_url="https://integrate.api.nvidia.com/v1"
+from .models import (
+    City, Route, Population, Potential, 
+    Segmentation, Visitors, TopVisitors, 
+    Distance, Transport, TransportDetail, 
+    ParcelService, SuggestedRoute, RouteAnalysisCache
 )
+from .ai_fallback import generate_route_analysis
+from django.utils import timezone
+from datetime import timedelta
 
-# ✅ PROMPT FUNCTION 1: Generate Raw Text
-def build_prompt(route_name):
-    return f"""Act as a transportation, tourism, and route analysis expert.
+def extract_number(text, default=10):
+    """Extracts a single number from a string (e.g., '20-50' -> 35, '20' -> 20)."""
+    if not text:
+        return default
+    if isinstance(text, (int, float)):
+        return int(text)
+    
+    # Find all numbers in the string
+    nums = [int(n) for n in re.findall(r'\d+', str(text))]
+    if len(nums) == 1:
+        return nums[0]
+    elif len(nums) >= 2:
+        return sum(nums) // len(nums)  # Average of range
+    return default
 
-Your task is to generate a COMPLETE and DETAILED route analysis.
-
-STRICT RULES:
-- You MUST follow EXACT numbering from 1 to 10
-- Do NOT skip any section
-- Do NOT summarize
-- Do NOT give short answers
-- Output must be detailed, structured, and professional
-- Use bullet points and tables where needed
-- Output must be READY FOR COPY-PASTE (no explanation before or after)
-- If data is unknown, give realistic Indian estimates
-
-FORMAT TO FOLLOW EXACTLY:
-
-ROUTE NAME: {route_name}
-
-1. Population in that area?
-(Give approximate population with range for each major city and total corridor population)
-
-2. Potential of the Area like Education, Temples, Tourist attraction, Companies?
-(Clearly explain strengths like tourism, pilgrimage, industry, education)
-
-3. Area Segmentation with Place Details
-(List zones like origin, industrial, tourist, entry, destination)
-
-4. Total Visitor Count with Place Name (Yearly & Daily)
-(Give yearly + daily normal + peak)
-
-5. Top Visitor Count (State-wise with Top 5 Cities and Count)
-(Give percentage + top 5 cities per state)
-
-6. Distance Between Two Cities (in KM)
-(Create a clean table of distances)
-
-7. Mode of Transport Used
-(Give percentage split)
-
-8. Luggage and Parcel Services
-(List practical logistics movement)
-
-9. Specific Bus and Train Details
-(Show city-wise buses/day and trains/day clearly)
-
-10. Suggested Routes
-(Give 2–3 optimized routes with travel time)
-
-IMPORTANT:
-- DO NOT return summary cards
-- DO NOT return UI format
-- DO NOT shorten content
-- DO NOT miss any section
-- Each section must be clearly separated
-
-Now generate for:
-{route_name}"""
+# Relational DB fetcher removed to prioritize real-time AI generation.
 
 
-# ✅ PROMPT FUNCTION 2: Transform to JSON
-def build_json_prompt(raw_text):
-    return f"""You are a data transformation engine.
+def get_route_analysis_data(source_name, dest_name, via_name):
+    """
+    ALWAYS fetches fresh data from NVIDIA API. 
+    No database caching or fallback logic is used.
+    """
+    if not source_name or not dest_name:
+        return None, "Source and destination cities are required."
 
-Convert the following unstructured route analysis data into STRICT VALID JSON.
+    # Directly call the AI generation function
+    ai_data, ai_error = generate_route_analysis(source_name, dest_name, via_name)
+    
+    if ai_data and not ai_error:
+        # Success: Return in the specific 'data_source': 'nvidia_api' format
+        return {
+            "status": "success",
+            "data_source": "nvidia_api",
+            "data": ai_data
+        }, None
 
-Rules:
-- Return ONLY JSON (no explanation, no text before/after)
-- Use proper JSON format (double quotes, no trailing commas)
-- Normalize ranges by taking mid-values (example: "10-15 million" → 12500000)
-- Convert percentages to integers (example: "60% - 70%" → 65)
-- Ensure all numeric fields are numbers (not strings)
-- Keep city names consistent
-- If multiple values exist, choose the most realistic average
-
-Output JSON structure:
-
-{{
-  "population": [
-    {{"city": "", "population": 0}}
-  ],
-  "potential": [
-    {{
-      "city": "",
-      "education": "",
-      "temples": "",
-      "tourism": "",
-      "industry": ""
-    }}
-  ],
-  "segmentation": [
-    {{
-      "city": "",
-      "urban": true,
-      "industrial": true,
-      "pilgrimage": false,
-      "transit": true
-    }}
-  ],
-  "visitors": [
-    {{
-      "city": "",
-      "yearly": 0,
-      "daily": 0,
-      "festival": ""
-    }}
-  ],
-  "distance": [
-    {{"from": "", "to": "", "km": 0}}
-  ],
-  "transport_pattern": {{
-    "bus": 0,
-    "train": 0,
-    "private": 0,
-    "peak_days": "",
-    "rush_pattern": ""
-  }},
-  "transport_details": [
-    {{
-      "from": "",
-      "to": "",
-      "mode": "",
-      "frequency": ""
-    }}
-  ],
-  "top_visitors": [
-    {{
-      "state": "",
-      "city": "",
-      "count": 0
-    }}
-  ],
-  "suggested_routes": [
-    {{"description": ""}}
-  ]
-}}
-
-Now convert this data:
-
-{raw_text}
-"""
+    # Error: API failed or returned invalid data
+    return None, ai_error or "Unable to fetch route analysis"
 
 
-# ✅ LLM CALL
-def call_llm(prompt, is_json=False):
-    params = {
-        "model": "meta/llama-3.1-70b-instruct",
-        "messages": [{"role": "user", "content": prompt}],
-        "temperature": 0.3
-    }
-    if is_json:
-        params["response_format"] = {"type": "json_object"}
-        
-    response = client.chat.completions.create(**params)
-    return response.choices[0].message.content
-
-
-# ✅ CLEAN JSON
-def clean_json(response):
-    response = response.strip()
-    if "```json" in response:
-        response = response.split("```json")[1]
-    if "```" in response:
-        response = response.split("```")[0]
-    return json.loads(response.strip())
-
-
-# ✅ MAIN VIEWS
 def index(request):
-    return render(request, 'index.html')
+    source_name = request.GET.get("source", "").strip()
+    dest_name = request.GET.get("destination", "").strip()
+    via_name = request.GET.get("via", "").strip()
 
-@csrf_exempt
-def full_analysis_view(request):
-    route_name = request.GET.get("route")
+    context = {
+        "source_input": source_name,
+        "dest_input": dest_name,
+        "via_input": via_name
+    }
 
-    if not route_name:
-        return JsonResponse({"error": "Route required"})
+    if source_name and dest_name:
+        try:
+            data, error = get_route_analysis_data(source_name, dest_name, via_name)
+            if error:
+                context["error"] = error
+            else:
+                # Unpack the 'data' part for template rendering compatibility
+                context.update(data["data"])
+                context["data_source"] = data["data_source"]
+                context["has_data"] = True
+                context["raw_json"] = json.dumps(data, indent=2)
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            context["error"] = "An internal server error occurred while analyzing the route."
+
+    return render(request, 'index.html', context)
+
+
+@api_view(['POST', 'GET'])
+@permission_classes([permissions.AllowAny])
+def analyze_route_api(request):
+    """
+    Django REST Framework API endpoint for React frontend.
+    POST /api/route-analysis/
+    """
+    if request.method == "POST":
+        # DRF's request.data handles both JSON and Form data automatically
+        source_name = request.data.get("source", "").strip()
+        dest_name = request.data.get("destination", "").strip()
+        via_name = request.data.get("via", "").strip()
+    else:
+        # Handle GET for testing in browser
+        source_name = request.query_params.get("source", "").strip()
+        dest_name = request.query_params.get("destination", "").strip()
+        via_name = request.query_params.get("via", "").strip()
+
+    # Validation
+    if not source_name or not dest_name:
+        return Response({
+            "status": "error",
+            "message": "Source and destination are required"
+        }, status=status.HTTP_400_BAD_REQUEST)
 
     try:
-        route, _ = Route.objects.get_or_create(name=route_name)
-
-        # STEP 1: Generate Raw Text
-        prompt1 = build_prompt(route_name)
-        raw_text = ""
-        for i in range(3):
-            try:
-                raw_text = call_llm(prompt1)
-                break
-            except Exception as e:
-                if i == 2:
-                    return JsonResponse({"error": f"LLM Step 1 failed: {str(e)}"})
-
-        # STEP 2: Transform to JSON
-        prompt2 = build_json_prompt(raw_text)
-        data = {}
-        for i in range(3):
-            try:
-                raw_json = call_llm(prompt2, is_json=True)
-                data = clean_json(raw_json)
-                break
-            except Exception as e:
-                if i == 2:
-                    # Fallback gracefully if JSON parsing fails, still return the raw text
-                    data = {}
-
-        # STEP 3: DB Population
-        if data:
-            city_map = {}
-
-            # Populate Cities & Population
-            for p in data.get("population", []):
-                city_name = p.get("city", "")
-                if city_name:
-                    city, _ = City.objects.get_or_create(name=city_name, route=route)
-                    city_map[city_name] = city
-                    Population.objects.update_or_create(
-                        city=city,
-                        defaults={"population": p.get("population", 0)}
-                    )
-
-            # Potential
-            for p in data.get("potential", []):
-                if p.get("city") in city_map:
-                    Potential.objects.update_or_create(
-                        city=city_map[p["city"]],
-                        defaults={
-                            "education": p.get("education", ""),
-                            "temples": p.get("temples", ""),
-                            "tourism": p.get("tourism", ""),
-                            "industry": p.get("industry", ""),
-                        }
-                    )
-
-            # Segmentation
-            for s in data.get("segmentation", []):
-                if s.get("city") in city_map:
-                    Segmentation.objects.update_or_create(
-                        city=city_map[s["city"]],
-                        defaults={
-                            "urban": s.get("urban", False),
-                            "industrial": s.get("industrial", False),
-                            "pilgrimage": s.get("pilgrimage", False),
-                            "transit": s.get("transit", False),
-                        }
-                    )
-
-            # Visitors
-            for v in data.get("visitors", []):
-                if v.get("city") in city_map:
-                    Visitors.objects.update_or_create(
-                        city=city_map[v["city"]],
-                        defaults={
-                            "yearly": v.get("yearly", 0),
-                            "daily": v.get("daily", 0),
-                            "festival": v.get("festival", "")
-                        }
-                    )
-
-            # Distance
-            for d in data.get("distance", []):
-                if d.get("from") in city_map and d.get("to") in city_map:
-                    Distance.objects.update_or_create(
-                        route=route,
-                        from_city=city_map[d["from"]],
-                        to_city=city_map[d["to"]],
-                        defaults={"km": d.get("km", 0)}
-                    )
-
-            # Transport
-            tp = data.get("transport_pattern", {})
-            Transport.objects.update_or_create(
-                route=route,
-                defaults={
-                    "bus": tp.get("bus", 0),
-                    "train": tp.get("train", 0),
-                    "private": tp.get("private", 0)
-                }
-            )
-
-            # Transport Details
-            for td in data.get("transport_details", []):
-                if td.get("from") in city_map and td.get("to") in city_map:
-                    TransportDetail.objects.update_or_create(
-                        route=route,
-                        from_city=city_map[td["from"]],
-                        to_city=city_map[td["to"]],
-                        mode=td.get("mode", "Bus"),
-                        defaults={"frequency": td.get("frequency", "")}
-                    )
-
-            # Top Visitors
-            for tv in data.get("top_visitors", []):
-                if tv.get("city") in city_map:
-                    TopVisitors.objects.update_or_create(
-                        route=route,
-                        city=city_map[tv["city"]],
-                        defaults={
-                            "state": tv.get("state", ""),
-                            "count": tv.get("count", 0)
-                        }
-                    )
-
-            # Suggested Routes
-            sr_text = "\\n".join([sr.get("description", "") for sr in data.get("suggested_routes", [])])
-            SuggestedRoute.objects.update_or_create(
-                route=route,
-                defaults={"description": sr_text}
-            )
-
-        # Return both the raw text (for the UI) and the structured JSON data
-        return JsonResponse({
-            "message": "Full analysis completed successfully",
-            "route": route.name,
-            "data": raw_text,
-            "json_data": data
-        })
+        response_data, error = get_route_analysis_data(source_name, dest_name, via_name)
+        if error:
+            return Response({
+                "status": "error",
+                "message": error
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        return Response(response_data)
 
     except Exception as e:
-        return JsonResponse({"error": str(e)})
+        return Response({
+            "status": "error",
+            "message": f"Internal server error: {str(e)}"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
