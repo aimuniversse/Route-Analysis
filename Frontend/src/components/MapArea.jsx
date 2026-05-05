@@ -6,9 +6,15 @@ import routeMap from "../assets/routemap.png";
 const MapArea = ({ routeData, routeQuery, isLoading }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   
+<<<<<<< HEAD
+  // Use data from props or fallbacks
+  const startLabel = routeData?.population_data?.source?.name || 'Origin';
+  const endLabel = routeData?.population_data?.destination?.name || 'Destination';
+=======
   const parsedPath = routeData?.route_summary?.path?.split(" → ") || routeQuery?.split(" to ");
   const startLabel = parsedPath?.[0] || 'Origin';
   const endLabel = parsedPath?.[parsedPath.length - 1] || 'Destination';
+>>>>>>> 6a65c60db754b236a990914d956f0373b98e1ba4
 
   return (
     <div className={`route-map-shell ${isFullscreen ? 'fullscreen-active' : ''}`}>
@@ -46,16 +52,16 @@ const MapArea = ({ routeData, routeQuery, isLoading }) => {
               alignItems: 'center',
               gap: '6px'
             }}>
-              <Navigation size={14} />
-              Live Overview
+              {/*<Navigation size={14} />
+              Live Overview*/}
             </div>
-            <button
+            {/*<button
               onClick={() => setIsFullscreen(!isFullscreen)}
               className="fullscreen-toggle"
               title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
             >
               {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
-            </button>
+            </button>*/}
           </div>
         </div>
 

@@ -6,6 +6,24 @@ import './RouteInsights.css';
 const RouteInsights = ({ routeQuery, routeData }) => {
   // --- Data Definitions ---
 
+<<<<<<< HEAD
+  // 1. Demographics Data
+  const popData = routeData?.population_data ? [
+    { name: routeData.population_data.source.name, value: (routeData.population_data.source.count / 1000000).toFixed(1), fill: 'url(#colorTrafficRed)' },
+    { name: routeData.population_data.destination.name, value: (routeData.population_data.destination.count / 1000000).toFixed(1), fill: 'var(--accent-blue-light)' },
+    { name: 'Via Points', value: routeData.population_data.via ? (routeData.population_data.via.count / 1000000).toFixed(1) : 0, fill: 'var(--text-muted)' },
+  ].filter(d => d.value > 0) : [
+    { name: 'Origin', value: 5.0, fill: 'url(#colorTrafficRed)' },
+    { name: 'Dest', value: 1.7, fill: 'var(--accent-blue-light)' },
+    { name: 'Corridor', value: 11.0, fill: 'var(--text-muted)' },
+  ];
+
+  // 2. Transport Data
+  const transportData = routeData?.transport_distribution ? [
+    { name: 'Bus', value: routeData.transport_distribution.bus, color: 'var(--accent-blue)' },
+    { name: 'Train', value: routeData.transport_distribution.train, color: '#f59e0b' },
+    { name: 'Car/Air', value: routeData.transport_distribution.car + (routeData.transport_distribution.flight || 0), color: '#10b981' },
+=======
   const aiPop = routeData?.population_data;
   const popData = aiPop ? [
     { name: aiPop.source?.name || 'Origin', value: aiPop.source?.count / 1000000 || 5.0, fill: 'url(#colorTrafficRed)' },
@@ -22,12 +40,31 @@ const RouteInsights = ({ routeQuery, routeData }) => {
     { name: 'Bus', value: aiTransport.bus || 60, color: 'var(--accent-blue)' },
     { name: 'Train', value: aiTransport.train || 30, color: '#f59e0b' },
     { name: 'Car/Air', value: (aiTransport.car || 0) + (aiTransport.flight || 0) + (aiTransport.private || 0), color: '#10b981' },
+>>>>>>> 6a65c60db754b236a990914d956f0373b98e1ba4
   ] : [
     { name: 'Bus', value: 60, color: 'var(--accent-blue)' },
     { name: 'Train', value: 30, color: '#f59e0b' },
     { name: 'Car/Air', value: 10, color: '#10b981' },
   ];
 
+<<<<<<< HEAD
+  // 3. Tourism Data
+  const tourismData = routeData?.visitor_data ? 
+    routeData.visitor_data.slice(0, 5).map(v => ({ subject: v.place_name, A: v.daily })) :
+    [
+      { subject: 'Marina', A: 100 },
+      { subject: 'Kapaleeswarar', A: 50 },
+      { subject: 'Black Thunder', A: 20 },
+      { subject: 'Perur Temple', A: 15 },
+      { subject: 'Isha Yoga', A: 60 },
+    ];
+
+  // 4. Area Data (Segmentation)
+  const areaData = routeData?.area_segmentation ? [
+    { name: 'Jobs', potential: 80, activity: 90, type: routeData.area_segmentation.job_business_areas[0] || 'Business' },
+    { name: 'Students', potential: 95, activity: 85, type: routeData.area_segmentation.student_areas[0] || 'Education' },
+    { name: 'Tourism', potential: 70, activity: 75, type: routeData.area_segmentation.tourist_areas[0] || 'Leisure' },
+=======
   const aiTourism = routeData?.visitor_data;
   const tourismData = aiTourism ? aiTourism.slice(0, 5).map(v => ({
     subject: v.place_name, A: v.daily || Math.round(v.yearly / 365) || 50
@@ -45,6 +82,7 @@ const RouteInsights = ({ routeQuery, routeData }) => {
     { name: 'Business', potential: 90, activity: 85, type: aiArea.job_business_areas?.[0] || 'Jobs' },
     { name: 'Student', potential: 60, activity: 50, type: aiArea.student_areas?.[0] || 'Education' },
     { name: 'Tourist', potential: 85, activity: 80, type: aiArea.tourist_areas?.[0] || 'Tourism' },
+>>>>>>> 6a65c60db754b236a990914d956f0373b98e1ba4
   ] : [
     { name: 'Chennai', potential: 80, activity: 90, type: 'Origin / IT' },
     { name: 'Sriperumbudur', potential: 95, activity: 85, type: 'Industrial' },
@@ -53,15 +91,22 @@ const RouteInsights = ({ routeQuery, routeData }) => {
     { name: 'Coimbatore', potential: 85, activity: 80, type: 'Textile' },
   ];
 
+<<<<<<< HEAD
+  const suggestedRoutes = routeData?.suggested_routes || [
+    { option: 1, path: 'NH 544', distance: 505, time: 8.5 },
+    { option: 2, path: 'NH 48', distance: 530, time: 9.7 },
+  ];
+=======
   // Suggested Routes
   const aiRoutes = routeData?.suggested_routes;
+>>>>>>> 6a65c60db754b236a990914d956f0373b98e1ba4
 
   // --- Render ---
 
   return (
     <div className="route-insights-container glass-panel mt-4">
       <div className="insights-header">
-        <h2 className="insights-title">Route Insights: Chennai to Coimbatore</h2>
+        <h2 className="insights-title">Route Insights: {routeQuery}</h2>
         <span className="badge live-data">Premium Analysis</span>
       </div>
 
@@ -224,41 +269,18 @@ const RouteInsights = ({ routeQuery, routeData }) => {
           </div>
           <div className="insight-card-content flex flex-col justify-center gap-4" style={{ height: '200px', padding: '10px 0' }}>
              
-             {/* Route 1 */}
-             <div className="w-full">
-               <div className="flex justify-between text-xs mb-1">
-                 <span className="font-bold">NH 544 (Optimal)</span>
-                 <span className="font-semibold text-primary">8h 25m</span>
+             {suggestedRoutes.map((route, idx) => (
+               <div key={idx} className="w-full">
+                 <div className="flex justify-between text-xs mb-1">
+                   <span className="font-bold">{route.path} {idx === 0 ? '(Optimal)' : ''}</span>
+                   <span className="font-semibold text-primary">{Math.floor(route.time)}h {Math.round((route.time % 1) * 60)}m</span>
+                 </div>
+                 <div className="w-full bg-gray-100 rounded-full h-2">
+                   <div className="h-2 rounded-full" style={{ width: idx === 0 ? '85%' : '95%', background: idx === 0 ? 'var(--gradient-primary)' : '#f59e0b' }}></div>
+                 </div>
+                 <div className="text-[10px] text-muted mt-1">{route.distance} KM • Detailed Analysis Avail.</div>
                </div>
-               <div className="w-full bg-gray-100 rounded-full h-2">
-                 <div className="h-2 rounded-full" style={{ width: '85%', background: 'var(--gradient-primary)' }}></div>
-               </div>
-               <div className="text-[10px] text-muted mt-1">505 KM • High Tolls • Fast</div>
-             </div>
-
-             {/* Route 2 */}
-             <div className="w-full">
-               <div className="flex justify-between text-xs mb-1">
-                 <span className="font-bold text-secondary">NH 48</span>
-                 <span className="font-semibold text-muted">9h 40m</span>
-               </div>
-               <div className="w-full bg-gray-100 rounded-full h-2">
-                 <div className="h-2 rounded-full" style={{ width: '95%', background: '#f59e0b' }}></div>
-               </div>
-               <div className="text-[10px] text-muted mt-1">530 KM • Medium Tolls • Scenic</div>
-             </div>
-
-             {/* Route 3 */}
-             <div className="w-full">
-               <div className="flex justify-between text-xs mb-1">
-                 <span className="font-bold text-secondary">SH 9</span>
-                 <span className="font-semibold text-muted">10h 15m</span>
-               </div>
-               <div className="w-full bg-gray-100 rounded-full h-2">
-                 <div className="h-2 rounded-full" style={{ width: '100%', background: '#94a3b8' }}></div>
-               </div>
-               <div className="text-[10px] text-muted mt-1">550 KM • Low Tolls • Slow</div>
-             </div>
+             ))}
 
           </div>
         </div>

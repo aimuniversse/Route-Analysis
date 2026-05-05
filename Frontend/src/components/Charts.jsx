@@ -26,19 +26,19 @@ const defaultTravelTimeData = [
 
 const Charts = ({ routeData }) => {
   // Use real data from backend if available
-  const trafficTrends = routeData?.traffic?.trends?.length > 0 
-    ? routeData.traffic.trends 
+  const trafficTrends = routeData?.dashboard_data?.traffic_trends?.length > 0 
+    ? routeData.dashboard_data.traffic_trends 
     : defaultTrafficData;
 
-  const travelTimeData = routeData?.traffic?.travel_time_by_hour?.length > 0
-    ? routeData.traffic.travel_time_by_hour.map(h => ({
+  const travelTimeData = routeData?.dashboard_data?.travel_time_by_hour?.length > 0
+    ? routeData.dashboard_data.travel_time_by_hour.map(h => ({
         time: h.hour,
         timeVal: h.minutes,
         active: h.active
       }))
     : defaultTravelTimeData;
 
-  const recommendedTime = routeData?.traffic?.recommended_time || { time: "10:00 AM", reason: "Optimal time to reach faster & avoid traffic." };
+  const recommendedTime = routeData?.dashboard_data?.recommended_time || { time: "10:00 AM", reason: "Optimal time to reach faster & avoid traffic." };
 
   const transportDist = routeData?.transport_distribution || routeData?.transport_pattern;
   const transportData = transportDist 
@@ -124,6 +124,94 @@ const Charts = ({ routeData }) => {
             </BarChart>
           </ResponsiveContainer>
         </div>
+      </div>
+
+      {/* Area Potential Map - Redesigned to match requested style */}
+      <div className="glass-panel chart-widget hover-lift redesigned-potential-map">
+        <div className="widget-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div className="map-icon-box" style={{ 
+              backgroundColor: 'rgba(245, 158, 11, 0.1)', 
+              color: '#f59e0b',
+              padding: '8px',
+              borderRadius: '10px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
+              </svg>
+            </div>
+            <h3>Area Potential Map</h3>
+          </div>
+        </div>
+        
+        <div className="chart-container" style={{ width: '100%', height: '180px', minHeight: 0, minWidth: 0, position: 'relative' }}>
+          <ResponsiveContainer width="100%" height="100%">
+            {/* Using a custom combination of Area and Bar for the requested "curved" look */}
+            <AreaChart 
+              data={[
+                { name: 'Business', value: routeData?.dashboard_data?.corridor_potential?.business || 90, barVal: routeData?.dashboard_data?.corridor_potential?.business || 90 },
+                { name: 'Student', value: routeData?.dashboard_data?.corridor_potential?.student || 60, barVal: routeData?.dashboard_data?.corridor_potential?.student || 60 },
+                { name: 'Tourist', value: routeData?.dashboard_data?.corridor_potential?.tourist || 85, barVal: routeData?.dashboard_data?.corridor_potential?.tourist || 85 }
+              ]} 
+              margin={{ top: 10, right: 30, left: 30, bottom: 0 }}
+            >
+              <defs>
+                <linearGradient id="colorPotentialOrange" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#0f172a', fontSize: 10, fontWeight: 600}} dy={10} />
+              <YAxis hide />
+              <Tooltip 
+                cursor={false}
+                contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.95)', borderRadius: '12px', border: '1px solid #eee' }}
+              />
+              <Area 
+                type="monotone" 
+                dataKey="value" 
+                stroke="#f59e0b" 
+                strokeWidth={2} 
+                fillOpacity={1} 
+                fill="url(#colorPotentialOrange)" 
+                isAnimationActive={true}
+              />
+              {/* Using a trick to render bars on top of the area if we used ComposedChart, 
+                  but here we'll just use a separate layer or bars within the same if possible. 
+                  Recharts AreaChart doesn't support Bar easily, let's use ComposedChart. */}
+            </AreaChart>
+          </ResponsiveContainer>
+          
+          {/* Overlay Bars Layer */}
+          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', display: 'flex', justifyContent: 'space-around', padding: '10px 30px 0 30px', alignItems: 'flex-end' }}>
+            {[
+              routeData?.dashboard_data?.corridor_potential?.business || 90,
+              routeData?.dashboard_data?.corridor_potential?.student || 60,
+              routeData?.dashboard_data?.corridor_potential?.tourist || 85
+            ].map((val, idx) => (
+              <div key={idx} style={{ 
+                width: '18px', 
+                height: `${val}%`, 
+                backgroundColor: 'var(--accent-blue)', 
+                borderRadius: '4px 4px 0 0',
+                boxShadow: '0 4px 12px rgba(225, 29, 72, 0.2)'
+              }}></div>
+            ))}
+          </div>
+        </div>
+        
+        <p className="potential-caption" style={{ 
+          fontSize: '0.75rem', 
+          color: '#64748b', 
+          marginTop: '20px', 
+          textAlign: 'left',
+          fontWeight: '500'
+        }}>
+          Bar represents economic/tourist potential along the corridor.
+        </p>
       </div>
 
       {/* AI Recommended Time */}

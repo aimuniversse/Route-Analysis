@@ -100,7 +100,8 @@ const trainFrequencies = [
 ];
 
 
-export default function PremiumReportPage() {
+export default function PremiumReportPage({ routeData }) {
+  const routeName = routeData?.route_summary?.path || "Coimbatore to Chennai";
   const [formData, setFormData] = useState({ name: '', busTravels: '', contactNo: '', message: '' });
   const [formStatus, setFormStatus] = useState(null); // null | 'success' | 'error'
   const [routeData, setRouteData] = useState(null);
@@ -246,10 +247,15 @@ export default function PremiumReportPage() {
         {/* Header */}
         <header className="report-header">
           <div className="header-badge">Corridor Report</div>
+<<<<<<< HEAD
           <h1>{routeSummary.path}</h1>
           <p className="subtitle">
             Comprehensive Route Analysis & Travel Intelligence | {routeSummary.total_distance} km | Approx. {routeSummary.estimated_time} hours
           </p>
+=======
+          <h1>{routeName}</h1>
+          <p className="subtitle">Comprehensive Route Analysis & Travel Intelligence</p>
+>>>>>>> dbea7a51e551fa514b2e050dc12f8a9ecfd57ec4
         </header>
 
         {/* Hero Image */}

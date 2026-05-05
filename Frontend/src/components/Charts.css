@@ -171,3 +171,35 @@
     display: inline-block;
   }
 }
+
+/* Redesigned Area Potential Map Styles */
+.redesigned-potential-map {
+  background: white !important;
+  border: 1px solid #f1f5f9 !important;
+  box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05) !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.redesigned-potential-map h3 {
+  color: #0f172a !important;
+  font-weight: 800 !important;
+  font-size: 1.1rem !important;
+}
+
+.map-icon-box {
+  transition: transform 0.3s ease;
+}
+
+.chart-widget:hover .map-icon-box {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.potential-caption {
+  padding-left: 10px;
+  border-left: 2px solid #f59e0b;
+}
+
+.recharts-area-path {
+  filter: drop-shadow(0 4px 8px rgba(245, 158, 11, 0.2));
+}

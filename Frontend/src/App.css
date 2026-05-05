@@ -195,8 +195,21 @@
   gap: 32px;
 }
 
-.charts-row, .widgets-row, .insights-row {
+.charts-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
   width: 100%;
+}
+
+.widgets-row, .insights-row {
+  width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .charts-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 .app-footer {
