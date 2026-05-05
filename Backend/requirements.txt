@@ -4,7 +4,4 @@ openai>=1.0.0
 mysqlclient>=2.2.0
 djangorestframework
 requests
-<<<<<<< HEAD
 django-cors-headers
-=======
->>>>>>> 551348bbb73abcbabe6c95d4b6da14a24f9d08ae
