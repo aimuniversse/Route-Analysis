@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState } from 'react';
 import Header from './components/Header';
 import MapArea from './components/MapArea';
@@ -109,6 +110,16 @@ function App() {
           </div>
         </div>
       </main>
+=======
+import React from 'react';
+import PremiumReportPage from './components/PremiumReportPage';
+import './App.css';
+
+function App() {
+  return (
+    <div className="app-wrapper">
+      <PremiumReportPage />
+>>>>>>> 35d500f228efb5ef39038f2bbbe783258f916723
     </div>
   );
 }

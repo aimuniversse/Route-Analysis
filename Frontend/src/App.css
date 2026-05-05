@@ -5,6 +5,7 @@
   background-color: var(--bg-main);
   color: var(--text-primary);
   overflow: hidden;
+<<<<<<< HEAD
   position: relative;
 }
 
@@ -59,6 +60,8 @@
   33% { transform: translate(30px, -50px) scale(1.1); }
   66% { transform: translate(-20px, 20px) scale(0.9); }
   100% { transform: translate(0, 0) scale(1); }
+=======
+>>>>>>> 35d500f228efb5ef39038f2bbbe783258f916723
 }
 
 .main-content {
@@ -66,6 +69,7 @@
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+<<<<<<< HEAD
   padding: 32px 40px;
   gap: 32px;
   position: relative;
@@ -111,6 +115,60 @@
 .text-secondary { color: var(--text-secondary); }
 .text-muted { color: var(--text-muted); }
 
+=======
+  padding: 24px;
+  gap: 24px;
+}
+
+/* Glass panel utility */
+.glass-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  backdrop-filter: blur(10px);
+}
+
+/* Dashboard Grid Layout */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+  flex: 1;
+}
+
+.dashboard-main-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.dashboard-bottom-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.dashboard-footer-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr;
+  gap: 24px;
+}
+
+/* Typography utilities */
+.text-xs { font-size: 0.75rem; }
+.text-sm { font-size: 0.875rem; }
+.text-base { font-size: 1rem; }
+.text-lg { font-size: 1.125rem; }
+.text-xl { font-size: 1.25rem; }
+.font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; }
+
+.text-secondary { color: var(--text-secondary); }
+.text-muted { color: var(--text-muted); }
+
+>>>>>>> 35d500f228efb5ef39038f2bbbe783258f916723
 /* Flex utilities */
 .flex { display: flex; }
 .items-center { align-items: center; }
@@ -118,6 +176,7 @@
 .gap-2 { gap: 8px; }
 .gap-3 { gap: 12px; }
 .gap-4 { gap: 16px; }
+<<<<<<< HEAD
 
 /* Tab Navigation (Mobile Only) */
 .mobile-tabs-nav {
@@ -206,3 +265,5 @@
   }
 }
 
+=======
+>>>>>>> 35d500f228efb5ef39038f2bbbe783258f916723
