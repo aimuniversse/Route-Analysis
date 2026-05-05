@@ -4,6 +4,7 @@ import MapArea from './components/MapArea';
 import Charts from './components/Charts';
 import BottomWidgets from './components/BottomWidgets';
 import RouteInsights from './components/RouteInsights';
+import AreaPotentialMap from './components/AreaPotentialMap';
 import PremiumReportPage from './components/PremiumReportPage';
 import './App.css';
 
@@ -13,16 +14,17 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const analyzeRoute = async (routeString) => {
-    if (!routeString.trim()) return;
+  const analyzeRoute = async (source, destination) => {
+    if (!source.trim() || !destination.trim()) return;
     
     setIsLoading(true);
     setError(null);
     setRouteData(null);
-    setRouteQuery(routeString);
+    setRouteQuery(`${source} to ${destination}`);
     
     try {
-      const response = await fetch(`/testing/?route=${encodeURIComponent(routeString)}`);
+      // Fetch from the Django API using the Vite proxy
+      const response = await fetch(`/api/route-analysis/?source=${encodeURIComponent(source)}&destination=${encodeURIComponent(destination)}`);
       
       if (!response.ok) {
         throw new Error(`Error: ${response.status} ${response.statusText}`);
@@ -30,11 +32,12 @@ function App() {
       
       const result = await response.json();
       
-      if (result.error) {
-        throw new Error(result.error);
+      if (result.status === 'error') {
+        throw new Error(result.message || 'Analysis failed');
       }
       
-      setRouteData(result.json_data || result.data);
+      // Backend returns { status: 'success', data: { ... }, data_source: '...' }
+      setRouteData(result.data);
     } catch (err) {
       console.error("Failed to analyze route:", err);
       setError(err.message);
@@ -43,10 +46,15 @@ function App() {
     }
   };
 
+  // Initial fetch on mount
+  React.useEffect(() => {
+    analyzeRoute('Chennai', 'Coimbatore');
+  }, []);
+
   return (
     <div className="app-stack">
       {/* Header Section 
-      <Header onAnalyze={analyzeRoute} isLoading={isLoading} /> */}
+      <Header onAnalyze={analyzeRoute} isLoading={isLoading} />*/}
       
       {error && (
         <div className="error-banner">
@@ -62,6 +70,11 @@ function App() {
         <MapArea routeData={routeData} routeQuery={routeQuery} isLoading={isLoading} />
       </section>
 
+      {/* 1.5 Area Potential Corridor Map */}
+      <section className="app-section potential-map-section animate-fade-in-up">
+        <AreaPotentialMap routeData={routeData} isLoading={isLoading} />
+      </section>
+
       {/* 2. Dashboard Section (Charts & Analytics) */}
       <section className="app-section dashboard-section animate-fade-in-up">
         <div className="section-header">
@@ -75,7 +88,7 @@ function App() {
             <BottomWidgets routeData={routeData} />
           </div>
           <div className="insights-row">
-            <RouteInsights routeQuery={routeQuery} />
+            <RouteInsights routeQuery={routeQuery} routeData={routeData} />
           </div>
         </div>
       </section>
@@ -85,7 +98,7 @@ function App() {
         <div className="section-header">
           <h2 className="section-title">Premium Corridor Report</h2>
         </div>
-        <PremiumReportPage />
+        <PremiumReportPage routeData={routeData} />
       </section>
 
       <footer className="app-footer">

@@ -7,8 +7,8 @@ const MapArea = ({ routeData, isLoading }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   
   // Use data from props or fallbacks
-  const startLabel = routeData?.distance?.[0]?.from || 'Origin';
-  const endLabel = routeData?.distance?.[0]?.to || 'Destination';
+  const startLabel = routeData?.population_data?.source?.name || 'Origin';
+  const endLabel = routeData?.population_data?.destination?.name || 'Destination';
 
   return (
     <div className={`route-map-shell ${isFullscreen ? 'fullscreen-active' : ''}`}>
@@ -46,16 +46,16 @@ const MapArea = ({ routeData, isLoading }) => {
               alignItems: 'center',
               gap: '6px'
             }}>
-              <Navigation size={14} />
-              Live Overview
+              {/*<Navigation size={14} />
+              Live Overview*/}
             </div>
-            <button
+            {/*<button
               onClick={() => setIsFullscreen(!isFullscreen)}
               className="fullscreen-toggle"
               title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
             >
               {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
-            </button>
+            </button>*/}
           </div>
         </div>
 

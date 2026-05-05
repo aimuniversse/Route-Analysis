@@ -3,15 +3,16 @@ import { AlertCircle, CloudRain, Clock, ArrowRight } from 'lucide-react';
 import './BottomWidgets.css';
 
 const BottomWidgets = ({ routeData }) => {
-  const distance = routeData?.distance?.[0]?.km || "505";
-  const startCity = routeData?.distance?.[0]?.from || "Chennai, TN";
-  const endCity = routeData?.distance?.[0]?.to || "Coimbatore, TN";
-  const timeMins = Math.round(Number(distance) / 60 * 60); // assuming avg 60km/h for highway
+  const distance = routeData?.route_summary?.total_distance || "505";
+  const startCity = routeData?.population_data?.source?.name || "Chennai, TN";
+  const endCity = routeData?.population_data?.destination?.name || "Coimbatore, TN";
+  const timeMins = Math.round((routeData?.route_summary?.estimated_time || 8) * 60);
 
-  const liveUpdates = Array.isArray(routeData?.traffic?.live_updates) 
-    ? routeData.traffic.live_updates 
-    : [{ incident: routeData?.traffic?.live_updates || "Normal traffic flow observed.", severity: "Low", time: "Just now" }];
-  const weatherDetails = routeData?.weather || { impact: "Low", details: "Clear skies. No significant impact on travel." };
+  const liveUpdates = Array.isArray(routeData?.dashboard_data?.live_updates) 
+    ? routeData.dashboard_data.live_updates 
+    : [{ incident: "Normal traffic flow observed.", severity: "Low", time: "Just now" }];
+    
+  const weatherDetails = routeData?.dashboard_data?.weather || { impact: "Low", details: "Clear skies. No significant impact on travel." };
 
   return (
     <>
