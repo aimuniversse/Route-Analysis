@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { Loader2, Maximize2, Minimize2, Map as MapIcon, Navigation } from 'lucide-react';
 import './MapArea.css';
-import routePng from "../assets/route.png";
-import chennaiImg from "../assets/chennai.png";
-import coimbatoreImg from "../assets/coimbatore.jpg";
+import routeMap from "../assets/routemap.png";
 
 const MapArea = ({ routeData, isLoading }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -64,11 +62,11 @@ const MapArea = ({ routeData, isLoading }) => {
         <div className="route-map-frame" style={{ height: isFullscreen ? '100%' : '650px' }}>
           <div className="static-map-container">
             <img 
-              src={routePng} 
+              src={routeMap} 
               alt={`Route visualization from ${startLabel} to ${endLabel}`} 
               className="static-map-image"
               style={{ 
-                objectFit: isFullscreen ? 'contain' : 'cover', 
+                objectFit: 'cover', 
                 width: '100%', 
                 height: '100%',
                 opacity: isLoading ? 0.3 : 1,
@@ -76,24 +74,6 @@ const MapArea = ({ routeData, isLoading }) => {
                 transform: isLoading ? 'scale(1.05)' : 'scale(1)'
               }}
             />
-            
-            {!isLoading && (
-              <>
-                <div className="map-landmark chennai-landmark">
-                  <div className="landmark-diamond">
-                    <img src={chennaiImg} alt="Chennai Landmark" />
-                  </div>
-                  <div className="map-pin"></div>
-                </div>
-                
-                <div className="map-landmark coimbatore-landmark">
-                  <div className="landmark-diamond">
-                    <img src={coimbatoreImg} alt="Coimbatore Landmark" />
-                  </div>
-                  <div className="map-pin"></div>
-                </div>
-              </>
-            )}
           </div>
 
           {isLoading && (
