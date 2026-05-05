@@ -6,6 +6,7 @@ import './RouteInsights.css';
 const RouteInsights = ({ routeQuery, routeData }) => {
   // --- Data Definitions ---
 
+<<<<<<< HEAD
   // 1. Demographics Data
   const popData = routeData?.population_data ? [
     { name: routeData.population_data.source.name, value: (routeData.population_data.source.count / 1000000).toFixed(1), fill: 'url(#colorTrafficRed)' },
@@ -22,12 +23,31 @@ const RouteInsights = ({ routeQuery, routeData }) => {
     { name: 'Bus', value: routeData.transport_distribution.bus, color: 'var(--accent-blue)' },
     { name: 'Train', value: routeData.transport_distribution.train, color: '#f59e0b' },
     { name: 'Car/Air', value: routeData.transport_distribution.car + (routeData.transport_distribution.flight || 0), color: '#10b981' },
+=======
+  const aiPop = routeData?.population_data;
+  const popData = aiPop ? [
+    { name: aiPop.source?.name || 'Origin', value: aiPop.source?.count / 1000000 || 5.0, fill: 'url(#colorTrafficRed)' },
+    { name: aiPop.destination?.name || 'Destination', value: aiPop.destination?.count / 1000000 || 1.7, fill: 'var(--accent-blue-light)' },
+    ...(aiPop.via ? [{ name: aiPop.via.name || 'Via', value: aiPop.via.count / 1000000 || 2.0, fill: 'var(--text-muted)' }] : [])
+  ] : [
+    { name: 'Chennai', value: 5.0, fill: 'url(#colorTrafficRed)' },
+    { name: 'Coimbatore', value: 1.7, fill: 'var(--accent-blue-light)' },
+    { name: 'Corridor', value: 11.0, fill: 'var(--text-muted)' },
+  ];
+
+  const aiTransport = routeData?.transport_distribution || routeData?.transport_pattern;
+  const transportData = aiTransport ? [
+    { name: 'Bus', value: aiTransport.bus || 60, color: 'var(--accent-blue)' },
+    { name: 'Train', value: aiTransport.train || 30, color: '#f59e0b' },
+    { name: 'Car/Air', value: (aiTransport.car || 0) + (aiTransport.flight || 0) + (aiTransport.private || 0), color: '#10b981' },
+>>>>>>> 6a65c60db754b236a990914d956f0373b98e1ba4
   ] : [
     { name: 'Bus', value: 60, color: 'var(--accent-blue)' },
     { name: 'Train', value: 30, color: '#f59e0b' },
     { name: 'Car/Air', value: 10, color: '#10b981' },
   ];
 
+<<<<<<< HEAD
   // 3. Tourism Data
   const tourismData = routeData?.visitor_data ? 
     routeData.visitor_data.slice(0, 5).map(v => ({ subject: v.place_name, A: v.daily })) :
@@ -44,6 +64,25 @@ const RouteInsights = ({ routeQuery, routeData }) => {
     { name: 'Jobs', potential: 80, activity: 90, type: routeData.area_segmentation.job_business_areas[0] || 'Business' },
     { name: 'Students', potential: 95, activity: 85, type: routeData.area_segmentation.student_areas[0] || 'Education' },
     { name: 'Tourism', potential: 70, activity: 75, type: routeData.area_segmentation.tourist_areas[0] || 'Leisure' },
+=======
+  const aiTourism = routeData?.visitor_data;
+  const tourismData = aiTourism ? aiTourism.slice(0, 5).map(v => ({
+    subject: v.place_name, A: v.daily || Math.round(v.yearly / 365) || 50
+  })) : [
+    { subject: 'Marina', A: 100 },
+    { subject: 'Kapaleeswarar', A: 50 },
+    { subject: 'Black Thunder', A: 20 },
+    { subject: 'Perur Temple', A: 15 },
+    { subject: 'Isha Yoga', A: 60 },
+  ];
+
+  // Map AI's area_segmentation into AreaData format (or default)
+  const aiArea = routeData?.area_segmentation;
+  const areaData = aiArea ? [
+    { name: 'Business', potential: 90, activity: 85, type: aiArea.job_business_areas?.[0] || 'Jobs' },
+    { name: 'Student', potential: 60, activity: 50, type: aiArea.student_areas?.[0] || 'Education' },
+    { name: 'Tourist', potential: 85, activity: 80, type: aiArea.tourist_areas?.[0] || 'Tourism' },
+>>>>>>> 6a65c60db754b236a990914d956f0373b98e1ba4
   ] : [
     { name: 'Chennai', potential: 80, activity: 90, type: 'Origin / IT' },
     { name: 'Sriperumbudur', potential: 95, activity: 85, type: 'Industrial' },
@@ -52,10 +91,15 @@ const RouteInsights = ({ routeQuery, routeData }) => {
     { name: 'Coimbatore', potential: 85, activity: 80, type: 'Textile' },
   ];
 
+<<<<<<< HEAD
   const suggestedRoutes = routeData?.suggested_routes || [
     { option: 1, path: 'NH 544', distance: 505, time: 8.5 },
     { option: 2, path: 'NH 48', distance: 530, time: 9.7 },
   ];
+=======
+  // Suggested Routes
+  const aiRoutes = routeData?.suggested_routes;
+>>>>>>> 6a65c60db754b236a990914d956f0373b98e1ba4
 
   // --- Render ---
 

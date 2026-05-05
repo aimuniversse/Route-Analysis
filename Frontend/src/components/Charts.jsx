@@ -40,11 +40,12 @@ const Charts = ({ routeData }) => {
 
   const recommendedTime = routeData?.dashboard_data?.recommended_time || { time: "10:00 AM", reason: "Optimal time to reach faster & avoid traffic." };
 
-  const transportData = routeData?.transport_pattern 
+  const transportDist = routeData?.transport_distribution || routeData?.transport_pattern;
+  const transportData = transportDist 
     ? [
-        { mode: 'Bus', share: routeData.transport_pattern.bus, active: routeData.transport_pattern.bus > 50 },
-        { mode: 'Train', share: routeData.transport_pattern.train, active: routeData.transport_pattern.train > 50 },
-        { mode: 'Private', share: routeData.transport_pattern.private, active: routeData.transport_pattern.private > 50 }
+        { mode: 'Bus', share: transportDist.bus || 0, active: (transportDist.bus || 0) > 40 },
+        { mode: 'Train', share: transportDist.train || 0, active: (transportDist.train || 0) > 40 },
+        { mode: 'Car/Private', share: transportDist.car || transportDist.private || 0, active: (transportDist.car || transportDist.private || 0) > 40 }
       ]
     : null;
 
