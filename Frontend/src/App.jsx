@@ -1,10 +1,10 @@
-<<<<<<< HEAD
 import React, { useState } from 'react';
 import Header from './components/Header';
 import MapArea from './components/MapArea';
 import Charts from './components/Charts';
 import BottomWidgets from './components/BottomWidgets';
 import RouteInsights from './components/RouteInsights';
+import PremiumReportPage from './components/PremiumReportPage';
 import './App.css';
 
 function App() {
@@ -18,11 +18,10 @@ function App() {
     
     setIsLoading(true);
     setError(null);
-    setRouteData(null); // Clear previous data
+    setRouteData(null);
     setRouteQuery(routeString);
     
     try {
-      // Proxy handles /testing -> http://localhost:8000/testing
       const response = await fetch(`/testing/?route=${encodeURIComponent(routeString)}`);
       
       if (!response.ok) {
@@ -44,82 +43,54 @@ function App() {
     }
   };
 
-  const [activeTab, setActiveTab] = useState('map');
-
   return (
-    <div className="app-container">
-      {/* Ambient Animated Background */}
-      <div className="ambient-background">
-        <div className="ambient-orb orb-1"></div>
-        <div className="ambient-orb orb-2"></div>
-        <div className="ambient-orb orb-3"></div>
-      </div>
-
-      <main className="main-content">
-        <div className="animate-fade-in-up">
-         {/*<Header onAnalyze={analyzeRoute} isLoading={isLoading} /> */}
+    <div className="app-stack">
+      {/* Header Section 
+      <Header onAnalyze={analyzeRoute} isLoading={isLoading} /> */}
+      
+      {error && (
+        <div className="error-banner">
+          {error}
         </div>
-        
-        {error && (
-          <div className="animate-fade-in-up delay-100" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', padding: '12px', borderRadius: '8px', border: '1px solid #ef4444' }}>
-            {error}
+      )}
+
+      {/* 1. Map Section */}
+      <section className="app-section map-section animate-fade-in">
+        <div className="section-header">
+          <h2 className="section-title">Route Overview Map</h2>
+        </div>
+        <MapArea routeData={routeData} routeQuery={routeQuery} isLoading={isLoading} />
+      </section>
+
+      {/* 2. Dashboard Section (Charts & Analytics) */}
+      <section className="app-section dashboard-section animate-fade-in-up">
+        <div className="section-header">
+          <h2 className="section-title">Data Analytics & Insights</h2>
+        </div>
+        <div className="dashboard-grid">
+          <div className="charts-row">
+            <Charts routeData={routeData} />
           </div>
-        )}
-
-        <div className="mobile-tabs-nav animate-fade-in-up delay-100">
-          <button 
-            className={`tab-btn ${activeTab === 'map' ? 'active' : ''}`} 
-            onClick={() => setActiveTab('map')}
-          >
-            Overview
-          </button>
-          <button 
-            className={`tab-btn ${activeTab === 'charts' ? 'active' : ''}`} 
-            onClick={() => setActiveTab('charts')}
-          >
-            Analytics
-          </button>
-          <button 
-            className={`tab-btn ${activeTab === 'updates' ? 'active' : ''}`} 
-            onClick={() => setActiveTab('updates')}
-          >
-            Incidents
-          </button>
-        </div>
-
-        <div className={`dashboard-grid active-tab-${activeTab}`}>
-          <div className="dashboard-main-column">
-            <div className={`tab-content map-tab ${activeTab === 'map' ? 'show' : ''} animate-fade-in-up delay-200`}>
-              <MapArea routeData={routeData} routeQuery={routeQuery} isLoading={isLoading} />
-            </div>
-            
-            <div className={`tab-content charts-tab ${activeTab === 'charts' ? 'show' : ''} animate-fade-in-up delay-300`}>
-              <div className="dashboard-bottom-row">
-                <Charts routeData={routeData} />
-              </div>
-            </div>
-
-            <div className={`tab-content updates-tab ${activeTab === 'updates' ? 'show' : ''}`}>
-              <div className="dashboard-footer-row animate-fade-in-up delay-400">
-                <BottomWidgets routeData={routeData} />
-              </div>
-              <div className="animate-fade-in-up delay-500">
-                <RouteInsights routeQuery={routeQuery} />
-              </div>
-            </div>
+          <div className="widgets-row">
+            <BottomWidgets routeData={routeData} />
+          </div>
+          <div className="insights-row">
+            <RouteInsights routeQuery={routeQuery} />
           </div>
         </div>
-      </main>
-=======
-import React from 'react';
-import PremiumReportPage from './components/PremiumReportPage';
-import './App.css';
+      </section>
 
-function App() {
-  return (
-    <div className="app-wrapper">
-      <PremiumReportPage />
->>>>>>> 35d500f228efb5ef39038f2bbbe783258f916723
+      {/* 3. Premium Report Page Section */}
+      <section className="app-section premium-section animate-fade-in-up">
+        <div className="section-header">
+          <h2 className="section-title">Premium Corridor Report</h2>
+        </div>
+        <PremiumReportPage />
+      </section>
+
+      <footer className="app-footer">
+        <p>&copy; {new Date().getFullYear()} Route Analysis AI. All Rights Reserved.</p>
+      </footer>
     </div>
   );
 }

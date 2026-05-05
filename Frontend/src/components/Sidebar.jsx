@@ -12,16 +12,16 @@ import {
 } from 'lucide-react';
 import './Sidebar.css';
 
-const Sidebar = () => {
+const Sidebar = ({ currentView, onViewChange }) => {
   const navItems = [
-    { icon: <LayoutDashboard size={20} />, label: 'Dashboard', active: true },
-    { icon: <Map size={20} />, label: 'Routes' },
-    { icon: <BarChart2 size={20} />, label: 'Analytics' },
-    { icon: <Activity size={20} />, label: 'Traffic' },
-    { icon: <Bookmark size={20} />, label: 'Saved Trips' },
-    { icon: <Bell size={20} />, label: 'Alerts' },
-    { icon: <FileText size={20} />, label: 'Reports' },
-    { icon: <Settings size={20} />, label: 'Settings' },
+    { id: 'dashboard', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
+    { id: 'routes', icon: <Map size={20} />, label: 'Routes' },
+    { id: 'analytics', icon: <BarChart2 size={20} />, label: 'Analytics' },
+    { id: 'traffic', icon: <Activity size={20} />, label: 'Traffic' },
+    { id: 'saved', icon: <Bookmark size={20} />, label: 'Saved Trips' },
+    { id: 'alerts', icon: <Bell size={20} />, label: 'Alerts' },
+    { id: 'premium', icon: <FileText size={20} />, label: 'Reports' },
+    { id: 'settings', icon: <Settings size={20} />, label: 'Settings' },
   ];
 
   return (
@@ -37,8 +37,12 @@ const Sidebar = () => {
       </div>
 
       <nav className="sidebar-nav">
-        {navItems.map((item, index) => (
-          <div key={index} className={`nav-item ${item.active ? 'active' : ''}`}>
+        {navItems.map((item) => (
+          <div 
+            key={item.id} 
+            className={`nav-item ${currentView === item.id ? 'active' : ''}`}
+            onClick={() => onViewChange(item.id)}
+          >
             {item.icon}
             <span>{item.label}</span>
           </div>
@@ -46,7 +50,7 @@ const Sidebar = () => {
       </nav>
 
       <div className="sidebar-footer">
-        <div className="upgrade-card">
+        <div className="upgrade-card" onClick={() => onViewChange('premium')}>
           <div className="upgrade-icon">
             <MapPin size={20} color="#a855f7" />
           </div>

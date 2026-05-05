@@ -1,59 +1,78 @@
 .chart-widget {
   display: flex;
   flex-direction: column;
-  height: 220px;
+  height: 280px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.chart-widget:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-premium);
+  border-color: var(--accent-blue-light);
 }
 
 .widget-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 }
 
 .widget-header h3 {
-  font-size: 0.95rem;
-  font-weight: 500;
+  font-size: 1.1rem;
+  font-weight: 700;
   color: var(--text-primary);
+  letter-spacing: -0.02em;
 }
 
 .widget-select {
-  background: transparent;
-  border: none;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
   color: var(--text-secondary);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
+  padding: 6px 12px;
+  border-radius: 8px;
   outline: none;
   cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
 }
 
-.widget-select option {
-  background: var(--bg-panel);
-  color: var(--text-primary);
+.widget-select:hover {
+  border-color: var(--accent-blue);
+  background: white;
 }
 
 .chart-container {
   flex: 1;
   width: 100%;
-  min-height: 0; /* Important for Recharts responsive container inside flex */
+  min-height: 0;
 }
 
-/* AI Time Widget specific styles */
+/* AI Recommended Time Card Optimization */
 .ai-time-widget {
-  display: flex;
-  flex-direction: column;
+  background: linear-gradient(135deg, #ffffff 0%, #fff5f7 100%);
+  border: 1px solid rgba(225, 29, 72, 0.1);
 }
 
 .ai-time-content {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 32px;
   flex: 1;
 }
 
 .radial-chart {
-  width: 90px;
-  height: 90px;
+  width: 100px;
+  height: 100px;
   position: relative;
+  filter: drop-shadow(0 8px 16px rgba(225, 29, 72, 0.15));
 }
 
 .radial-svg {
@@ -64,59 +83,91 @@
 
 .radial-bg {
   fill: none;
-  stroke: rgba(220, 38, 38, 0.1);
-  stroke-width: 8;
+  stroke: #f1f5f9;
+  stroke-width: 10;
 }
 
 .radial-progress {
   fill: none;
-  stroke: var(--accent-blue-light);
-  stroke-width: 8;
+  stroke: var(--gradient-primary);
+  stroke-width: 10;
   stroke-linecap: round;
-  transition: stroke-dashoffset 1s ease-in-out;
+  transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.radial-text {
-  fill: var(--text-primary);
-  font-size: 24px;
-  text-anchor: middle;
-  transform: rotate(90deg) translate(0, -60px); /* Adjust to counter SVG rotation */
+.radial-text-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ai-icon {
+  font-size: 1.5rem;
+  margin-bottom: 2px;
 }
 
 .ai-time-details {
   flex: 1;
 }
 
-.confidence-badge {
-  align-self: center;
-  background-color: rgba(16, 185, 129, 0.15);
-  color: var(--success-green);
-  padding: 6px 16px;
-  border-radius: var(--radius-full);
-  font-size: 0.8rem;
-  font-weight: 600;
-  margin-top: 8px;
+.ai-time-label {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  margin-bottom: 4px;
 }
-/* Responsive Charts */
+
+.ai-time-value {
+  font-size: 2rem;
+  font-weight: 800;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.1;
+}
+
+.ai-time-reason {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-top: 12px;
+}
+
+.confidence-badge {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: var(--gradient-primary);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 99px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  box-shadow: 0 4px 12px var(--gradient-glow);
+}
+
+/* Responsive Adjustments */
 @media (max-width: 768px) {
   .chart-widget {
     height: auto;
-    min-height: 240px;
+    min-height: 300px;
   }
 
   .ai-time-content {
     flex-direction: column;
     text-align: center;
-    gap: 16px;
+    gap: 24px;
   }
 
-  .radial-chart {
-    margin: 0 auto;
-  }
-}
-
-@media (max-width: 480px) {
-  .widget-header h3 {
-    font-size: 0.85rem;
+  .confidence-badge {
+    position: static;
+    margin-top: 16px;
+    display: inline-block;
   }
 }
