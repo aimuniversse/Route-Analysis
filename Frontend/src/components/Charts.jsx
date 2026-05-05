@@ -40,11 +40,12 @@ const Charts = ({ routeData }) => {
 
   const recommendedTime = routeData?.traffic?.recommended_time || { time: "10:00 AM", reason: "Optimal time to reach faster & avoid traffic." };
 
-  const transportData = routeData?.transport_pattern 
+  const transportDist = routeData?.transport_distribution || routeData?.transport_pattern;
+  const transportData = transportDist 
     ? [
-        { mode: 'Bus', share: routeData.transport_pattern.bus, active: routeData.transport_pattern.bus > 50 },
-        { mode: 'Train', share: routeData.transport_pattern.train, active: routeData.transport_pattern.train > 50 },
-        { mode: 'Private', share: routeData.transport_pattern.private, active: routeData.transport_pattern.private > 50 }
+        { mode: 'Bus', share: transportDist.bus || 0, active: (transportDist.bus || 0) > 40 },
+        { mode: 'Train', share: transportDist.train || 0, active: (transportDist.train || 0) > 40 },
+        { mode: 'Car/Private', share: transportDist.car || transportDist.private || 0, active: (transportDist.car || transportDist.private || 0) > 40 }
       ]
     : null;
 
@@ -127,24 +128,26 @@ const Charts = ({ routeData }) => {
 
       {/* AI Recommended Time */}
       <div className="glass-panel chart-widget ai-time-widget hover-lift">
+        <div className="confidence-badge animate-pulse-glow">96% Confidence</div>
         <div className="widget-header">
           <h3>AI Recommended Time</h3>
         </div>
         <div className="ai-time-content">
           <div className="radial-chart">
             <svg viewBox="0 0 100 100" className="radial-svg">
-              <circle cx="50" cy="50" r="40" className="radial-bg" stroke="rgba(225, 29, 72, 0.1)" />
-              <circle cx="50" cy="50" r="40" className="radial-progress" stroke="var(--accent-blue)" strokeDasharray="251.2" strokeDashoffset="62.8" strokeLinecap="round" />
-              <text x="50" y="55" className="radial-text" fill="var(--text-primary)" fontWeight="bold" fontSize="16">🕒</text>
+              <circle cx="50" cy="50" r="45" className="radial-bg" />
+              <circle cx="50" cy="50" r="45" className="radial-progress" strokeDasharray="282.6" strokeDashoffset="70" />
             </svg>
+            <div className="radial-text-container">
+              <span className="ai-icon">✨</span>
+            </div>
           </div>
           <div className="ai-time-details">
-            <div className="text-muted text-sm font-medium">Start at</div>
-            <div className="text-xl font-bold" style={{ color: 'var(--accent-blue)' }}>{recommendedTime.time}</div>
-            <p className="text-xs text-muted mt-2">{recommendedTime.reason}</p>
+            <div className="ai-time-label">Start at</div>
+            <div className="ai-time-value">{recommendedTime.time}</div>
+            <p className="ai-time-reason">{recommendedTime.reason}</p>
           </div>
         </div>
-        <div className="confidence-badge animate-pulse-glow" style={{ background: 'var(--gradient-primary)', color: 'white', border: 'none' }}>96% Confidence</div>
       </div>
     </>
   );

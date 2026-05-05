@@ -3,12 +3,12 @@ import { Loader2, Maximize2, Minimize2, Map as MapIcon, Navigation } from 'lucid
 import './MapArea.css';
 import routeMap from "../assets/routemap.png";
 
-const MapArea = ({ routeData, isLoading }) => {
+const MapArea = ({ routeData, routeQuery, isLoading }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   
-  // Use data from props or fallbacks
-  const startLabel = routeData?.distance?.[0]?.from || 'Origin';
-  const endLabel = routeData?.distance?.[0]?.to || 'Destination';
+  const parsedPath = routeData?.route_summary?.path?.split(" → ") || routeQuery?.split(" to ");
+  const startLabel = parsedPath?.[0] || 'Origin';
+  const endLabel = parsedPath?.[parsedPath.length - 1] || 'Destination';
 
   return (
     <div className={`route-map-shell ${isFullscreen ? 'fullscreen-active' : ''}`}>
