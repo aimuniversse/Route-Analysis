@@ -1,13 +1,3 @@
-<<<<<<< HEAD
-import React from 'react';
-import PremiumReportPage from './components/PremiumReportPage';
-import './App.css';
-
-function App() {
-  return (
-    <div className="app-wrapper">
-      <PremiumReportPage />
-=======
 import React, { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
@@ -95,7 +85,6 @@ function App() {
       <footer className="app-footer">
         <p>© {new Date().getFullYear()} Route Analysis AI</p>
       </footer>
->>>>>>> 76bf54b7a29fabb6bf607653c1389d979ee0f2e0
     </div>
   );
 }

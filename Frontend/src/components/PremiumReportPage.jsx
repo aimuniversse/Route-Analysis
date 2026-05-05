@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Users, MapPin, Building2, Landmark, Mountain,
   Bus, Train, Car, Briefcase, Package, Navigation, Clock,
@@ -103,6 +103,43 @@ const trainFrequencies = [
 export default function PremiumReportPage() {
   const [formData, setFormData] = useState({ name: '', busTravels: '', contactNo: '', message: '' });
   const [formStatus, setFormStatus] = useState(null); // null | 'success' | 'error'
+  const [routeData, setRouteData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchRouteData('Coimbatore', 'Chennai');
+  }, []);
+
+  const fetchRouteData = async (source, destination) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch('http://localhost:8000/api/route-analysis/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ source, destination }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch route data');
+      }
+
+      const result = await response.json();
+      if (result.status === 'success') {
+        setRouteData(result.data);
+      } else {
+        throw new Error(result.message || 'Error fetching data');
+      }
+    } catch (err) {
+      console.error('Fetch Error:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
@@ -125,6 +162,82 @@ export default function PremiumReportPage() {
     setTimeout(() => setFormStatus(null), 5000);
   };
 
+  // Data Mapping
+  const dynamicTransportData = useMemo(() => {
+    if (!routeData?.transport_distribution) return transportData;
+    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
+    return Object.entries(routeData.transport_distribution).map(([name, value], idx) => ({
+      name: name.charAt(0).toUpperCase() + name.slice(1),
+      value,
+      color: colors[idx % colors.length]
+    }));
+  }, [routeData]);
+
+  const dynamicSuggestedRoutes = useMemo(() => {
+    if (!routeData?.suggested_routes) return suggestedRoutes;
+    const colors = ['#3b82f6', '#10b981', '#8b5cf6'];
+    return routeData.suggested_routes.map((route, idx) => ({
+      id: route.option,
+      name: `Route Option ${route.option}`,
+      time: `${route.time} hours`,
+      distance: `${route.distance} km`,
+      via: route.path,
+      type: idx === 0 ? 'RECOMMENDED' : 'ALTERNATIVE',
+      efficiency: idx === 0 ? 'Most Efficient' : 'Alternative',
+      efficiencyDesc: idx === 0 ? 'Best balance of time & distance' : 'Alternative route option',
+      icon: idx === 0 ? <Navigation size={22} /> : <MapPin size={22} />,
+      color: colors[idx % colors.length]
+    }));
+  }, [routeData]);
+
+  const dynamicBusFrequencies = useMemo(() => {
+    if (!routeData?.transport_schedule) return busFrequencies;
+    return routeData.transport_schedule.map(item => ({
+      from: item.from,
+      to: item.to,
+      label: 'Regular Service',
+      count: item.bus_trips,
+      icon: <Bus size={18} />
+    }));
+  }, [routeData]);
+
+  const dynamicTrainFrequencies = useMemo(() => {
+    if (!routeData?.transport_schedule) return trainFrequencies;
+    return routeData.transport_schedule.map(item => ({
+      from: item.from,
+      to: item.to,
+      label: 'Scheduled Service',
+      count: item.train_trips,
+      icon: <Train size={18} />
+    }));
+  }, [routeData]);
+
+  if (loading) {
+    return (
+      <div className="report-loading-container">
+        <div className="loading-spinner"></div>
+        <p>Generating Premium Route Report...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="report-error-container">
+        <Info size={48} className="text-red-500" />
+        <h2>Analysis Failed</h2>
+        <p>{error}</p>
+        <button onClick={() => fetchRouteData('Coimbatore', 'Chennai')} className="retry-btn">Retry Analysis</button>
+      </div>
+    );
+  }
+
+  const routeSummary = routeData?.route_summary || { path: "Coimbatore to Chennai", total_distance: 500, estimated_time: 9 };
+  const popData = routeData?.population_data || {};
+  const areaSeg = routeData?.area_segmentation || {};
+  const visitors = routeData?.visitor_data || [];
+  const demandDist = routeData?.demand_distribution || [];
+
   return (
     <div className="report-page-container">
       {/* Brand logo moved to section header for alignment */}
@@ -133,8 +246,10 @@ export default function PremiumReportPage() {
         {/* Header */}
         <header className="report-header">
           <div className="header-badge">Corridor Report</div>
-          <h1>Coimbatore to Chennai</h1>
-          <p className="subtitle">Comprehensive Route Analysis & Travel Intelligence</p>
+          <h1>{routeSummary.path}</h1>
+          <p className="subtitle">
+            Comprehensive Route Analysis & Travel Intelligence | {routeSummary.total_distance} km | Approx. {routeSummary.estimated_time} hours
+          </p>
         </header>
 
         {/* Hero Image */}
@@ -169,71 +284,44 @@ export default function PremiumReportPage() {
             </div>
 
             <div className="population-list">
-              <div className="population-item">
-                <div className="city-info-left">
-                  <div className="city-icon-badge bg-blue-light">
-                    <Landmark size={20} className="text-blue-main" />
+              {popData.source && (
+                <div className="population-item">
+                  <div className="city-info-left">
+                    <div className="city-icon-badge bg-blue-light">
+                      <Landmark size={20} className="text-blue-main" />
+                    </div>
+                    <span className="dot bg-blue-main"></span>
+                    <span className="city-name">{popData.source.name}</span>
                   </div>
-                  <span className="dot bg-blue-main"></span>
-                  <span className="city-name">Coimbatore</span>
+                  <div className="pop-badge bg-blue-light text-blue-main">{(popData.source.count / 1000000).toFixed(1)}M</div>
                 </div>
-                <div className="pop-badge bg-blue-light text-blue-main">1.6M - 2.0M</div>
-              </div>
+              )}
 
-              <div className="population-item">
-                <div className="city-info-left">
-                  <div className="city-icon-badge bg-purple-light">
-                    <Building2 size={20} className="text-purple-main" />
+              {popData.via && (
+                <div className="population-item">
+                  <div className="city-info-left">
+                    <div className="city-icon-badge bg-purple-light">
+                      <Building2 size={20} className="text-purple-main" />
+                    </div>
+                    <span className="dot bg-purple-main"></span>
+                    <span className="city-name">{popData.via.name}</span>
                   </div>
-                  <span className="dot bg-purple-main"></span>
-                  <span className="city-name">Tirupur</span>
+                  <div className="pop-badge bg-purple-light text-purple-main">{(popData.via.count / 1000000).toFixed(1)}M</div>
                 </div>
-                <div className="pop-badge bg-purple-light text-purple-main">0.8M - 1.2M</div>
-              </div>
+              )}
 
-              <div className="population-item">
-                <div className="city-info-left">
-                  <div className="city-icon-badge bg-orange-light">
-                    <Activity size={20} className="text-orange-main" />
+              {popData.destination && (
+                <div className="population-item">
+                  <div className="city-info-left">
+                    <div className="city-icon-badge bg-indigo-light">
+                      <Landmark size={20} className="text-indigo-main" />
+                    </div>
+                    <span className="dot bg-indigo-main"></span>
+                    <span className="city-name">{popData.destination.name}</span>
                   </div>
-                  <span className="dot bg-orange-main"></span>
-                  <span className="city-name">Erode</span>
+                  <div className="pop-badge bg-indigo-light text-indigo-main">{(popData.destination.count / 1000000).toFixed(1)}M</div>
                 </div>
-                <div className="pop-badge bg-orange-light text-orange-main">0.5M - 0.8M</div>
-              </div>
-
-              <div className="population-item">
-                <div className="city-info-left">
-                  <div className="city-icon-badge bg-green-light">
-                    <Landmark size={20} className="text-green-main" />
-                  </div>
-                  <span className="dot bg-green-main"></span>
-                  <span className="city-name">Salem</span>
-                </div>
-                <div className="pop-badge bg-green-light text-green-main">0.8M - 1.2M</div>
-              </div>
-
-              <div className="population-item">
-                <div className="city-info-left">
-                  <div className="city-icon-badge bg-pink-light">
-                    <Building2 size={20} className="text-pink-main" />
-                  </div>
-                  <span className="dot bg-pink-main"></span>
-                  <span className="city-name">Vellore</span>
-                </div>
-                <div className="pop-badge bg-pink-light text-pink-main">0.5M - 0.8M</div>
-              </div>
-
-              <div className="population-item">
-                <div className="city-info-left">
-                  <div className="city-icon-badge bg-indigo-light">
-                    <Landmark size={20} className="text-indigo-main" />
-                  </div>
-                  <span className="dot bg-indigo-main"></span>
-                  <span className="city-name">Chennai</span>
-                </div>
-                <div className="pop-badge bg-indigo-light text-indigo-main">7.0M - 9.0M</div>
-              </div>
+              )}
             </div>
 
             <div className="total-population-footer">
@@ -245,7 +333,9 @@ export default function PremiumReportPage() {
               </div>
               <div className="total-right">
                 <div className="vertical-dotted-sep"></div>
-                <span className="total-value">11.2M - 15.8M</span>
+                <span className="total-value">
+                  {(( (popData.source?.count || 0) + (popData.via?.count || 0) + (popData.destination?.count || 0) ) / 1000000).toFixed(1)}M
+                </span>
               </div>
             </div>
           </section>
@@ -278,61 +368,26 @@ export default function PremiumReportPage() {
             </div>
 
             <div className="potential-cards-list">
-              <div className="potential-card-item">
-                <div className="card-icon-side">
-                  <div className="p-icon-badge bg-orange-soft">
-                    <GraduationCap className="text-orange-main" size={28} />
+              {(areaSeg.job_business_areas || ['Education & Institutions', 'Temples & Heritage', 'Tourist Attractions', 'Companies & Industries']).map((item, idx) => {
+                const colors = ['orange', 'purple', 'green', 'blue'];
+                const icons = [<GraduationCap />, <Landmark />, <Mountain />, <Factory />];
+                const titles = ['Job & Business', 'Institutions', 'Tourist Hotspots', 'Logistics Hubs'];
+                return (
+                  <div key={idx} className="potential-card-item">
+                    <div className="card-icon-side">
+                      <div className={`p-icon-badge bg-${colors[idx % colors.length]}-soft`}>
+                        {React.cloneElement(icons[idx % icons.length], { className: `text-${colors[idx % colors.length]}-main`, size: 28 })}
+                      </div>
+                      <div className={`v-sep bg-${colors[idx % colors.length]}-main`}></div>
+                    </div>
+                    <div className="card-text-side">
+                      <h3>{titles[idx] || 'Key Attraction'}</h3>
+                      <p>{item}</p>
+                    </div>
+                    <div className={`card-number-badge bg-${colors[idx % colors.length]}-soft text-${colors[idx % colors.length]}-main`}>0{idx + 1}</div>
                   </div>
-                  <div className="v-sep bg-orange-main"></div>
-                </div>
-                <div className="card-text-side">
-                  <h3>Education & Institutions</h3>
-                  <p>Coimbatore is home to several prestigious educational institutions, including the Coimbatore Institute of Technology and the PSG College of Technology.</p>
-                </div>
-                <div className="card-number-badge bg-orange-soft text-orange-main">01</div>
-              </div>
-
-              <div className="potential-card-item">
-                <div className="card-icon-side">
-                  <div className="p-icon-badge bg-purple-soft">
-                    <Landmark className="text-purple-main" size={28} />
-                  </div>
-                  <div className="v-sep bg-purple-main"></div>
-                </div>
-                <div className="card-text-side">
-                  <h3>Temples & Heritage</h3>
-                  <p>The corridor is home to several famous temples, including the Perur Pateeswarar Temple in Coimbatore and the Kapaleeswarar Temple in Chennai.</p>
-                </div>
-                <div className="card-number-badge bg-purple-soft text-purple-main">02</div>
-              </div>
-
-              <div className="potential-card-item">
-                <div className="card-icon-side">
-                  <div className="p-icon-badge bg-green-soft">
-                    <Mountain className="text-green-main" size={28} />
-                  </div>
-                  <div className="v-sep bg-green-main"></div>
-                </div>
-                <div className="card-text-side">
-                  <h3>Tourist Attractions</h3>
-                  <p>The corridor is home to several popular tourist attractions, including the Nilgiri Hills, the Kodaikanal Lake, and the Marina Beach in Chennai.</p>
-                </div>
-                <div className="card-number-badge bg-green-soft text-green-main">03</div>
-              </div>
-
-              <div className="potential-card-item">
-                <div className="card-icon-side">
-                  <div className="p-icon-badge bg-blue-soft">
-                    <Factory className="text-blue-main" size={28} />
-                  </div>
-                  <div className="v-sep bg-blue-main"></div>
-                </div>
-                <div className="card-text-side">
-                  <h3>Companies & Industries</h3>
-                  <p>The corridor is home to several major industries, including textiles, automotive, and IT. Some of the major companies include Tata Motors, Ford India, and Hyundai India.</p>
-                </div>
-                <div className="card-number-badge bg-blue-soft text-blue-main">04</div>
-              </div>
+                );
+              })}
             </div>
           </section>
         </div>
@@ -452,7 +507,7 @@ export default function PremiumReportPage() {
                 <div className="mini-icon bg-pink-soft"><TrendingUp size={16} className="text-pink" /></div>
                 <span>Yearly Total</span>
               </div>
-              <div className="stat-value">10M - 15M</div>
+              <div className="stat-value">{(visitors.reduce((acc, curr) => acc + curr.yearly, 0) / 1000000).toFixed(1)}M</div>
               <div className="stat-underline"></div>
             </div>
             
@@ -461,7 +516,7 @@ export default function PremiumReportPage() {
                 <div className="mini-icon bg-pink-soft"><Clock size={16} className="text-pink" /></div>
                 <span>Daily (Normal)</span>
               </div>
-              <div className="stat-value">20K - 30K</div>
+              <div className="stat-value">{(visitors.reduce((acc, curr) => acc + curr.daily, 0) / 1000).toFixed(0)}K</div>
               <div className="stat-underline"></div>
             </div>
 
@@ -470,7 +525,7 @@ export default function PremiumReportPage() {
                 <div className="mini-icon bg-pink-soft"><TrendingUp size={16} className="text-pink" /></div>
                 <span>Daily (Peak)</span>
               </div>
-              <div className="stat-value">50K - 70K</div>
+              <div className="stat-value">{(visitors.reduce((acc, curr) => acc + curr.daily * 1.5, 0) / 1000).toFixed(0)}K</div>
               <div className="stat-underline"></div>
             </div>
           </div>
@@ -479,75 +534,35 @@ export default function PremiumReportPage() {
             <div className="attractions-header">
               <div className="title-row">
                 <MapPin className="text-pink" size={20} />
-                <h3>Key Attractions (Yearly / Daily)</h3>
+                <h3>Key Locations (Yearly / Daily)</h3>
                 <div className="header-line"></div>
                 <Sparkles className="text-pink" size={16} />
               </div>
             </div>
 
             <div className="attraction-items">
-              <div className="attraction-item-row">
-                <div className="attraction-main">
-                  <div className="attraction-img-circle">
-                    <Mountain size={24} className="text-pink" />
+              {visitors.map((item, idx) => (
+                <div key={idx} className="attraction-item-row">
+                  <div className="attraction-main">
+                    <div className="attraction-img-circle">
+                      {idx % 3 === 0 ? <Mountain size={24} className="text-pink" /> : idx % 3 === 1 ? <Activity size={24} className="text-pink" /> : <Plane size={24} className="text-pink" />}
+                    </div>
+                    <span className="attraction-name">{item.place_name}</span>
                   </div>
-                  <span className="attraction-name">Nilgiri Hills</span>
+                  <div className="attraction-stats-box">
+                    <div className="stat-sub">
+                      <Users size={14} className="text-pink" />
+                      <span>{(item.yearly / 1000000).toFixed(1)}M</span>
+                    </div>
+                    <div className="stat-sep"></div>
+                    <div className="stat-sub">
+                      <Sun size={14} className="text-pink" />
+                      <span>{(item.daily / 1000).toFixed(1)}K</span>
+                    </div>
+                  </div>
+                  <ChevronRight className="text-slate-light" size={20} />
                 </div>
-                <div className="attraction-stats-box">
-                  <div className="stat-sub">
-                    <Users size={14} className="text-pink" />
-                    <span>1M - 2M</span>
-                  </div>
-                  <div className="stat-sep"></div>
-                  <div className="stat-sub">
-                    <Sun size={14} className="text-pink" />
-                    <span>2K - 5K</span>
-                  </div>
-                </div>
-                <ChevronRight className="text-slate-light" size={20} />
-              </div>
-
-              <div className="attraction-item-row">
-                <div className="attraction-main">
-                  <div className="attraction-img-circle">
-                    <Activity size={24} className="text-pink" />
-                  </div>
-                  <span className="attraction-name">Kodaikanal Lake</span>
-                </div>
-                <div className="attraction-stats-box">
-                  <div className="stat-sub">
-                    <Users size={14} className="text-pink" />
-                    <span>0.5M - 1M</span>
-                  </div>
-                  <div className="stat-sep"></div>
-                  <div className="stat-sub">
-                    <Sun size={14} className="text-pink" />
-                    <span>1K - 3K</span>
-                  </div>
-                </div>
-                <ChevronRight className="text-slate-light" size={20} />
-              </div>
-
-              <div className="attraction-item-row">
-                <div className="attraction-main">
-                  <div className="attraction-img-circle">
-                    <Plane size={24} className="text-pink" />
-                  </div>
-                  <span className="attraction-name">Marina Beach</span>
-                </div>
-                <div className="attraction-stats-box">
-                  <div className="stat-sub">
-                    <Users size={14} className="text-pink" />
-                    <span>2M - 3M</span>
-                  </div>
-                  <div className="stat-sep"></div>
-                  <div className="stat-sub">
-                    <Sun size={14} className="text-pink" />
-                    <span>5K - 10K</span>
-                  </div>
-                </div>
-                <ChevronRight className="text-slate-light" size={20} />
-              </div>
+              ))}
             </div>
           </div>
         </section>
@@ -577,69 +592,23 @@ export default function PremiumReportPage() {
           </div>
 
           <div className="custom-bar-chart">
-            <div className="chart-row">
-              <div className="state-info">
-                <div className="state-icon-circle bg-pink-soft">
-                  <Landmark className="text-pink" size={22} />
+            {demandDist.map((item, idx) => (
+              <div key={idx} className="chart-row">
+                <div className="state-info">
+                  <div className="state-icon-circle bg-pink-soft">
+                    {idx === 0 ? <Landmark size={22} className="text-pink" /> : idx === 1 ? <Building2 size={22} className="text-pink" /> : <Activity size={22} className="text-pink" />}
+                  </div>
+                  <div className="state-name-box">
+                    <span className="state-name">{item.state}</span>
+                    <span className="state-pct">{item.percentage}%</span>
+                  </div>
                 </div>
-                <div className="state-name-box">
-                  <span className="state-name">Tamil Nadu</span>
-                  <span className="state-pct">70% - 80%</span>
-                </div>
-              </div>
-              <div className="bar-container">
-                <div className="bar-fill" style={{ width: '75%' }}></div>
-                <span className="bar-label">70% - 80%</span>
-              </div>
-            </div>
-
-            <div className="chart-row">
-              <div className="state-info">
-                <div className="state-icon-circle bg-pink-soft">
-                  <Building2 className="text-pink" size={22} />
-                </div>
-                <div className="state-name-box">
-                  <span className="state-name">Karnataka</span>
-                  <span className="state-pct">10% - 15%</span>
+                <div className="bar-container">
+                  <div className="bar-fill" style={{ width: `${item.percentage}%` }}></div>
+                  <span className="bar-label">{item.percentage}%</span>
                 </div>
               </div>
-              <div className="bar-container">
-                <div className="bar-fill" style={{ width: '15%' }}></div>
-                <span className="bar-label">10% - 15%</span>
-              </div>
-            </div>
-
-            <div className="chart-row">
-              <div className="state-info">
-                <div className="state-icon-circle bg-pink-soft">
-                  <Activity className="text-pink" size={22} />
-                </div>
-                <div className="state-name-box">
-                  <span className="state-name">Kerala</span>
-                  <span className="state-pct">5% - 10%</span>
-                </div>
-              </div>
-              <div className="bar-container">
-                <div className="bar-fill" style={{ width: '10%' }}></div>
-                <span className="bar-label">5% - 10%</span>
-              </div>
-            </div>
-
-            <div className="chart-row">
-              <div className="state-info">
-                <div className="state-icon-circle bg-pink-soft">
-                  <MoreHorizontal className="text-pink" size={22} />
-                </div>
-                <div className="state-name-box">
-                  <span className="state-name">Others</span>
-                  <span className="state-pct">2% - 5%</span>
-                </div>
-              </div>
-              <div className="bar-container">
-                <div className="bar-fill" style={{ width: '5%' }}></div>
-                <span className="bar-label">2% - 5%</span>
-              </div>
-            </div>
+            ))}
 
             <div className="chart-axis">
               <span>0%</span>
@@ -655,7 +624,7 @@ export default function PremiumReportPage() {
 
           <div className="info-footer-banner">
             <Info size={16} className="text-pink" />
-            <span>* Tamil Nadu (70-80%), Karnataka (10-15%), Kerala (5-10%), Others (2-5%)</span>
+            <span>* {demandDist.map(d => `${d.state} (${d.percentage}%)`).join(', ')}</span>
           </div>
         </section>
 
@@ -758,7 +727,7 @@ export default function PremiumReportPage() {
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie 
-                      data={transportData} 
+                      data={dynamicTransportData} 
                       cx="50%" 
                       cy="50%" 
                       innerRadius={80} 
@@ -767,7 +736,7 @@ export default function PremiumReportPage() {
                       dataKey="value"
                       stroke="none"
                     >
-                      {transportData.map((entry, index) => (
+                      {dynamicTransportData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
@@ -781,53 +750,24 @@ export default function PremiumReportPage() {
             </div>
 
             <div className="progress-legend-side">
-              <div className="legend-item-modern">
-                <div className="legend-header">
-                  <div className="legend-icon bg-blue-soft"><Bus className="text-blue-main" size={18} /></div>
-                  <span className="legend-name">Bus</span>
-                  <span className="legend-pct">60-70%</span>
+              {dynamicTransportData.map((item, idx) => (
+                <div key={idx} className="legend-item-modern">
+                  <div className="legend-header">
+                    <div className="legend-icon" style={{ backgroundColor: `${item.color}22` }}>
+                      {item.name === 'Bus' ? <Bus style={{ color: item.color }} size={18} /> : 
+                       item.name === 'Train' ? <Train style={{ color: item.color }} size={18} /> : 
+                       item.name === 'Car' ? <Car style={{ color: item.color }} size={18} /> : 
+                       <Plane style={{ color: item.color }} size={18} />}
+                    </div>
+                    <span className="legend-name">{item.name}</span>
+                    <span className="legend-pct">{item.value}%</span>
+                  </div>
+                  <div className="legend-progress-bar">
+                    <div className="progress-fill" style={{ width: `${item.value}%`, backgroundColor: item.color }}></div>
+                  </div>
+                  <p className="legend-desc">Preferred mode for {item.name.toLowerCase()} travel and logistics.</p>
                 </div>
-                <div className="legend-progress-bar">
-                  <div className="progress-fill bg-blue-main" style={{ width: '65%' }}></div>
-                </div>
-                <p className="legend-desc">Most preferred for short & long distance travel.</p>
-              </div>
-
-              <div className="legend-item-modern">
-                <div className="legend-header">
-                  <div className="legend-icon bg-green-soft"><Train className="text-green-main" size={18} /></div>
-                  <span className="legend-name">Train</span>
-                  <span className="legend-pct">20-30%</span>
-                </div>
-                <div className="legend-progress-bar">
-                  <div className="progress-fill bg-green-main" style={{ width: '25%' }}></div>
-                </div>
-                <p className="legend-desc">Reliable for medium to long distance routes.</p>
-              </div>
-
-              <div className="legend-item-modern">
-                <div className="legend-header">
-                  <div className="legend-icon bg-orange-soft"><Car className="text-orange-main" size={18} /></div>
-                  <span className="legend-name">Car</span>
-                  <span className="legend-pct">5-10%</span>
-                </div>
-                <div className="legend-progress-bar">
-                  <div className="progress-fill bg-orange-main" style={{ width: '8%' }}></div>
-                </div>
-                <p className="legend-desc">Preferred for personal & short distance travel.</p>
-              </div>
-
-              <div className="legend-item-modern">
-                <div className="legend-header">
-                  <div className="legend-icon bg-purple-soft"><Plane className="text-purple-main" size={18} /></div>
-                  <span className="legend-name">Flight</span>
-                  <span className="legend-pct">2-5%</span>
-                </div>
-                <div className="legend-progress-bar">
-                  <div className="progress-fill bg-purple-main" style={{ width: '4%' }}></div>
-                </div>
-                <p className="legend-desc">Used for long distance & urgent deliveries.</p>
-              </div>
+              ))}
             </div>
           </div>
 
@@ -999,7 +939,7 @@ export default function PremiumReportPage() {
               </div>
               
               <div className="freq-list">
-                {busFrequencies.map((item, idx) => (
+                {dynamicBusFrequencies.map((item, idx) => (
                   <div key={idx} className="freq-item">
                     <div className="item-left">
                       <div className="item-icon-circle">{item.icon}</div>
@@ -1038,7 +978,7 @@ export default function PremiumReportPage() {
               </div>
 
               <div className="freq-list">
-                {trainFrequencies.map((item, idx) => (
+                {dynamicTrainFrequencies.map((item, idx) => (
                   <div key={idx} className="freq-item">
                     <div className="item-left">
                       <div className="item-icon-circle">{item.icon}</div>
@@ -1073,7 +1013,7 @@ export default function PremiumReportPage() {
         </section>
 
         {/* Concept 10: Suggested Routes */}
-        
+       
       </div>
 
       {/* Contact Form Section */}
