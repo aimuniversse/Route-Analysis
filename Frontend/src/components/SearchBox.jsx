@@ -31,7 +31,8 @@ const SearchBox = ({ onResults }) => {
 
     const handleDataReady = (data) => {
         setIsSearching(false);
-        if (onResults) onResults(data);
+        const routeStr = viaCity ? `${fromCity} via ${viaCity} to ${toCity}` : `${fromCity} to ${toCity}`;
+        if (onResults) onResults(data, routeStr);
     };
 
     return (

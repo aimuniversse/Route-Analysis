@@ -3,9 +3,10 @@ import { AlertCircle, CloudRain, Clock, ArrowRight } from 'lucide-react';
 import './BottomWidgets.css';
 
 const BottomWidgets = ({ routeData }) => {
-  const distance = routeData?.distance?.[0]?.km || "505";
-  const startCity = routeData?.distance?.[0]?.from || "Chennai, TN";
-  const endCity = routeData?.distance?.[0]?.to || "Coimbatore, TN";
+  const distance = routeData?.route_summary?.total_distance || routeData?.distance?.[0]?.km || "505";
+  const parsedPath = routeData?.route_summary?.path?.split(" → ");
+  const startCity = parsedPath?.[0] || routeData?.distance?.[0]?.from || "Chennai, TN";
+  const endCity = parsedPath?.[parsedPath.length - 1] || routeData?.distance?.[0]?.to || "Coimbatore, TN";
   const timeMins = Math.round(Number(distance) / 60 * 60); // assuming avg 60km/h for highway
 
   const liveUpdates = Array.isArray(routeData?.traffic?.live_updates) 

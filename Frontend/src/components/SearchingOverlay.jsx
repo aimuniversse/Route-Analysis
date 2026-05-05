@@ -108,7 +108,7 @@ const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
                 }
                 return prev + 1;
             });
-        }, 1500); // Faster progress for better UX
+        }, 50); // 5 seconds total for 100% (50ms * 100)
 
         return () => {
             clearInterval(statusInterval);
