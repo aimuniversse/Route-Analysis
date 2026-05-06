@@ -20,46 +20,62 @@ import SearchingOverlay from "./components/SearchingOverlay";
 import "./App.css";
 
 function App() {
-  // Global States
+  // States
   const [loading, setLoading] = useState(true);
+  const [results, setResults] = useState(null);
+
   const [routeData, setRouteData] = useState(null);
   const [routeQuery, setRouteQuery] = useState("Chennai to Coimbatore");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
   const [hasSearched, setHasSearched] = useState(false);
   const [viaCity, setViaCity] = useState("");
 
-  // Route Analysis Function (from Header)
+  // Splash screen timer
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Route analysis function
   const analyzeRoute = async (source, destination) => {
     if (!source.trim() || !destination.trim()) return;
+
     setRouteQuery(`${source} to ${destination}`);
     setViaCity("");
     setIsLoading(true);
   };
 
-  // Main results handler (from SearchBox or Overlay)
+  // Handle route results
   const handleSearchResults = (data, query, via = "") => {
     if (!data) {
-      // Triggered by SearchBox to start the 3D searching process
       setRouteQuery(query);
       setViaCity(via);
       setIsLoading(true);
       return;
     }
-    
-    // Data received from API
+
     setRouteData(data);
+    setResults(data);
     setRouteQuery(query);
+
     setHasSearched(true);
     setIsLoading(false);
-    
-    // Smooth scroll to top of the dashboard
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setError(null);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
   return (
     <div className="app-wrapper">
-      {/* Optional Splash Screen */}
+      {/* Splash Screen */}
       {loading && (
         <SplashScreen onFinish={() => setLoading(false)} />
       )}
@@ -67,7 +83,7 @@ function App() {
       {/* Navbar */}
       <Navbar />
 
-      {/* Conditional Hero/Search View */}
+      {/* Home / Hero Section */}
       {!hasSearched ? (
         <>
           <Hero onResults={handleSearchResults} />
@@ -75,43 +91,48 @@ function App() {
         </>
       ) : (
         <div className="results-view-header">
-           <Header onAnalyze={analyzeRoute} isLoading={isLoading} />
-           <div className="app-section pt-4">
-             <button 
-               className="text-xs font-bold text-primary flex items-center gap-1 hover:underline"
-               onClick={() => setHasSearched(false)}
-             >
-               ← Back to Home
-             </button>
-           </div>
+          <Header onAnalyze={analyzeRoute} isLoading={isLoading} />
+
+          <div className="app-section pt-4">
+            <button
+              className="text-xs font-bold text-primary flex items-center gap-1 hover:underline"
+              onClick={() => setHasSearched(false)}
+            >
+              ← Back to Home
+            </button>
+          </div>
         </div>
       )}
 
-      {/* Searching Overlay (Unified 3D Engine) */}
+      {/* Searching Overlay */}
       {isLoading && (
         <SearchingOverlay
           from={routeQuery.split(" to ")[0] || "Origin"}
           to={routeQuery.split(" to ")[1] || "Destination"}
           via={viaCity}
           onCancel={() => setIsLoading(false)}
-          onDataReady={(data) => handleSearchResults(data, routeQuery)}
+          onDataReady={(data) =>
+            handleSearchResults(data, routeQuery)
+          }
         />
       )}
 
-      {/* Error Message */}
+      {/* Error Banner */}
       {error && (
         <div className="error-banner">
           {error}
         </div>
       )}
 
-      {/* Results Stack - Only shown after a successful search */}
+      {/* Results Stack */}
       {hasSearched && (
         <div className="app-stack">
           {/* Map Section */}
           <section className="app-section map-section animate-fade-in">
             <div className="section-header">
-              <h2 className="section-title">Route Overview Map</h2>
+              <h2 className="section-title">
+                Route Overview Map
+              </h2>
             </div>
 
             <MapArea
@@ -129,7 +150,7 @@ function App() {
             />
           </section>
 
-          {/* Analytics Dashboard */}
+          {/* Dashboard */}
           <section className="app-section dashboard-section animate-fade-in-up">
             <div className="section-header">
               <h2 className="section-title">
@@ -155,7 +176,7 @@ function App() {
             </div>
           </section>
 
-          {/* Premium Report Section */}
+          {/* Premium Report */}
           <section className="app-section premium-section animate-fade-in-up">
             <div className="section-header">
               <h2 className="section-title">
@@ -166,6 +187,11 @@ function App() {
             <PremiumReportPage routeData={routeData} />
           </section>
         </div>
+      )}
+
+      {/* Legacy Route Results */}
+      {results && (
+        <RouteResults results={results} />
       )}
 
       {/* Footer */}

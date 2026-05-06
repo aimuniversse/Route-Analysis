@@ -83,18 +83,18 @@ const RouteInsights = ({ routeQuery, routeData }) => {
       <svg style={{ height: 0, width: 0, position: 'absolute' }}>
         <defs>
           <linearGradient id="colorTrafficRed" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="var(--accent-blue)" stopOpacity={0.8}/>
-            <stop offset="95%" stopColor="var(--accent-blue)" stopOpacity={0.2}/>
+            <stop offset="5%" stopColor="var(--accent-blue)" stopOpacity={0.8} />
+            <stop offset="95%" stopColor="var(--accent-blue)" stopOpacity={0.2} />
           </linearGradient>
           <linearGradient id="colorArea" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.8}/>
-            <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.2}/>
+            <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.8} />
+            <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.2} />
           </linearGradient>
         </defs>
       </svg>
 
       <div className="insights-grid">
-        
+
         {/* 1. Demographics & Distance (Bar Chart) */}
         <div className="insight-card hover-lift">
           <div className="insight-card-header">
@@ -105,9 +105,9 @@ const RouteInsights = ({ routeQuery, routeData }) => {
             <ResponsiveContainer width="100%" aspect={1.6}>
               <BarChart data={popData} layout="vertical" margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
                 <XAxis type="number" hide />
-                <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{fill: 'var(--text-secondary)', fontSize: 11, fontWeight: 600}} width={80} />
-                <Tooltip 
-                  cursor={{fill: 'rgba(0,0,0,0.02)'}}
+                <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fill: 'var(--text-secondary)', fontSize: 11, fontWeight: 600 }} width={80} />
+                <Tooltip
+                  cursor={{ fill: 'rgba(0,0,0,0.02)' }}
                   contentStyle={{ borderRadius: '12px', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-md)' }}
                   formatter={(value) => [`${value} Million`, 'Population']}
                 />
@@ -154,7 +154,7 @@ const RouteInsights = ({ routeQuery, routeData }) => {
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip 
+                <Tooltip
                   contentStyle={{ borderRadius: '12px', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-md)' }}
                   formatter={(value) => [`${value}%`, 'Share']}
                 />
@@ -162,12 +162,12 @@ const RouteInsights = ({ routeQuery, routeData }) => {
             </ResponsiveContainer>
           </div>
           <div className="flex justify-center gap-4 text-xs font-medium">
-             {transportData.map((d, i) => (
-               <div key={i} className="flex items-center gap-1">
-                 <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: d.color }}></div>
-                 <span>{d.name}</span>
-               </div>
-             ))}
+            {transportData.map((d, i) => (
+              <div key={i} className="flex items-center gap-1">
+                <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: d.color }}></div>
+                <span>{d.name}</span>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -180,10 +180,10 @@ const RouteInsights = ({ routeQuery, routeData }) => {
           <div className="insight-card-content" style={{ width: '100%', minWidth: '0px' }}>
             <ResponsiveContainer width="100%" aspect={3.5}>
               <ComposedChart data={areaData} margin={{ top: 20, right: 20, bottom: 20, left: -20 }}>
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: 'var(--text-muted)', fontSize: 11, fontWeight: 500}} dy={10} />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)', fontSize: 11, fontWeight: 500 }} dy={10} />
                 <YAxis hide />
-                <Tooltip 
-                  cursor={{fill: 'rgba(0,0,0,0.02)'}}
+                <Tooltip
+                  cursor={{ fill: 'rgba(0,0,0,0.02)' }}
                   contentStyle={{ borderRadius: '12px', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-md)' }}
                   formatter={(value, name, props) => {
                     if (name === 'potential') return [value, 'Economic Potential'];
@@ -219,9 +219,9 @@ const RouteInsights = ({ routeQuery, routeData }) => {
             <ResponsiveContainer width="100%" aspect={1.6}>
               <RadarChart cx="50%" cy="50%" outerRadius="75%" data={tourismData}>
                 <PolarGrid stroke="rgba(0,0,0,0.05)" />
-                <PolarAngleAxis dataKey="subject" tick={{fill: 'var(--text-secondary)', fontSize: 10}} />
+                <PolarAngleAxis dataKey="subject" tick={{ fill: 'var(--text-secondary)', fontSize: 10 }} />
                 <Radar name="Visitors" dataKey="A" stroke="var(--purple-light)" fill="var(--purple-light)" fillOpacity={0.4} />
-                <Tooltip 
+                <Tooltip
                   contentStyle={{ borderRadius: '12px', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-md)' }}
                   formatter={(value) => [`${value} Index`, 'Footfall']}
                 />
@@ -237,19 +237,19 @@ const RouteInsights = ({ routeQuery, routeData }) => {
             <h3>Route Tradeoffs</h3>
           </div>
           <div className="insight-card-content flex flex-col justify-center gap-4" style={{ minHeight: '160px', padding: '10px 0' }}>
-             
-             {suggestedRoutes.map((route, idx) => (
-               <div key={idx} className="w-full">
-                 <div className="flex justify-between text-xs mb-1">
-                   <span className="font-bold">{route.path} {idx === 0 ? '(Optimal)' : ''}</span>
-                   <span className="font-semibold text-primary">{Math.floor(route.time)}h {Math.round((route.time % 1) * 60)}m</span>
-                 </div>
-                 <div className="w-full bg-gray-100 rounded-full h-2">
-                   <div className="h-2 rounded-full" style={{ width: idx === 0 ? '85%' : '95%', background: idx === 0 ? 'var(--gradient-primary)' : '#f59e0b' }}></div>
-                 </div>
-                 <div className="text-[10px] text-muted mt-1">{route.distance} KM • Detailed Analysis Avail.</div>
-               </div>
-             ))}
+
+            {suggestedRoutes.map((route, idx) => (
+              <div key={idx} className="w-full">
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="font-bold">{route.path} {idx === 0 ? '(Optimal)' : ''}</span>
+                  <span className="font-semibold text-primary">{Math.floor(route.time)}h {Math.round((route.time % 1) * 60)}m</span>
+                </div>
+                <div className="w-full bg-gray-100 rounded-full h-2">
+                  <div className="h-2 rounded-full" style={{ width: idx === 0 ? '85%' : '95%', background: idx === 0 ? 'var(--gradient-primary)' : '#f59e0b' }}></div>
+                </div>
+                <div className="text-[10px] text-muted mt-1">{route.distance} KM • Detailed Analysis Avail.</div>
+              </div>
+            ))}
 
           </div>
         </div>
