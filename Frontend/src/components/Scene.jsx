@@ -8,7 +8,7 @@ const Scene = ({ progress }) => {
     return (
         <Canvas
             shadows
-            camera={{ position: [2, 1, 6], fov: 40 }}
+            camera={{ position: [2.5, 1.5, 8], fov: 45 }}
             gl={{ antialias: true, alpha: true }}
             style={{ background: 'transparent', width: '100%', height: '100%' }}
         >

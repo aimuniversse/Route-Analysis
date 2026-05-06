@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SearchingOverlay from "./SearchingOverlay";
 import "../styles/searchbox.css";
 
@@ -11,13 +11,28 @@ const SearchBox = ({ onResults }) => {
 
     const cities = ["Bangalore", "Chennai", "Hyderabad", "Vijayawada", "Pune", "Mumbai", "Delhi", "Manali", "Ahmedabad", "Surat", "Coimbatore", "Kochi", "Goa", "Mysore"];
 
-    const popularSearches = [
+    const [popularSearches, setPopularSearches] = useState([
         "Bangalore → Chennai",
         "Hyderabad → Vijayawada",
         "Pune → Mumbai",
         "Delhi → Manali",
         "Ahmedabad → Surat"
-    ];
+    ]);
+
+    useEffect(() => {
+        const fetchPopular = async () => {
+            try {
+                const response = await fetch("http://localhost:8000/api/popular-searches/");
+                const data = await response.json();
+                if (data.status === "success") {
+                    setPopularSearches(data.popular_searches);
+                }
+            } catch (error) {
+                console.error("Error fetching popular searches:", error);
+            }
+        };
+        fetchPopular();
+    }, []);
 
     const filteredCities = (input) => cities.filter(city => city.toLowerCase().includes(input.toLowerCase()) && input !== "");
 

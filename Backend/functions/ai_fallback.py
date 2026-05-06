@@ -79,7 +79,7 @@ DATA RULES:
             "https://integrate.api.nvidia.com/v1/chat/completions", 
             headers=headers, 
             json=payload,
-            timeout=90
+            timeout=180
         )
         response.raise_for_status()
         

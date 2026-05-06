@@ -98,7 +98,9 @@ const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
 
         fetchData();
 
-        // Progress Animation
+        // Progress Animation: Slow while loading, fast-forward when done
+        const tickRate = apiFinished ? 20 : 3000; // Exactly 5 mins total (3000ms * 100), or zoom to 100% if done
+
         const progressInterval = setInterval(() => {
             setProgress((prev) => {
                 if (prev >= 95 && !apiFinished) return 95; // Wait at 95% if API is not yet done
@@ -106,9 +108,9 @@ const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
                     clearInterval(progressInterval);
                     return 100;
                 }
-                return prev + 1;
+                return prev + (apiFinished ? 2 : 1); // Jump faster if finished
             });
-        }, 50); // 5 seconds total for 100% (50ms * 100)
+        }, tickRate);
 
         return () => {
             clearInterval(statusInterval);
