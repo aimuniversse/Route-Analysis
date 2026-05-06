@@ -10,10 +10,7 @@ import json
 import re
 
 from .models import (
-    City, Route, Population, Potential, 
-    Segmentation, Visitors, TopVisitors, 
-    Distance, Transport, TransportDetail, 
-    ParcelService, SuggestedRoute, RouteAnalysisCache
+    ParcelService, SuggestedRoute, RouteAnalysisCache, PopularSearch
 )
 from .ai_fallback import generate_route_analysis
 from django.utils import timezone
@@ -108,6 +105,14 @@ def analyze_route_api(request):
         dest_name = request.query_params.get("destination", "").strip()
         via_name = request.query_params.get("via", "").strip()
 
+    # Record the search
+    if source_name and dest_name:
+        route_text = f"{source_name} → {dest_name}"
+        popular, created = PopularSearch.objects.get_or_create(route_text=route_text)
+        if not created:
+            popular.search_count += 1
+            popular.save()
+
     # Validation
     if not source_name or not dest_name:
         return Response({
@@ -130,3 +135,27 @@ def analyze_route_api(request):
             "status": "error",
             "message": f"Internal server error: {str(e)}"
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def get_popular_searches(request):
+    """
+    Returns the top 5 most searched routes.
+    """
+    popular = PopularSearch.objects.all()[:5]
+    data = [p.route_text for p in popular]
+    
+    # Fallback if no searches recorded yet
+    if not data:
+        data = [
+            "Bangalore → Chennai",
+            "Hyderabad → Vijayawada",
+            "Pune → Mumbai",
+            "Delhi → Manali",
+            "Ahmedabad → Surat"
+        ]
+        
+    return Response({
+        "status": "success",
+        "popular_searches": data
+    })

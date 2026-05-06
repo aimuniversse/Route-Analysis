@@ -3,10 +3,10 @@ import React from "react";
 const Lighting = () => {
     return (
         <>
-            <ambientLight intensity={0.8} />
+            <ambientLight intensity={1.5} />
             <directionalLight
                 position={[5, 10, 5]}
-                intensity={1.5}
+                intensity={3.5}
                 castShadow
             />
             <directionalLight

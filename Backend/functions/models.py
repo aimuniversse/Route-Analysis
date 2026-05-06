@@ -112,3 +112,14 @@ class RouteAnalysisCache(models.Model):
 
     def __str__(self):
         return f"Cache: {self.source_city} to {self.dest_city} ({'via ' + self.via_city if self.via_city else 'Direct'})"
+
+class PopularSearch(models.Model):
+    route_text = models.CharField(max_length=255, unique=True)
+    search_count = models.IntegerField(default=1)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-search_count', '-updated_at']
+
+    def __str__(self):
+        return f"{self.route_text} ({self.search_count})"

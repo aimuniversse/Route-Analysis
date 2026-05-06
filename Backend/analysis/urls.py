@@ -7,4 +7,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/route-analysis/', views.analyze_route_api, name='route_analysis_api'),
     path('api/analyze/', views.analyze_route_api, name='analyze_route_api_legacy'),
+    path('api/popular-searches/', views.get_popular_searches, name='popular_searches_api'),
 ]
