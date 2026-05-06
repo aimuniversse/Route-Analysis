@@ -12,6 +12,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer
 } from 'recharts';
 import './PremiumReportPage.css';
+import AreaPotentialMap from './AreaPotentialMap';
 import pinIcon from '../assets/image/pin.png';
 import industryIcon from '../assets/image/industry.png';
 import touristIcon from '../assets/image/tourist.png';
@@ -100,17 +101,21 @@ const trainFrequencies = [
 ];
 
 
-export default function PremiumReportPage({ routeData }) {
+export default function PremiumReportPage({ routeData: propRouteData }) {
+  const [internalRouteData, setInternalRouteData] = useState(null);
+  const routeData = propRouteData || internalRouteData;
+  
   const routeName = routeData?.route_summary?.path || "Coimbatore to Chennai";
   const [formData, setFormData] = useState({ name: '', busTravels: '', contactNo: '', message: '' });
   const [formStatus, setFormStatus] = useState(null); // null | 'success' | 'error'
-  const [routeData, setRouteData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!routeData);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchRouteData('Coimbatore', 'Chennai');
-  }, []);
+    if (!propRouteData) {
+      fetchRouteData('Coimbatore', 'Chennai');
+    }
+  }, [propRouteData]);
 
   const fetchRouteData = async (source, destination) => {
     setLoading(true);
@@ -130,7 +135,7 @@ export default function PremiumReportPage({ routeData }) {
 
       const result = await response.json();
       if (result.status === 'success') {
-        setRouteData(result.data);
+        setInternalRouteData(result.data);
       } else {
         throw new Error(result.message || 'Error fetching data');
       }
@@ -167,12 +172,41 @@ export default function PremiumReportPage({ routeData }) {
   const dynamicTransportData = useMemo(() => {
     if (!routeData?.transport_distribution) return transportData;
     const colors = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
-    return Object.entries(routeData.transport_distribution).map(([name, value], idx) => ({
-      name: name.charAt(0).toUpperCase() + name.slice(1),
-      value,
-      color: colors[idx % colors.length]
-    }));
+    return Object.entries(routeData.transport_distribution).map(([name, value], idx) => {
+      const modeName = name.charAt(0).toUpperCase() + name.slice(1);
+      let icon = <Bus size={18} />;
+      if (modeName.includes('Train')) icon = <Train size={18} />;
+      else if (modeName.includes('Car')) icon = <Car size={18} />;
+      else if (modeName.includes('Taxi')) icon = <Car size={18} />;
+      else if (modeName.includes('Flight')) icon = <Plane size={18} />;
+      
+      return {
+        name: modeName,
+        value,
+        color: colors[idx % colors.length],
+        icon: icon
+      };
+    });
   }, [routeData]);
+
+  const transportInsight = useMemo(() => {
+    if (!dynamicTransportData?.length) return null;
+    
+    const sorted = [...dynamicTransportData].sort((a, b) => b.value - a.value);
+    const top = sorted[0];
+    const second = sorted[1];
+    
+    if (!top) return "Data on transport modes is currently unavailable.";
+    
+    let text = `${top.name} transport dominates this corridor with ${top.value}% preference`;
+    if (second) {
+      text += `, followed by ${second.name.toLowerCase()} at ${second.value}% for efficient connectivity.`;
+    } else {
+      text += ".";
+    }
+    
+    return text;
+  }, [dynamicTransportData]);
 
   const dynamicSuggestedRoutes = useMemo(() => {
     if (!routeData?.suggested_routes) return suggestedRoutes;
@@ -213,6 +247,152 @@ export default function PremiumReportPage({ routeData }) {
     }));
   }, [routeData]);
 
+  const dynamicTimelineNodes = useMemo(() => {
+    if (!routeData?.route_summary?.path) return [];
+    
+    const cities = routeData.route_summary.path.split(' → ').map(c => c.trim());
+    const segmentation = routeData.area_segmentation || {};
+    const areaPotential = routeData.dashboard_data?.area_potential || [];
+    
+    return cities.map((city, idx) => {
+      let type = 'General';
+      let icon = pointIcon;
+      let desc = `${city}: A key point along the corridor.`;
+
+      // Check for detailed data in area_potential
+      const districtData = areaPotential.find(d => d.district.toLowerCase().includes(city.toLowerCase()));
+      
+      // Assign type and icon based on segmentation data
+      const isIndustrial = (segmentation.job_business_areas || []).some(s => s.toLowerCase().includes(city.toLowerCase()));
+      const isTourist = (segmentation.tourist_areas || []).some(s => s.toLowerCase().includes(city.toLowerCase()));
+      const isStudent = (segmentation.student_areas || []).some(s => s.toLowerCase().includes(city.toLowerCase()));
+
+      if (idx === 0) {
+        type = 'Origin';
+        icon = pinIcon;
+        desc = `${city}: The starting point of the corridor.`;
+      } else if (idx === cities.length - 1) {
+        type = 'Destination';
+        icon = destinationIcon;
+        desc = `${city}: The final destination of the corridor.`;
+      } else if (isIndustrial) {
+        type = 'Industrial Zone';
+        icon = industryIcon;
+        desc = districtData ? `${city}: Major industrial hub with ${districtData.business_potential} business potential.` : `${city}: A major hub for manufacturing and industry.`;
+      } else if (isTourist) {
+        type = 'Tourist Zone';
+        icon = touristIcon;
+        desc = districtData ? `${city}: Popular tourist destination with a potential score of ${districtData.potential_score}%.` : `${city}: Known for its attractions and scenic beauty.`;
+      } else if (isStudent) {
+        type = 'Education Hub';
+        icon = pointIcon; 
+        desc = districtData ? `${city}: Education center with a projected growth rate of ${districtData.growth_rate}%.` : `${city}: A center for educational institutions.`;
+      }
+
+      return { city, type, icon, desc };
+    });
+  }, [routeData]);
+
+  const combinedPotential = useMemo(() => {
+    const areaSeg = routeData?.area_segmentation || {};
+    const items = [];
+    
+    if (areaSeg.job_business_areas?.length) {
+      items.push({ 
+        title: 'Job & Business', 
+        content: areaSeg.job_business_areas[0], 
+        icon: <Briefcase />, 
+        color: 'orange' 
+      });
+    }
+    
+    if (areaSeg.student_areas?.length) {
+      items.push({ 
+        title: 'Education Hubs', 
+        content: areaSeg.student_areas[0], 
+        icon: <GraduationCap />, 
+        color: 'purple' 
+      });
+    }
+    
+    if (areaSeg.tourist_areas?.length) {
+      items.push({ 
+        title: 'Tourist Hotspots', 
+        content: areaSeg.tourist_areas[0], 
+        icon: <Mountain />, 
+        color: 'green' 
+      });
+    }
+
+    // Add more if we have space (up to 4)
+    if (items.length < 4 && areaSeg.job_business_areas?.length > 1) {
+      items.push({ 
+        title: 'Industrial Center', 
+        content: areaSeg.job_business_areas[1], 
+        icon: <Factory />, 
+        color: 'blue' 
+      });
+    }
+
+    // Fallbacks if data is missing
+    const fallbacks = [
+      { title: 'Job & Business', content: 'Major Industrial Hubs', icon: <Briefcase />, color: 'orange' },
+      { title: 'Institutions', content: 'Education & Research Centers', icon: <GraduationCap />, color: 'purple' },
+      { title: 'Tourist Hotspots', content: 'Heritage & Nature Sites', icon: <Mountain />, color: 'green' },
+      { title: 'Logistics Hubs', content: 'Key Transport Junctions', icon: <Factory />, color: 'blue' }
+    ];
+
+    return items.length >= 2 ? items : fallbacks;
+  }, [routeData]);
+
+  // Dynamic Distance Matrix Calculation
+  const matrixData = useMemo(() => {
+    if (!routeData?.route_summary?.path) return { cities: [], matrix: [] };
+
+    const cities = routeData.route_summary.path.split(' → ').map(c => c.trim());
+    const segments = routeData.distance_details || [];
+    
+    // Create a cumulative distance map
+    const cumulativeDistances = [0];
+    let currentTotal = 0;
+
+    for (let i = 0; i < cities.length - 1; i++) {
+      const from = cities[i];
+      const to = cities[i + 1];
+      const segment = segments.find(s => 
+        (s.segment.includes(from) && s.segment.includes(to)) || 
+        (s.segment.includes(to) && s.segment.includes(from))
+      );
+      
+      const dist = segment ? segment.distance_km : Math.round((routeData.route_summary.total_distance / (cities.length - 1)));
+      currentTotal += dist;
+      cumulativeDistances.push(currentTotal);
+    }
+
+    // Build N x N matrix
+    const matrix = cities.map((_, i) => {
+      return cities.map((_, j) => Math.abs(cumulativeDistances[j] - cumulativeDistances[i]));
+    });
+
+    const getAbbr = (name) => {
+      const parts = name.split(' ');
+      if (parts.length > 1) return parts.map(p => p[0]).join('').toUpperCase();
+      return name.slice(0, 3).toUpperCase();
+    };
+
+    return { cities, matrix, getAbbr };
+  }, [routeData]);
+
+  const dynamicLogisticsData = useMemo(() => {
+    const parcelData = routeData?.logistics_services?.parcel_movement || { bus: 40, train: 30, courier: 20, taxi: 10 };
+    return [
+      { name: 'Bus Parcels', value: parcelData.bus, icon: <Bus size={24} />, color: 'blue', tag: 'WIDE COVERAGE' },
+      { name: 'Train Parcels', value: parcelData.train, icon: <Train size={24} />, color: 'green', tag: 'EXTENSIVE NETWORK' },
+      { name: 'Couriers', value: parcelData.courier, icon: <Briefcase size={24} />, color: 'orange', tag: 'TRUSTED PARTNERS' },
+      { name: 'Taxi Delivery', value: parcelData.taxi, icon: <Car size={24} />, color: 'purple', tag: 'DOOR-TO-DOOR' },
+    ];
+  }, [routeData]);
+
   if (loading) {
     return (
       <div className="report-loading-container">
@@ -247,15 +427,10 @@ export default function PremiumReportPage({ routeData }) {
         {/* Header */}
         <header className="report-header">
           <div className="header-badge">Corridor Report</div>
-<<<<<<< HEAD
           <h1>{routeSummary.path}</h1>
           <p className="subtitle">
             Comprehensive Route Analysis & Travel Intelligence | {routeSummary.total_distance} km | Approx. {routeSummary.estimated_time} hours
           </p>
-=======
-          <h1>{routeName}</h1>
-          <p className="subtitle">Comprehensive Route Analysis & Travel Intelligence</p>
->>>>>>> dbea7a51e551fa514b2e050dc12f8a9ecfd57ec4
         </header>
 
         {/* Hero Image */}
@@ -374,23 +549,20 @@ export default function PremiumReportPage({ routeData }) {
             </div>
 
             <div className="potential-cards-list">
-              {(areaSeg.job_business_areas || ['Education & Institutions', 'Temples & Heritage', 'Tourist Attractions', 'Companies & Industries']).map((item, idx) => {
-                const colors = ['orange', 'purple', 'green', 'blue'];
-                const icons = [<GraduationCap />, <Landmark />, <Mountain />, <Factory />];
-                const titles = ['Job & Business', 'Institutions', 'Tourist Hotspots', 'Logistics Hubs'];
+              {combinedPotential.map((item, idx) => {
                 return (
                   <div key={idx} className="potential-card-item">
                     <div className="card-icon-side">
-                      <div className={`p-icon-badge bg-${colors[idx % colors.length]}-soft`}>
-                        {React.cloneElement(icons[idx % icons.length], { className: `text-${colors[idx % colors.length]}-main`, size: 28 })}
+                      <div className={`p-icon-badge bg-${item.color}-soft`}>
+                        {React.cloneElement(item.icon, { className: `text-${item.color}-main`, size: 28 })}
                       </div>
-                      <div className={`v-sep bg-${colors[idx % colors.length]}-main`}></div>
+                      <div className={`v-sep bg-${item.color}-main`}></div>
                     </div>
                     <div className="card-text-side">
-                      <h3>{titles[idx] || 'Key Attraction'}</h3>
-                      <p>{item}</p>
+                      <h3>{item.title}</h3>
+                      <p>{item.content}</p>
                     </div>
-                    <div className={`card-number-badge bg-${colors[idx % colors.length]}-soft text-${colors[idx % colors.length]}-main`}>0{idx + 1}</div>
+                    <div className={`card-number-badge bg-${item.color}-soft text-${item.color}-main`}>0{idx + 1}</div>
                   </div>
                 );
               })}
@@ -398,7 +570,12 @@ export default function PremiumReportPage({ routeData }) {
           </section>
         </div>
 
-        {/* Concept 3: Area Segmentation */}
+        {/* Concept 3: Area Segmentation Map */}
+        <section className="section-spacing animate-fade-in">
+          <AreaPotentialMap routeData={routeData} isLoading={loading} />
+        </section>
+
+        {/* Concept 3: Area Segmentation Timeline */}
         <section className="analysis-section-box section-spacing">
           <div className="box-header">
             <div className="icon-wrap bg-green"><MapPin /></div>
@@ -407,72 +584,19 @@ export default function PremiumReportPage({ routeData }) {
           <div className="segmentation-model-container">
             <div className="timeline-horizontal-line"></div>
             <div className="timeline-nodes-wrapper">
-              
-              {/* Node 1: Origin */}
-              <div className="model-timeline-node is-top">
-                <div className="node-content-box">
-                  <div className="node-image-circle">
-                    <img src={pinIcon} alt="Origin" />
+              {dynamicTimelineNodes.map((node, idx) => (
+                <div key={idx} className={`model-timeline-node ${idx % 2 === 0 ? 'is-top' : 'is-bottom'}`}>
+                  <div className="node-content-box">
+                    <div className="node-image-circle">
+                      <img src={node.icon} alt={node.type} />
+                    </div>
+                    <div className="node-title-main">{node.type}</div>
                   </div>
-                  <div className="node-title-main">Origin</div>
+                  <div className="node-marker-dot"></div>
+                  <div className="node-vertical-connector"></div>
+                  <div className="node-desc-text">{node.desc}</div>
                 </div>
-                <div className="node-marker-dot"></div>
-                <div className="node-vertical-connector"></div>
-                <div className="node-desc-text">Coimbatore: The starting point of the corridor.</div>
-              </div>
-
-              {/* Node 2: Industrial Zone */}
-              <div className="model-timeline-node is-bottom">
-                <div className="node-content-box">
-                  <div className="node-image-circle">
-                    <img src={industryIcon} alt="Industrial Zone" />
-                  </div>
-                  <div className="node-title-main">Industrial Zone</div>
-                </div>
-                <div className="node-marker-dot"></div>
-                <div className="node-vertical-connector"></div>
-                <div className="node-desc-text">Tirupur, Erode, Salem: Major textile and steel manufacturing hubs.</div>
-              </div>
-
-              {/* Node 3: Tourist Zone */}
-              <div className="model-timeline-node is-top">
-                <div className="node-content-box">
-                  <div className="node-image-circle">
-                    <img src={touristIcon} alt="Tourist Zone" />
-                  </div>
-                  <div className="node-title-main">Tourist Zone</div>
-                </div>
-                <div className="node-marker-dot"></div>
-                <div className="node-vertical-connector"></div>
-                <div className="node-desc-text">Nilgiri Hills, Kodaikanal: Scenic beauty and popular hill stations.</div>
-              </div>
-
-              {/* Node 4: Entry Zone */}
-              <div className="model-timeline-node is-bottom">
-                <div className="node-content-box">
-                  <div className="node-image-circle">
-                    <img src={pointIcon} alt="Entry Zone" />
-                  </div>
-                  <div className="node-title-main">Entry Zone</div>
-                </div>
-                <div className="node-marker-dot"></div>
-                <div className="node-vertical-connector"></div>
-                <div className="node-desc-text">Vellore: Historical city known for its fort and gold temple.</div>
-              </div>
-
-              {/* Node 5: Destination */}
-              <div className="model-timeline-node is-top">
-                <div className="node-content-box">
-                  <div className="node-image-circle">
-                    <img src={destinationIcon} alt="Destination" />
-                  </div>
-                  <div className="node-title-main">Destination</div>
-                </div>
-                <div className="node-marker-dot"></div>
-                <div className="node-vertical-connector"></div>
-                <div className="node-desc-text">Chennai: Major metro city, beach destination, and IT hub.</div>
-              </div>
-
+              ))}
             </div>
           </div>
         </section>
@@ -641,7 +765,7 @@ export default function PremiumReportPage({ routeData }) {
               <div className="icon-wrap bg-orange-light"><Navigation className="text-orange-main" /></div>
               <div>
                 <h2>Distance Matrix (km)</h2>
-                <p className="subtitle-small">Distance between major cities in Tamil Nadu</p>
+                <p className="subtitle-small">Distance matrix between key points on the {routeName} corridor</p>
               </div>
             </div>
             <div className="route-visual-top">
@@ -672,39 +796,33 @@ export default function PremiumReportPage({ routeData }) {
                       <span>City</span>
                     </div>
                   </th>
-                  <th><div className="city-header-icon"><Landmark size={20} /><br/>CBE</div></th>
-                  <th><div className="city-header-icon"><Activity size={20} /><br/>TRP</div></th>
-                  <th><div className="city-header-icon"><Building2 size={20} /><br/>ERD</div></th>
-                  <th><div className="city-header-icon"><Landmark size={20} /><br/>SLM</div></th>
-                  <th><div className="city-header-icon"><Landmark size={20} /><br/>VLR</div></th>
-                  <th><div className="city-header-icon"><Building2 size={20} /><br/>MAA</div></th>
+                  {matrixData.cities.map((city, idx) => {
+                    const node = dynamicTimelineNodes[idx];
+                    return (
+                      <th key={idx}>
+                        <div className="city-header-icon">
+                          <img src={node?.icon} alt="" style={{ width: '20px', height: '20px', marginBottom: '4px' }} />
+                          <br/>{matrixData.getAbbr(city)}
+                        </div>
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
               <tbody>
-                <tr className="dist-row">
-                  <td className="row-label"><div className="city-label"><Landmark size={18} /> Coimbatore</div></td>
-                  <td className="zero-cell">0</td><td>45</td><td>100</td><td>160</td><td>220</td><td>500</td>
-                </tr>
-                <tr className="dist-row">
-                  <td className="row-label"><div className="city-label"><Activity size={18} /> Tirupur</div></td>
-                  <td>45</td><td className="zero-cell">0</td><td>55</td><td>115</td><td>175</td><td>455</td>
-                </tr>
-                <tr className="dist-row">
-                  <td className="row-label"><div className="city-label"><Building2 size={18} /> Erode</div></td>
-                  <td>100</td><td>55</td><td className="zero-cell">0</td><td>60</td><td>120</td><td>400</td>
-                </tr>
-                <tr className="dist-row">
-                  <td className="row-label"><div className="city-label"><Landmark size={18} /> Salem</div></td>
-                  <td>160</td><td>115</td><td>60</td><td className="zero-cell">0</td><td>60</td><td>340</td>
-                </tr>
-                <tr className="dist-row">
-                  <td className="row-label"><div className="city-label"><Landmark size={18} /> Vellore</div></td>
-                  <td>220</td><td>175</td><td>120</td><td>60</td><td className="zero-cell">0</td><td>280</td>
-                </tr>
-                <tr className="dist-row">
-                  <td className="row-label"><div className="city-label"><Building2 size={18} /> Chennai</div></td>
-                  <td>500</td><td>455</td><td>400</td><td>340</td><td>280</td><td className="zero-cell">0</td>
-                </tr>
+                {matrixData.matrix.map((row, i) => (
+                  <tr key={i} className="dist-row">
+                    <td className="row-label">
+                      <div className="city-label">
+                        <img src={dynamicTimelineNodes[i]?.icon} alt="" style={{ width: '18px', height: '18px', marginRight: '8px' }} />
+                        {matrixData.cities[i]}
+                      </div>
+                    </td>
+                    {row.map((dist, j) => (
+                      <td key={j} className={dist === 0 ? "zero-cell" : ""}>{dist}</td>
+                    ))}
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -760,10 +878,7 @@ export default function PremiumReportPage({ routeData }) {
                 <div key={idx} className="legend-item-modern">
                   <div className="legend-header">
                     <div className="legend-icon" style={{ backgroundColor: `${item.color}22` }}>
-                      {item.name === 'Bus' ? <Bus style={{ color: item.color }} size={18} /> : 
-                       item.name === 'Train' ? <Train style={{ color: item.color }} size={18} /> : 
-                       item.name === 'Car' ? <Car style={{ color: item.color }} size={18} /> : 
-                       <Plane style={{ color: item.color }} size={18} />}
+                      {React.cloneElement(item.icon, { style: { color: item.color } })}
                     </div>
                     <span className="legend-name">{item.name}</span>
                     <span className="legend-pct">{item.value}%</span>
@@ -783,7 +898,7 @@ export default function PremiumReportPage({ routeData }) {
             </div>
             <div className="insight-text">
               <strong>Insight</strong>
-              <p>Bus transport dominates logistics movement, followed by rail for efficient long-distance connectivity.</p>
+              <p>{transportInsight || "Bus transport dominates logistics movement, followed by rail for efficient long-distance connectivity."}</p>
             </div>
           </div>
         </section>
@@ -801,93 +916,34 @@ export default function PremiumReportPage({ routeData }) {
           </div>
 
           <div className="services-rows-list">
-            {/* Bus Parcels */}
-            <div className="service-split-row">
-              <div className="service-main-info">
-                <div className="service-icon-wrap bg-blue-soft"><Bus className="text-blue-main" size={24} /></div>
-                <div className="service-text-wrap">
-                  <div className="service-title-line">
-                    <h3>Bus Parcels</h3>
-                    <span className="status-badge bg-blue-soft text-blue-main"><CheckCircle2 size={12} /> WIDE COVERAGE</span>
+            {dynamicLogisticsData.map((service, idx) => (
+              <div key={idx} className="service-split-row">
+                <div className="service-main-info">
+                  <div className={`service-icon-wrap bg-${service.color}-soft`}>
+                    {React.cloneElement(service.icon, { className: `text-${service.color}-main` })}
                   </div>
-                  <p>Available on most private & state buses across major routes.</p>
-                </div>
-              </div>
-              <div className="service-detail-box bg-blue-light">
-                <div className="detail-icon bg-white text-blue-main"><ShieldCheck size={20} /></div>
-                <div className="detail-text">
-                  <strong>High Availability</strong>
-                  <p>Extensive network across cities & towns</p>
-                </div>
-                <ChevronRight className="detail-arrow text-blue-main" size={20} />
-              </div>
-            </div>
-
-            {/* Train Parcels */}
-            <div className="service-split-row">
-              <div className="service-main-info">
-                <div className="service-icon-wrap bg-green-soft"><Train className="text-green-main" size={24} /></div>
-                <div className="service-text-wrap">
-                  <div className="service-title-line">
-                    <h3>Train Parcels</h3>
-                    <span className="status-badge bg-green-soft text-green-main"><CheckCircle2 size={12} /> EXTENSIVE NETWORK</span>
+                  <div className="service-text-wrap">
+                    <div className="service-title-line">
+                      <h3>{service.name}</h3>
+                      <span className={`status-badge bg-${service.color}-soft text-${service.color}-main`}>
+                        <CheckCircle2 size={12} /> {service.tag}
+                      </span>
+                    </div>
+                    <p>{service.value}% share of parcel movement on this route.</p>
                   </div>
-                  <p>Extensive railway cargo network covering major stations & destinations.</p>
                 </div>
-              </div>
-              <div className="service-detail-box bg-green-light">
-                <div className="detail-icon bg-white text-green-main"><ShieldCheck size={20} /></div>
-                <div className="detail-text">
-                  <strong>Reliable & Secure</strong>
-                  <p>Safe handling with timely deliveries</p>
-                </div>
-                <ChevronRight className="detail-arrow text-green-main" size={20} />
-              </div>
-            </div>
-
-            {/* Couriers */}
-            <div className="service-split-row">
-              <div className="service-main-info">
-                <div className="service-icon-wrap bg-orange-soft"><Briefcase className="text-orange-main" size={24} /></div>
-                <div className="service-text-wrap">
-                  <div className="service-title-line">
-                    <h3>Couriers</h3>
-                    <span className="status-badge bg-orange-soft text-orange-main"><CheckCircle2 size={12} /> TRUSTED PARTNERS</span>
+                <div className={`service-detail-box bg-${service.color}-light`}>
+                  <div className="detail-icon bg-white" style={{ color: `var(--${service.color}-main)` }}>
+                    <ShieldCheck size={20} />
                   </div>
-                  <p>Partnered with leading courier services for fast & dependable delivery.</p>
-                </div>
-              </div>
-              <div className="service-detail-box bg-orange-light">
-                <div className="detail-icon bg-white text-orange-main"><ShieldCheck size={20} /></div>
-                <div className="detail-text">
-                  <strong>Top Partners</strong>
-                  <p>DTDC, Blue Dart, FedEx & more</p>
-                </div>
-                <ChevronRight className="detail-arrow text-orange-main" size={20} />
-              </div>
-            </div>
-
-            {/* Taxi Delivery */}
-            <div className="service-split-row">
-              <div className="service-main-info">
-                <div className="service-icon-wrap bg-purple-soft"><Car className="text-purple-main" size={24} /></div>
-                <div className="service-text-wrap">
-                  <div className="service-title-line">
-                    <h3>Taxi Delivery</h3>
-                    <span className="status-badge bg-purple-soft text-purple-main"><CheckCircle2 size={12} /> DOOR-TO-DOOR</span>
+                  <div className="detail-text">
+                    <strong>Reliable Service</strong>
+                    <p>Secured and tracked deliveries</p>
                   </div>
-                  <p>Door-to-door express delivery for urgent and time-sensitive parcels.</p>
+                  <ChevronRight className={`detail-arrow text-${service.color}-main`} size={20} />
                 </div>
               </div>
-              <div className="service-detail-box bg-purple-light">
-                <div className="detail-icon bg-white text-purple-main"><ShieldCheck size={20} /></div>
-                <div className="detail-text">
-                  <strong>Fast & Convenient</strong>
-                  <p>Real-time tracking with quick updates</p>
-                </div>
-                <ChevronRight className="detail-arrow text-purple-main" size={20} />
-              </div>
-            </div>
+            ))}
           </div>
 
           <div className="logistics-stats-footer">
@@ -1019,7 +1075,53 @@ export default function PremiumReportPage({ routeData }) {
         </section>
 
         {/* Concept 10: Suggested Routes */}
-       
+        {/* <section className="analysis-section-box section-spacing suggested-routes-container">
+          <div className="box-header">
+            <div className="icon-wrap bg-blue-soft"><Navigation className="text-blue-main" /></div>
+            <h2>Suggested Route Options</h2>
+          </div>
+          
+          <div className="routes-grid-premium">
+            {dynamicSuggestedRoutes.map((route) => (
+              <div key={route.id} className="route-option-card hover-lift" style={{ borderTop: `4px solid ${route.color}` }}>
+                <div className="route-card-header">
+                  <div className="route-type-badge" style={{ backgroundColor: `${route.color}22`, color: route.color }}>
+                    {route.type}
+                  </div>
+                  <div className="route-icon-box" style={{ color: route.color }}>
+                    {route.icon}
+                  </div>
+                </div>
+                
+                <div className="route-card-main">
+                  <h3 className="route-name-title">{route.name}</h3>
+                  <div className="route-path-string">
+                    <span className="path-via">via</span> {route.via}
+                  </div>
+                </div>
+
+                <div className="route-card-metrics">
+                  <div className="metric-item">
+                    <Clock size={16} className="text-muted" />
+                    <span>{route.time}</span>
+                  </div>
+                  <div className="metric-item">
+                    <MapPin size={16} className="text-muted" />
+                    <span>{route.distance}</span>
+                  </div>
+                </div>
+
+                <div className="route-card-footer">
+                  <div className="efficiency-box">
+                    <div className="eff-title">{route.efficiency}</div>
+                    <div className="eff-desc">{route.efficiencyDesc}</div>
+                  </div>
+                  <ArrowRight className="route-arrow" size={20} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section> */}
       </div>
 
       {/* Contact Form Section */}

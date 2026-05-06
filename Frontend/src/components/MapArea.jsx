@@ -6,15 +6,9 @@ import routeMap from "../assets/routemap.png";
 const MapArea = ({ routeData, routeQuery, isLoading }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   
-<<<<<<< HEAD
-  // Use data from props or fallbacks
-  const startLabel = routeData?.population_data?.source?.name || 'Origin';
-  const endLabel = routeData?.population_data?.destination?.name || 'Destination';
-=======
   const parsedPath = routeData?.route_summary?.path?.split(" → ") || routeQuery?.split(" to ");
-  const startLabel = parsedPath?.[0] || 'Origin';
-  const endLabel = parsedPath?.[parsedPath.length - 1] || 'Destination';
->>>>>>> 6a65c60db754b236a990914d956f0373b98e1ba4
+  const startLabel = parsedPath?.[0] || routeData?.population_data?.source?.name || 'Origin';
+  const endLabel = parsedPath?.[parsedPath.length - 1] || routeData?.population_data?.destination?.name || 'Destination';
 
   return (
     <div className={`route-map-shell ${isFullscreen ? 'fullscreen-active' : ''}`}>

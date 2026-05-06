@@ -3,18 +3,11 @@ import { AlertCircle, CloudRain, Clock, ArrowRight } from 'lucide-react';
 import './BottomWidgets.css';
 
 const BottomWidgets = ({ routeData }) => {
-<<<<<<< HEAD
-  const distance = routeData?.route_summary?.total_distance || "505";
-  const startCity = routeData?.population_data?.source?.name || "Chennai, TN";
-  const endCity = routeData?.population_data?.destination?.name || "Coimbatore, TN";
-  const timeMins = Math.round((routeData?.route_summary?.estimated_time || 8) * 60);
-=======
   const distance = routeData?.route_summary?.total_distance || routeData?.distance?.[0]?.km || "505";
   const parsedPath = routeData?.route_summary?.path?.split(" → ");
-  const startCity = parsedPath?.[0] || routeData?.distance?.[0]?.from || "Chennai, TN";
-  const endCity = parsedPath?.[parsedPath.length - 1] || routeData?.distance?.[0]?.to || "Coimbatore, TN";
-  const timeMins = Math.round(Number(distance) / 60 * 60); // assuming avg 60km/h for highway
->>>>>>> 6a65c60db754b236a990914d956f0373b98e1ba4
+  const startCity = parsedPath?.[0] || routeData?.population_data?.source?.name || routeData?.distance?.[0]?.from || "Chennai, TN";
+  const endCity = parsedPath?.[parsedPath.length - 1] || routeData?.population_data?.destination?.name || routeData?.distance?.[0]?.to || "Coimbatore, TN";
+  const timeMins = Math.round((routeData?.route_summary?.estimated_time || 8) * 60);
 
   const liveUpdates = Array.isArray(routeData?.dashboard_data?.live_updates) 
     ? routeData.dashboard_data.live_updates 
