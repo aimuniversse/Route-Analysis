@@ -29,9 +29,6 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-<<<<<<< HEAD
-  // Route Analysis Function
-=======
   const [hasSearched, setHasSearched] = useState(false);
   const [viaCity, setViaCity] = useState("");
 
@@ -45,7 +42,6 @@ function App() {
   }, []);
 
   // Route analysis function
->>>>>>> d510d0f921cae64759baa3f9cf050f68c275bbee
   const analyzeRoute = async (source, destination) => {
     if (!source.trim() || !destination.trim()) return;
 
