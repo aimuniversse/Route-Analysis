@@ -15,65 +15,71 @@ import BottomWidgets from "./components/BottomWidgets";
 import RouteInsights from "./components/RouteInsights";
 import AreaPotentialMap from "./components/AreaPotentialMap";
 import PremiumReportPage from "./components/PremiumReportPage";
+import SearchingOverlay from "./components/SearchingOverlay";
 
 import "./App.css";
 
 function App() {
-  // Landing Page States
+  // States
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState(null);
 
-  // Route Analysis States
   const [routeData, setRouteData] = useState(null);
   const [routeQuery, setRouteQuery] = useState("Chennai to Coimbatore");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+<<<<<<< HEAD
   // Route Analysis Function
+=======
+  const [hasSearched, setHasSearched] = useState(false);
+  const [viaCity, setViaCity] = useState("");
+
+  // Splash screen timer
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Route analysis function
+>>>>>>> d510d0f921cae64759baa3f9cf050f68c275bbee
   const analyzeRoute = async (source, destination) => {
     if (!source.trim() || !destination.trim()) return;
 
-    setIsLoading(true);
-    setError(null);
-    setRouteData(null);
     setRouteQuery(`${source} to ${destination}`);
-
-    try {
-      // Fetch data from Django API
-      const response = await fetch(
-        `/api/route-analysis/?source=${encodeURIComponent(
-          source
-        )}&destination=${encodeURIComponent(destination)}`
-      );
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} ${response.statusText}`);
-      }
-
-      const result = await response.json();
-
-      if (result.status === "error") {
-        throw new Error(result.message || "Analysis failed");
-      }
-
-      // Backend response
-      setRouteData(result.data);
-    } catch (err) {
-      console.error("Failed to analyze route:", err);
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
+    setViaCity("");
+    setIsLoading(true);
   };
 
-  // Initial Route Load
-  useEffect(() => {
-    analyzeRoute("Chennai", "Coimbatore");
-  }, []);
+  // Handle route results
+  const handleSearchResults = (data, query, via = "") => {
+    if (!data) {
+      setRouteQuery(query);
+      setViaCity(via);
+      setIsLoading(true);
+      return;
+    }
+
+    setRouteData(data);
+    setResults(data);
+    setRouteQuery(query);
+
+    setHasSearched(true);
+    setIsLoading(false);
+    setError(null);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
 
   return (
     <div className="app-wrapper">
-      {/* Optional Splash Screen */}
+      {/* Splash Screen */}
       {loading && (
         <SplashScreen onFinish={() => setLoading(false)} />
       )}
@@ -81,87 +87,121 @@ function App() {
       {/* Navbar */}
       <Navbar />
 
-      {/* Hero Section */}
-      <Hero />
+      {/* Home / Hero Section */}
+      {!hasSearched ? (
+        <>
+          <Hero onResults={handleSearchResults} />
+          <Features />
+        </>
+      ) : (
+        <div className="results-view-header">
+          <Header onAnalyze={analyzeRoute} isLoading={isLoading} />
 
-      {/* Features Section */}
-      <Features />
+          <div className="app-section pt-4">
+            <button
+              className="text-xs font-bold text-primary flex items-center gap-1 hover:underline"
+              onClick={() => setHasSearched(false)}
+            >
+              ← Back to Home
+            </button>
+          </div>
+        </div>
+      )}
 
-      {/* Route Analysis Header */}
-      <Header onAnalyze={analyzeRoute} isLoading={isLoading} />
+      {/* Searching Overlay */}
+      {isLoading && (
+        <SearchingOverlay
+          from={routeQuery.split(" to ")[0] || "Origin"}
+          to={routeQuery.split(" to ")[1] || "Destination"}
+          via={viaCity}
+          onCancel={() => setIsLoading(false)}
+          onDataReady={(data) =>
+            handleSearchResults(data, routeQuery)
+          }
+        />
+      )}
 
-      {/* Error Message */}
+      {/* Error Banner */}
       {error && (
         <div className="error-banner">
           {error}
         </div>
       )}
 
-      {/* Map Section */}
-      <section className="app-section map-section animate-fade-in">
-        <div className="section-header">
-          <h2 className="section-title">Route Overview Map</h2>
-        </div>
+      {/* Results Stack */}
+      {hasSearched && (
+        <div className="app-stack">
+          {/* Map Section */}
+          <section className="app-section map-section animate-fade-in">
+            <div className="section-header">
+              <h2 className="section-title">
+                Route Overview Map
+              </h2>
+            </div>
 
-        <MapArea
-          routeData={routeData}
-          routeQuery={routeQuery}
-          isLoading={isLoading}
-        />
-      </section>
-
-      {/* Area Potential Map */}
-      <section className="app-section potential-map-section animate-fade-in-up">
-        <AreaPotentialMap
-          routeData={routeData}
-          isLoading={isLoading}
-        />
-      </section>
-
-      {/* Analytics Dashboard */}
-      <section className="app-section dashboard-section animate-fade-in-up">
-        <div className="section-header">
-          <h2 className="section-title">
-            Data Analytics & Insights
-          </h2>
-        </div>
-
-        <div className="dashboard-grid">
-          <div className="charts-row">
-            <Charts routeData={routeData} />
-          </div>
-
-          <div className="widgets-row">
-            <BottomWidgets routeData={routeData} />
-          </div>
-
-          <div className="insights-row">
-            <RouteInsights
-              routeQuery={routeQuery}
+            <MapArea
               routeData={routeData}
+              routeQuery={routeQuery}
+              isLoading={isLoading}
             />
-          </div>
+          </section>
+
+          {/* Area Potential Map */}
+          <section className="app-section potential-map-section animate-fade-in-up">
+            <AreaPotentialMap
+              routeData={routeData}
+              isLoading={isLoading}
+            />
+          </section>
+
+          {/* Dashboard */}
+          <section className="app-section dashboard-section animate-fade-in-up">
+            <div className="section-header">
+              <h2 className="section-title">
+                Data Analytics & Insights
+              </h2>
+            </div>
+
+            <div className="dashboard-grid">
+              <div className="charts-row">
+                <Charts routeData={routeData} />
+              </div>
+
+              <div className="widgets-row">
+                <BottomWidgets routeData={routeData} />
+              </div>
+
+              <div className="insights-row">
+                <RouteInsights
+                  routeQuery={routeQuery}
+                  routeData={routeData}
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Premium Report */}
+          <section className="app-section premium-section animate-fade-in-up">
+            <div className="section-header">
+              <h2 className="section-title">
+                Premium Corridor Report
+              </h2>
+            </div>
+
+            <PremiumReportPage routeData={routeData} />
+          </section>
         </div>
-      </section>
+      )}
 
-      {/* Premium Report Section */}
-      <section className="app-section premium-section animate-fade-in-up">
-        <div className="section-header">
-          <h2 className="section-title">
-            Premium Corridor Report
-          </h2>
-        </div>
-
-        <PremiumReportPage routeData={routeData} />
-      </section>
-
-      {/* Route Results */}
-      {results && <RouteResults results={results} />}
+      {/* Legacy Route Results */}
+      {results && (
+        <RouteResults results={results} />
+      )}
 
       {/* Footer */}
       <footer className="app-footer">
         <p>
-          © {new Date().getFullYear()} Route Analysis AI
+          © {new Date().getFullYear()} Route Analysis AI | Powered by AIM UNIVERSSE
         </p>
       </footer>
     </div>

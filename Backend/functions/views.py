@@ -131,6 +131,8 @@ def analyze_route_api(request):
         return Response(response_data)
 
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return Response({
             "status": "error",
             "message": f"Internal server error: {str(e)}"

@@ -95,6 +95,14 @@
 .insight-icon.purple { background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(168, 85, 247, 0.2)); color: var(--purple-light); }
 .insight-icon.green { background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.2)); color: var(--success-green); }
 
+.insight-card-content {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
 .stat-row {
   display: flex;
   justify-content: space-between;

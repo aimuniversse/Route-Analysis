@@ -22,7 +22,7 @@ const SearchBox = ({ onResults }) => {
     useEffect(() => {
         const fetchPopular = async () => {
             try {
-                const response = await fetch("http://localhost:8000/api/popular-searches/");
+                const response = await fetch("/api/popular-searches/");
                 const data = await response.json();
                 if (data.status === "success") {
                     setPopularSearches(data.popular_searches);
@@ -38,29 +38,14 @@ const SearchBox = ({ onResults }) => {
 
     const handleSearch = () => {
         if (fromCity && toCity) {
-            setIsSearching(true);
+            if (onResults) onResults(null, `${fromCity} to ${toCity}`, viaCity);
         } else {
             alert("Please enter both source and destination cities.");
         }
     };
 
-    const handleDataReady = (data) => {
-        setIsSearching(false);
-        const routeStr = viaCity ? `${fromCity} via ${viaCity} to ${toCity}` : `${fromCity} to ${toCity}`;
-        if (onResults) onResults(data, routeStr);
-    };
-
     return (
         <div className="search-wrapper">
-            {isSearching && (
-                <SearchingOverlay
-                    from={fromCity}
-                    via={viaCity}
-                    to={toCity}
-                    onCancel={() => setIsSearching(false)}
-                    onDataReady={handleDataReady}
-                />
-            )}
             <div className="search-card tilt-3d">
                 <div className="search-inputs">
                     <div className="input-field">

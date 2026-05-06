@@ -9,10 +9,10 @@ const BottomWidgets = ({ routeData }) => {
   const endCity = parsedPath?.[parsedPath.length - 1] || routeData?.population_data?.destination?.name || routeData?.distance?.[0]?.to || "Coimbatore, TN";
   const timeMins = Math.round((routeData?.route_summary?.estimated_time || 8) * 60);
 
-  const liveUpdates = Array.isArray(routeData?.dashboard_data?.live_updates) 
-    ? routeData.dashboard_data.live_updates 
+  const liveUpdates = Array.isArray(routeData?.dashboard_data?.live_updates)
+    ? routeData.dashboard_data.live_updates
     : [{ incident: "Normal traffic flow observed.", severity: "Low", time: "Just now" }];
-    
+
   const weatherDetails = routeData?.dashboard_data?.weather || { impact: "Low", details: "Clear skies. No significant impact on travel." };
 
   return (
@@ -71,8 +71,8 @@ const BottomWidgets = ({ routeData }) => {
           </div>
           <div className="flex-1">
             <div className="search-route">
-              <span className="city-pill">{startCity.split(',')[0]}</span> 
-              <ArrowRight size={14} className="text-muted" /> 
+              <span className="city-pill">{startCity.split(',')[0]}</span>
+              <ArrowRight size={14} className="text-muted" />
               <span className="city-pill">{endCity.split(',')[0]}</span>
             </div>
             <div className="text-xs text-muted mt-1 font-medium">Just now</div>

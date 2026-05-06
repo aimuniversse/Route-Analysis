@@ -5,7 +5,6 @@ import routeMap from "../assets/routemap.png";
 
 const MapArea = ({ routeData, routeQuery, isLoading }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
-  
   const parsedPath = routeData?.route_summary?.path?.split(" → ") || routeQuery?.split(" to ");
   const startLabel = parsedPath?.[0] || routeData?.population_data?.source?.name || 'Origin';
   const endLabel = parsedPath?.[parsedPath.length - 1] || routeData?.population_data?.destination?.name || 'Destination';
@@ -15,9 +14,9 @@ const MapArea = ({ routeData, routeQuery, isLoading }) => {
       <div className={`route-map-card ${isFullscreen ? 'fullscreen-card' : ''}`}>
         <div className="route-map-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <div style={{ 
-              background: 'rgba(225, 29, 72, 0.1)', 
-              padding: '10px', 
+            <div style={{
+              background: 'rgba(225, 29, 72, 0.1)',
+              padding: '10px',
               borderRadius: '12px',
               display: 'flex',
               alignItems: 'center',
@@ -29,17 +28,17 @@ const MapArea = ({ routeData, routeQuery, isLoading }) => {
             <div>
               <p className="eyebrow" style={{ marginBottom: '2px', opacity: 0.7 }}>Premium Route Analysis</p>
               <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                {startLabel} 
-                <ArrowIcon /> 
+                {startLabel}
+                <ArrowIcon />
                 {endLabel}
               </h2>
             </div>
           </div>
-          
+
           <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-            <div className="route-chip" style={{ 
-              background: 'var(--bg-panel)', 
-              color: 'var(--text-primary)', 
+            <div className="route-chip" style={{
+              background: 'var(--bg-panel)',
+              color: 'var(--text-primary)',
               border: '1px solid var(--border-color)',
               boxShadow: 'none',
               display: 'flex',
@@ -61,13 +60,13 @@ const MapArea = ({ routeData, routeQuery, isLoading }) => {
 
         <div className="route-map-frame" style={{ height: isFullscreen ? '100%' : '650px' }}>
           <div className="static-map-container">
-            <img 
-              src={routeMap} 
-              alt={`Route visualization from ${startLabel} to ${endLabel}`} 
+            <img
+              src={routeMap}
+              alt={`Route visualization from ${startLabel} to ${endLabel}`}
               className="static-map-image"
-              style={{ 
-                objectFit: 'cover', 
-                width: '100%', 
+              style={{
+                objectFit: 'cover',
+                width: '100%',
                 height: '100%',
                 opacity: isLoading ? 0.3 : 1,
                 transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',

@@ -42,15 +42,14 @@ const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
     ];
 
     // Growth Stages based on progress (0 to 100)
-    const growthStage = Math.min(Math.floor(progress / 20), 5);
+    const growthStage = Math.min(Math.floor(progress / 20), 4);
 
     const growthLabels = [
-        "Planting Seed...",
-        "Sprouting Intelligence...",
-        "Growing Sapling...",
-        "Expanding Branches...",
-        "Lush Bloom...",
-        "Tickmybus Fully Grown!"
+        "Initializing Neural Seed...",
+        "Sprouting Digital Life...",
+        "Nurturing Data Sapling...",
+        "Expanding AI Network...",
+        "Tickmybus Fully Bloomed"
     ];
 
     useEffect(() => {
@@ -67,7 +66,7 @@ const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
         // Fetch Data from Backend
         const fetchData = async () => {
             try {
-                const response = await fetch("http://localhost:8000/api/route-analysis/", {
+                const response = await fetch("/api/route-analysis/", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -123,11 +122,11 @@ const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
         <div className="searching-overlay">
             <div className="searching-card">
                 <div className="branding-header">
-                    Tickmybus <span>AI</span>
+                    TICKMYBUS <span>AI</span>
                 </div>
 
                 <div className="ai-badge">
-                    <span></span> AI Neural Processing
+                    <span className="pulse-dot"></span> NEURAL AI PROCESSING ENGINE
                 </div>
 
                 <div className="content-layout">
