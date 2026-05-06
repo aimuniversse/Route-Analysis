@@ -6,10 +6,7 @@ import './RouteInsights.css';
 const RouteInsights = ({ routeQuery, routeData }) => {
   // --- Data Definitions ---
 
-<<<<<<< HEAD
-=======
   // 1. Demographics Data
->>>>>>> 1a4096c879c37015fd7709f92c30060ea02cd6f8
   const aiPop = routeData?.population_data;
   const popData = aiPop ? [
     { name: aiPop.source?.name || 'Origin', value: aiPop.source?.count / 1000000 || 5.0, fill: 'url(#colorTrafficRed)' },
@@ -33,10 +30,7 @@ const RouteInsights = ({ routeQuery, routeData }) => {
     { name: 'Car/Air', value: 10, color: '#10b981' },
   ];
 
-<<<<<<< HEAD
-=======
   // 3. Tourism Data
->>>>>>> 1a4096c879c37015fd7709f92c30060ea02cd6f8
   const aiTourism = routeData?.visitor_data;
   const tourismData = aiTourism ? aiTourism.slice(0, 5).map(v => ({
     subject: v.place_name, A: v.daily || Math.round(v.yearly / 365) || 50
@@ -53,11 +47,7 @@ const RouteInsights = ({ routeQuery, routeData }) => {
   const areaData = aiArea ? [
     { name: 'Business', potential: 90, activity: 85, type: aiArea.job_business_areas?.[0] || 'Jobs' },
     { name: 'Student', potential: 60, activity: 50, type: aiArea.student_areas?.[0] || 'Education' },
-<<<<<<< HEAD
-    { name: 'Tourist', potential: 85, activity: 80, type: aiArea.tourist_areas?.[0] || 'Tourism' },
-=======
     { name: 'Tourist', potential: 85, activity: 80, type: aiArea.tourist_areas?.[0] || 'Leisure' },
->>>>>>> 1a4096c879c37015fd7709f92c30060ea02cd6f8
   ] : [
     { name: 'Chennai', potential: 80, activity: 90, type: 'Origin / IT' },
     { name: 'Sriperumbudur', potential: 95, activity: 85, type: 'Industrial' },

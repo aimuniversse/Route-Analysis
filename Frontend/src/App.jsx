@@ -29,77 +29,6 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-<<<<<<< HEAD
-  // Splash screen timer
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Route analysis function (receives data from Hero/SearchBox)
-  const handleRouteResults = (data, routeString) => {
-    setIsLoading(false);
-    setError(null);
-    setRouteData(data);
-    setResults(data); // Shows the dashboard
-    setRouteQuery(routeString || "Custom Route");
-  };
-
-  return (
-    <div className="app">
-      {loading && <SplashScreen />}
-
-      <Navbar />
-
-      {/* If results exist → show full dashboard */}
-      {results ? (
-        <div className="dashboard-container animate-fade-in">
-          <RouteResults data={results} onBack={() => setResults(null)} />
-
-          {error && <div className="error-banner">{error}</div>}
-
-          <div className="dashboard-content-stack">
-            {/* Map Section */}
-            <section className="app-section map-section">
-              <div className="section-header">
-                <h2 className="section-title">Route Overview Map</h2>
-              </div>
-              <MapArea routeData={routeData} routeQuery={routeQuery} isLoading={isLoading} />
-            </section>
-
-            {/* Dashboard Section */}
-            <section className="app-section dashboard-section">
-              <div className="section-header">
-                <h2 className="section-title">Data Analytics & Insights</h2>
-              </div>
-              <div className="dashboard-grid">
-                <Charts routeData={routeData} />
-                <BottomWidgets routeData={routeData} />
-                <RouteInsights routeQuery={routeQuery} routeData={routeData} />
-              </div>
-            </section>
-
-            {/* Premium Section */}
-            <section className="app-section premium-section">
-              <div className="section-header">
-                <h2 className="section-title">Premium Corridor Report</h2>
-              </div>
-              <PremiumReportPage routeData={routeData} />
-            </section>
-          </div>
-        </div>
-      ) : (
-        <>
-          <Hero onResults={handleRouteResults} />
-          <Features />
-        </>
-      )}
-
-      <footer className="app-footer">
-        <p>© {new Date().getFullYear()} Route Analysis AI | Powered by AIM UNIVERSSE</p>
-=======
   // Route Analysis Function
   const analyzeRoute = async (source, destination) => {
     if (!source.trim() || !destination.trim()) return;
@@ -234,7 +163,6 @@ function App() {
         <p>
           © {new Date().getFullYear()} Route Analysis AI
         </p>
->>>>>>> 1a4096c879c37015fd7709f92c30060ea02cd6f8
       </footer>
     </div>
   );
