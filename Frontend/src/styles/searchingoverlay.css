@@ -4,19 +4,16 @@
     left: 0;
     width: 100%;
     height: calc(100% - 80px);
-    background: rgba(255, 255, 255, 0.7); /* Reduced opacity for better glassmorphism */
-    backdrop-filter: blur(25px) saturate(180%);
-    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    background: rgba(255, 255, 255, 0.85); /* Increased opacity for cleaner look */
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 10000;
     animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    overflow: hidden;
-    /* Subtle mesh gradient for depth */
-    background-image: 
-        radial-gradient(at 0% 0%, rgba(216, 0, 0, 0.05) 0, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(216, 0, 0, 0.02) 0, transparent 50%);
+    overflow-y: auto; /* Allow scrolling if screen is too small */
+    padding: 40px 0;
 }
 
 @keyframes fadeIn {
@@ -35,9 +32,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.8rem; /* Further reduced gap to fit branding */
+    gap: 0.2rem; /* Even tighter gap for small screens */
     position: relative;
     border: none;
+    margin-top: 20px;
 }
 
 .branding-header {
@@ -276,61 +274,46 @@
 }
 
 .growth-animation {
-    width: 350px;
+    width: 450px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 0;
     background: none;
-    margin-left: -50px; /* Shifted slightly left */
     position: relative;
-}
-
-.growth-animation::before {
-    content: '';
-    position: absolute;
-    width: 250px;
-    height: 250px;
-    background: radial-gradient(circle, rgba(216, 0, 0, 0.08) 0%, transparent 70%);
-    z-index: 0;
-    pointer-events: none;
-    animation: pulseGlow 4s ease-in-out infinite;
-}
-
-@keyframes pulseGlow {
-    0%, 100% { transform: scale(1); opacity: 0.5; }
-    50% { transform: scale(1.2); opacity: 0.8; }
+    margin-left: -100px; /* Moved tree slightly left */
 }
 
 .tree-container {
-    width: 350px; /* Further increased for new organic tree */
-    height: 400px;
+    width: 420px; 
+    height: 400px; /* Reduced further to ensure all buttons fit */
     position: relative;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: center;
     margin: 0 auto;
-    padding-bottom: 25px;
+    padding-bottom: 0;
 }
 
 /* 3D Scene adjustments */
 .tree-container canvas {
-    border-radius: 20px;
+    background: transparent !important;
     outline: none;
 }
 
 .growth-indicator {
     position: absolute;
-    bottom: 0;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
     font-size: 0.8rem;
-    font-weight: 800;
-    color: #8B4513;
+    font-weight: 900;
+    color: var(--primary);
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 3px;
     white-space: nowrap;
+    opacity: 0.8;
 }
 
 @keyframes pulse {

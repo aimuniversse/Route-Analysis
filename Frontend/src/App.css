@@ -1,29 +1,19 @@
-<<<<<<< HEAD
 /* Global App Layout */
 .app-wrapper {
-=======
-/* App.css */
-.app-stack {
->>>>>>> b1172839a1b6d322a3817ac511f9835fac1b91fd
   width: 100%;
   min-height: 100vh;
   background-color: var(--bg-main);
   color: var(--text-primary);
-<<<<<<< HEAD
   display: flex;
   flex-direction: column;
 }
 
 .app-stack {
   width: 100%;
-=======
->>>>>>> b1172839a1b6d322a3817ac511f9835fac1b91fd
   display: flex;
   flex-direction: column;
   gap: 40px;
   padding-bottom: 60px;
-<<<<<<< HEAD
-=======
 }
 
 .dashboard-container {
@@ -34,7 +24,6 @@
   display: flex;
   flex-direction: column;
   gap: 32px;
->>>>>>> b1172839a1b6d322a3817ac511f9835fac1b91fd
 }
 
 .app-section {
@@ -126,7 +115,6 @@
   from { opacity: 0; transform: translateY(30px); }
   to { opacity: 1; transform: translateY(0); }
 }
-<<<<<<< HEAD
 
 /* Responsive Design */
 @media (max-width: 1024px) {
@@ -149,5 +137,4 @@
     padding: 0 16px;
   }
 }
-=======
->>>>>>> b1172839a1b6d322a3817ac511f9835fac1b91fd
+

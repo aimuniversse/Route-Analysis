@@ -5,15 +5,9 @@ import './BottomWidgets.css';
 const BottomWidgets = ({ routeData }) => {
   const distance = routeData?.route_summary?.total_distance || routeData?.distance?.[0]?.km || "505";
   const parsedPath = routeData?.route_summary?.path?.split(" → ");
-<<<<<<< HEAD
-  const startCity = parsedPath?.[0] || routeData?.distance?.[0]?.from || "Chennai, TN";
-  const endCity = parsedPath?.[parsedPath.length - 1] || routeData?.distance?.[0]?.to || "Coimbatore, TN";
-  const timeMins = Math.round(Number(distance) / 60 * 60); // assuming avg 60km/h for highway
-=======
   const startCity = parsedPath?.[0] || routeData?.population_data?.source?.name || routeData?.distance?.[0]?.from || "Chennai, TN";
   const endCity = parsedPath?.[parsedPath.length - 1] || routeData?.population_data?.destination?.name || routeData?.distance?.[0]?.to || "Coimbatore, TN";
   const timeMins = Math.round((routeData?.route_summary?.estimated_time || 8) * 60);
->>>>>>> b1172839a1b6d322a3817ac511f9835fac1b91fd
 
   const liveUpdates = Array.isArray(routeData?.dashboard_data?.live_updates)
     ? routeData.dashboard_data.live_updates

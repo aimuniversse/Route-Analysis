@@ -20,96 +20,16 @@ import SearchingOverlay from "./components/SearchingOverlay";
 import "./App.css";
 
 function App() {
-  // Landing Page States
+  // Global States
   const [loading, setLoading] = useState(true);
-  const [results, setResults] = useState(null);
-
-  // Route Analysis States
   const [routeData, setRouteData] = useState(null);
   const [routeQuery, setRouteQuery] = useState("Chennai to Coimbatore");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  
-  // Track if user has performed a search to toggle Hero view
   const [hasSearched, setHasSearched] = useState(false);
   const [viaCity, setViaCity] = useState("");
 
-<<<<<<< HEAD
   // Route Analysis Function (from Header)
-=======
-<<<<<<< HEAD
-  // Splash screen timer
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Route analysis function (receives data from Hero/SearchBox)
-  const handleRouteResults = (data, routeString) => {
-    setIsLoading(false);
-    setError(null);
-    setRouteData(data);
-    setResults(data); // Shows the dashboard
-    setRouteQuery(routeString || "Custom Route");
-  };
-
-  return (
-    <div className="app">
-      {loading && <SplashScreen />}
-
-      <Navbar />
-
-      {/* If results exist → show full dashboard */}
-      {results ? (
-        <div className="dashboard-container animate-fade-in">
-          <RouteResults data={results} onBack={() => setResults(null)} />
-
-          {error && <div className="error-banner">{error}</div>}
-
-          <div className="dashboard-content-stack">
-            {/* Map Section */}
-            <section className="app-section map-section">
-              <div className="section-header">
-                <h2 className="section-title">Route Overview Map</h2>
-              </div>
-              <MapArea routeData={routeData} routeQuery={routeQuery} isLoading={isLoading} />
-            </section>
-
-            {/* Dashboard Section */}
-            <section className="app-section dashboard-section">
-              <div className="section-header">
-                <h2 className="section-title">Data Analytics & Insights</h2>
-              </div>
-              <div className="dashboard-grid">
-                <Charts routeData={routeData} />
-                <BottomWidgets routeData={routeData} />
-                <RouteInsights routeQuery={routeQuery} routeData={routeData} />
-              </div>
-            </section>
-
-            {/* Premium Section */}
-            <section className="app-section premium-section">
-              <div className="section-header">
-                <h2 className="section-title">Premium Corridor Report</h2>
-              </div>
-              <PremiumReportPage routeData={routeData} />
-            </section>
-          </div>
-        </div>
-      ) : (
-        <>
-          <Hero onResults={handleRouteResults} />
-          <Features />
-        </>
-      )}
-
-      <footer className="app-footer">
-        <p>© {new Date().getFullYear()} Route Analysis AI | Powered by AIM UNIVERSSE</p>
-=======
-  // Route Analysis Function
->>>>>>> b1172839a1b6d322a3817ac511f9835fac1b91fd
   const analyzeRoute = async (source, destination) => {
     if (!source.trim() || !destination.trim()) return;
     setRouteQuery(`${source} to ${destination}`);
@@ -117,25 +37,25 @@ function App() {
     setIsLoading(true);
   };
 
+  // Main results handler (from SearchBox or Overlay)
   const handleSearchResults = (data, query, via = "") => {
     if (!data) {
-      // Triggered by SearchBox to start search
+      // Triggered by SearchBox to start the 3D searching process
       setRouteQuery(query);
       setViaCity(via);
       setIsLoading(true);
       return;
     }
     
+    // Data received from API
     setRouteData(data);
     setRouteQuery(query);
     setHasSearched(true);
     setIsLoading(false);
     
-    // Smooth scroll to top of content
+    // Smooth scroll to top of the dashboard
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
-  // Initial Route Load removed for cleaner landing page
 
   return (
     <div className="app-wrapper">
@@ -167,7 +87,7 @@ function App() {
         </div>
       )}
 
-      {/* Searching Overlay */}
+      {/* Searching Overlay (Unified 3D Engine) */}
       {isLoading && (
         <SearchingOverlay
           from={routeQuery.split(" to ")[0] || "Origin"}
@@ -185,7 +105,7 @@ function App() {
         </div>
       )}
 
-      {/* Results Stack - Only shown after search */}
+      {/* Results Stack - Only shown after a successful search */}
       {hasSearched && (
         <div className="app-stack">
           {/* Map Section */}
@@ -248,15 +168,11 @@ function App() {
         </div>
       )}
 
-      {/* Route Results (Optional Legacy Component) */}
-      {results && <RouteResults results={results} />}
-
       {/* Footer */}
       <footer className="app-footer">
         <p>
-          © {new Date().getFullYear()} Route Analysis AI
+          © {new Date().getFullYear()} Route Analysis AI | Powered by AIM UNIVERSSE
         </p>
->>>>>>> 1a4096c879c37015fd7709f92c30060ea02cd6f8
       </footer>
     </div>
   );
