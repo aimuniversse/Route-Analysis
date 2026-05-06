@@ -13,7 +13,7 @@ const Header = ({ onAnalyze, isLoading }) => {
 
   const handleAnalyze = () => {
     if (fromCity && toCity) {
-      onAnalyze(`${fromCity} to ${toCity}`);
+      onAnalyze(fromCity, toCity);
     }
   };
 

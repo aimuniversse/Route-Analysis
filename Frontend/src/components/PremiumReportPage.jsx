@@ -100,7 +100,8 @@ const trainFrequencies = [
 ];
 
 
-export default function PremiumReportPage() {
+export default function PremiumReportPage({ routeData }) {
+  const routeName = routeData?.route_summary?.path || "Coimbatore to Chennai";
   const [formData, setFormData] = useState({ name: '', busTravels: '', contactNo: '', message: '' });
   const [formStatus, setFormStatus] = useState(null); // null | 'success' | 'error'
 
@@ -133,7 +134,7 @@ export default function PremiumReportPage() {
         {/* Header */}
         <header className="report-header">
           <div className="header-badge">Corridor Report</div>
-          <h1>Coimbatore to Chennai</h1>
+          <h1>{routeName}</h1>
           <p className="subtitle">Comprehensive Route Analysis & Travel Intelligence</p>
         </header>
 
@@ -1073,7 +1074,7 @@ export default function PremiumReportPage() {
         </section>
 
         {/* Concept 10: Suggested Routes */}
-       
+        
       </div>
 
       {/* Contact Form Section */}

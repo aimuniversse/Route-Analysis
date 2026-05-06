@@ -37,6 +37,14 @@ Return ONLY valid JSON. The JSON structure MUST follow this 10-point format exac
 8. logistics_services: {{ "parcel_movement": {{ "bus": float, "train": float, "courier": float, "taxi": float }}, "modes_used": ["List modes"] }} (Total percentage must be 100%)
 9. transport_schedule: [ {{ "from": "{destination}", "to": "{source}", "bus_trips": int, "train_trips": int }} ] (Show ONLY the REVERSE route)
 10. suggested_routes: [ {{ "option": int, "path": "Path String", "distance": int, "time": float }} ]
+11. dashboard_data: {{
+      "traffic_trends": [ {{ "time": "12 AM", "value": int }}, {{ "time": "4 AM", "value": int }}, {{ "time": "8 AM", "value": int }}, {{ "time": "12 PM", "value": int }}, {{ "time": "4 PM", "value": int }}, {{ "time": "8 PM", "value": int }} ],
+      "travel_time_by_hour": [ {{ "hour": "12 AM", "minutes": int }}, {{ "hour": "6 AM", "minutes": int }}, {{ "hour": "12 PM", "minutes": int }}, {{ "hour": "6 PM", "minutes": int }} ],
+      "live_updates": [ {{ "incident": "String", "severity": "Low"|"High", "time": "Just now" }} ],
+      "weather": {{ "impact": "Low"|"High", "details": "Description" }},
+      "area_potential": [ {{ "district": "String", "population": int, "potential_score": int, "business_potential": "High"|"Medium"|"Low", "growth_rate": float, "sectors": [ {{ "name": "String", "score": int }} ] }} ],
+      "corridor_potential": {{ "business": int, "student": int, "tourist": int }}
+    }}
 
 DATA RULES:
 - Use realistic, professional values.
@@ -56,7 +64,7 @@ DATA RULES:
     }
 
     payload = {
-        "model": "meta/llama-3.1-70b-instruct",
+        "model": "meta/llama-3.1-8b-instruct",
         "messages": [
             {"role": "system", "content": "You are a professional transportation data analyst. Provide consistent, deterministic JSON data."},
             {"role": "user", "content": prompt}
