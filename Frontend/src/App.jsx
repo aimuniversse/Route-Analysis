@@ -15,6 +15,7 @@ import BottomWidgets from "./components/BottomWidgets";
 import RouteInsights from "./components/RouteInsights";
 import AreaPotentialMap from "./components/AreaPotentialMap";
 import PremiumReportPage from "./components/PremiumReportPage";
+import SearchingOverlay from "./components/SearchingOverlay";
 
 import "./App.css";
 
@@ -28,48 +29,38 @@ function App() {
   const [routeQuery, setRouteQuery] = useState("Chennai to Coimbatore");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  
+  // Track if user has performed a search to toggle Hero view
+  const [hasSearched, setHasSearched] = useState(false);
+  const [viaCity, setViaCity] = useState("");
 
-  // Route Analysis Function
+  // Route Analysis Function (from Header)
   const analyzeRoute = async (source, destination) => {
     if (!source.trim() || !destination.trim()) return;
-
-    setIsLoading(true);
-    setError(null);
-    setRouteData(null);
     setRouteQuery(`${source} to ${destination}`);
-
-    try {
-      // Fetch data from Django API
-      const response = await fetch(
-        `/api/route-analysis/?source=${encodeURIComponent(
-          source
-        )}&destination=${encodeURIComponent(destination)}`
-      );
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} ${response.statusText}`);
-      }
-
-      const result = await response.json();
-
-      if (result.status === "error") {
-        throw new Error(result.message || "Analysis failed");
-      }
-
-      // Backend response
-      setRouteData(result.data);
-    } catch (err) {
-      console.error("Failed to analyze route:", err);
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
+    setViaCity("");
+    setIsLoading(true);
   };
 
-  // Initial Route Load
-  useEffect(() => {
-    analyzeRoute("Chennai", "Coimbatore");
-  }, []);
+  const handleSearchResults = (data, query, via = "") => {
+    if (!data) {
+      // Triggered by SearchBox to start search
+      setRouteQuery(query);
+      setViaCity(via);
+      setIsLoading(true);
+      return;
+    }
+    
+    setRouteData(data);
+    setRouteQuery(query);
+    setHasSearched(true);
+    setIsLoading(false);
+    
+    // Smooth scroll to top of content
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Initial Route Load removed for cleaner landing page
 
   return (
     <div className="app-wrapper">
@@ -81,14 +72,36 @@ function App() {
       {/* Navbar */}
       <Navbar />
 
-      {/* Hero Section */}
-      <Hero />
+      {/* Conditional Hero/Search View */}
+      {!hasSearched ? (
+        <>
+          <Hero onResults={handleSearchResults} />
+          <Features />
+        </>
+      ) : (
+        <div className="results-view-header">
+           <Header onAnalyze={analyzeRoute} isLoading={isLoading} />
+           <div className="app-section pt-4">
+             <button 
+               className="text-xs font-bold text-primary flex items-center gap-1 hover:underline"
+               onClick={() => setHasSearched(false)}
+             >
+               ← Back to Home
+             </button>
+           </div>
+        </div>
+      )}
 
-      {/* Features Section */}
-      <Features />
-
-      {/* Route Analysis Header */}
-      <Header onAnalyze={analyzeRoute} isLoading={isLoading} />
+      {/* Searching Overlay */}
+      {isLoading && (
+        <SearchingOverlay
+          from={routeQuery.split(" to ")[0] || "Origin"}
+          to={routeQuery.split(" to ")[1] || "Destination"}
+          via={viaCity}
+          onCancel={() => setIsLoading(false)}
+          onDataReady={(data) => handleSearchResults(data, routeQuery)}
+        />
+      )}
 
       {/* Error Message */}
       {error && (
@@ -97,65 +110,70 @@ function App() {
         </div>
       )}
 
-      {/* Map Section */}
-      <section className="app-section map-section animate-fade-in">
-        <div className="section-header">
-          <h2 className="section-title">Route Overview Map</h2>
-        </div>
+      {/* Results Stack - Only shown after search */}
+      {hasSearched && (
+        <div className="app-stack">
+          {/* Map Section */}
+          <section className="app-section map-section animate-fade-in">
+            <div className="section-header">
+              <h2 className="section-title">Route Overview Map</h2>
+            </div>
 
-        <MapArea
-          routeData={routeData}
-          routeQuery={routeQuery}
-          isLoading={isLoading}
-        />
-      </section>
-
-      {/* Area Potential Map */}
-      <section className="app-section potential-map-section animate-fade-in-up">
-        <AreaPotentialMap
-          routeData={routeData}
-          isLoading={isLoading}
-        />
-      </section>
-
-      {/* Analytics Dashboard */}
-      <section className="app-section dashboard-section animate-fade-in-up">
-        <div className="section-header">
-          <h2 className="section-title">
-            Data Analytics & Insights
-          </h2>
-        </div>
-
-        <div className="dashboard-grid">
-          <div className="charts-row">
-            <Charts routeData={routeData} />
-          </div>
-
-          <div className="widgets-row">
-            <BottomWidgets routeData={routeData} />
-          </div>
-
-          <div className="insights-row">
-            <RouteInsights
-              routeQuery={routeQuery}
+            <MapArea
               routeData={routeData}
+              routeQuery={routeQuery}
+              isLoading={isLoading}
             />
-          </div>
+          </section>
+
+          {/* Area Potential Map */}
+          <section className="app-section potential-map-section animate-fade-in-up">
+            <AreaPotentialMap
+              routeData={routeData}
+              isLoading={isLoading}
+            />
+          </section>
+
+          {/* Analytics Dashboard */}
+          <section className="app-section dashboard-section animate-fade-in-up">
+            <div className="section-header">
+              <h2 className="section-title">
+                Data Analytics & Insights
+              </h2>
+            </div>
+
+            <div className="dashboard-grid">
+              <div className="charts-row">
+                <Charts routeData={routeData} />
+              </div>
+
+              <div className="widgets-row">
+                <BottomWidgets routeData={routeData} />
+              </div>
+
+              <div className="insights-row">
+                <RouteInsights
+                  routeQuery={routeQuery}
+                  routeData={routeData}
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Premium Report Section */}
+          <section className="app-section premium-section animate-fade-in-up">
+            <div className="section-header">
+              <h2 className="section-title">
+                Premium Corridor Report
+              </h2>
+            </div>
+
+            <PremiumReportPage routeData={routeData} />
+          </section>
         </div>
-      </section>
+      )}
 
-      {/* Premium Report Section */}
-      <section className="app-section premium-section animate-fade-in-up">
-        <div className="section-header">
-          <h2 className="section-title">
-            Premium Corridor Report
-          </h2>
-        </div>
-
-        <PremiumReportPage routeData={routeData} />
-      </section>
-
-      {/* Route Results */}
+      {/* Route Results (Optional Legacy Component) */}
       {results && <RouteResults results={results} />}
 
       {/* Footer */}

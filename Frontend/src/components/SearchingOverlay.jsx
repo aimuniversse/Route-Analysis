@@ -67,7 +67,7 @@ const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
         // Fetch Data from Backend
         const fetchData = async () => {
             try {
-                const response = await fetch("http://localhost:8000/api/route-analysis/", {
+                const response = await fetch("/api/route-analysis/", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

@@ -251,6 +251,12 @@ const TreeStages = ({ progress }) => {
         
     }, [branches, roots, leaves, blossoms, apples]);
 
+    // Reuse objects to prevent memory leaks in useFrame
+    const _tempVec = new THREE.Vector3();
+    const _tempMat = new THREE.Matrix4();
+    const _tempColor = new THREE.Color();
+    const _tempQuat = new THREE.Quaternion();
+
     // Update Transforms per Frame
     useFrame((state) => {
         const t = state.clock.getElapsedTime();
@@ -260,7 +266,7 @@ const TreeStages = ({ progress }) => {
             groupRef.current.rotation.x = Math.cos(t * 0.2) * 0.006;
         }
 
-        // --- Phase 1: Seed (0 - 13.3) ---
+        // --- Phase 1: Seed ---
         if (seedLeftRef.current && seedRightRef.current) {
             let sScale = 0;
             let sRot = 0;
@@ -286,7 +292,7 @@ const TreeStages = ({ progress }) => {
             seedRightRef.current.position.x = sPosOffset;
         }
 
-        // --- Phase 2: Sprout (13.3 - 30) ---
+        // --- Phase 2: Sprout ---
         if (sproutRef.current && sproutLeaf1Ref.current && sproutLeaf2Ref.current) {
             if (progress >= 13.3 && progress < 40) {
                 const spT = Math.min((progress - 13.3) / 7, 1); 
@@ -318,10 +324,9 @@ const TreeStages = ({ progress }) => {
             }
         }
 
-        // --- Structural Growth (Branches & Roots) ---
+        // --- Structural Growth ---
         const updateStructuralMesh = (meshRef, items, isRoot = false) => {
             if (!meshRef.current) return;
-            const matrix = new THREE.Matrix4();
             items.forEach((item, i) => {
                 let currentScaleY = 0;
                 let currentScaleXZ = 0;
@@ -336,21 +341,18 @@ const TreeStages = ({ progress }) => {
                         currentScaleY = easedT * item.length;
                         currentScaleXZ = (rawT * 0.75 + 0.25) * item.thickness; 
                     }
-                    
-                    // Extra thickening for trunk (depth 0) in stage 4-5
                     if (!isRoot && item.depth === 0 && progress > 50) {
-                        const thickBonus = 1 + (progress - 50) / 50; 
-                        currentScaleXZ *= thickBonus;
+                        currentScaleXZ *= (1 + (progress - 50) / 50);
                     }
                 }
-                matrix.compose(item.startPos, item.quaternion, new THREE.Vector3(currentScaleXZ, currentScaleY, currentScaleXZ));
-                meshRef.current.setMatrixAt(i, matrix);
+                _tempVec.set(currentScaleXZ, currentScaleY, currentScaleXZ);
+                _tempMat.compose(item.startPos, item.quaternion, _tempVec);
+                meshRef.current.setMatrixAt(i, _tempMat);
 
-                // Root color transition: white -> brown
                 if (isRoot) {
-                    const colorT = Math.min((progress - 8) / 40, 1); // 8 to 48
-                    const rootColor = new THREE.Color("#FFFFFF").lerp(new THREE.Color("#3E2723"), colorT);
-                    meshRef.current.setColorAt(i, rootColor);
+                    const colorT = Math.min((progress - 8) / 40, 1);
+                    _tempColor.set("#FFFFFF").lerp(_tempColor.set("#3E2723"), colorT);
+                    meshRef.current.setColorAt(i, _tempColor);
                 }
             });
             meshRef.current.instanceMatrix.needsUpdate = true;
@@ -362,65 +364,53 @@ const TreeStages = ({ progress }) => {
 
         // --- Leaves ---
         if (leafMeshRef.current) {
-            const leafMatrix = new THREE.Matrix4();
             leaves.forEach((l, i) => {
                 let currentScale = 0;
                 if (progress >= l.pStart) {
-                    if (progress >= l.pEnd) {
-                        currentScale = l.baseScale;
-                    } else {
-                        currentScale = easeOut((progress - l.pStart) / (l.pEnd - l.pStart)) * l.baseScale;
-                    }
+                    if (progress >= l.pEnd) currentScale = l.baseScale;
+                    else currentScale = easeOut((progress - l.pStart) / (l.pEnd - l.pStart)) * l.baseScale;
                     
                     if (currentScale > 0) {
                         const flutter = Math.sin(t * 1.8 + i) * 0.04 * currentScale;
-                        const dynamicRot = new THREE.Euler(l.rotation.x + flutter, l.rotation.y, l.rotation.z + flutter);
-                        leafMatrix.makeRotationFromEuler(dynamicRot);
-                        leafMatrix.setPosition(l.position);
-                        leafMatrix.scale(new THREE.Vector3(currentScale, currentScale, currentScale));
+                        _tempQuat.setFromEuler(_tempVec.set(l.rotation.x + flutter, l.rotation.y, l.rotation.z + flutter));
+                        _tempVec.set(currentScale, currentScale, currentScale);
+                        _tempMat.compose(l.position, _tempQuat, _tempVec);
                     } else {
-                        leafMatrix.identity().scale(new THREE.Vector3(0,0,0));
+                        _tempMat.identity().scale(_tempVec.set(0,0,0));
                     }
                 } else {
-                    leafMatrix.identity().scale(new THREE.Vector3(0,0,0));
+                    _tempMat.identity().scale(_tempVec.set(0,0,0));
                 }
-                leafMeshRef.current.setMatrixAt(i, leafMatrix);
+                leafMeshRef.current.setMatrixAt(i, _tempMat);
             });
             leafMeshRef.current.instanceMatrix.needsUpdate = true;
         }
 
         // --- Blossoms & Apples ---
         if (blossomMeshRef.current) {
-            const matrix = new THREE.Matrix4();
             blossoms.forEach((b, i) => {
                 let currentScale = 0;
                 if (progress >= b.pStart) {
-                    if (progress < b.pFade) {
-                        const tGrow = Math.min((progress - b.pStart) / (b.pEnd - b.pStart), 1);
-                        currentScale = easeOut(tGrow) * b.baseScale;
-                    } else {
-                        const tFade = Math.max(1 - (progress - b.pFade) / 5, 0);
-                        currentScale = tFade * b.baseScale;
-                    }
+                    if (progress < b.pFade) currentScale = easeOut(Math.min((progress - b.pStart) / (b.pEnd - b.pStart), 1)) * b.baseScale;
+                    else currentScale = Math.max(1 - (progress - b.pFade) / 5, 0) * b.baseScale;
                 }
-                matrix.identity().setPosition(b.position).scale(new THREE.Vector3(currentScale, currentScale, currentScale));
-                blossomMeshRef.current.setMatrixAt(i, matrix);
+                _tempVec.set(currentScale, currentScale, currentScale);
+                _tempMat.identity().setPosition(b.position).scale(_tempVec);
+                blossomMeshRef.current.setMatrixAt(i, _tempMat);
             });
             blossomMeshRef.current.instanceMatrix.needsUpdate = true;
         }
 
         if (appleMeshRef.current) {
-            const matrix = new THREE.Matrix4();
             apples.forEach((a, i) => {
                 let currentScale = 0;
                 if (progress >= a.pStart) {
-                    const tGrow = Math.min((progress - a.pStart) / (a.pEnd - a.pStart), 1);
-                    const pt = tGrow;
-                    const c4 = (2 * Math.PI) / 3;
-                    currentScale = pt === 0 ? 0 : pt === 1 ? a.baseScale : (Math.pow(2, -10 * pt) * Math.sin((pt * 10 - 0.75) * c4) + 1) * a.baseScale;
+                    const pt = Math.min((progress - a.pStart) / (a.pEnd - a.pStart), 1);
+                    currentScale = pt === 0 ? 0 : pt === 1 ? a.baseScale : (Math.pow(2, -10 * pt) * Math.sin((pt * 10 - 0.75) * ((2 * Math.PI) / 3)) + 1) * a.baseScale;
                 }
-                matrix.identity().setPosition(a.position).scale(new THREE.Vector3(currentScale, currentScale, currentScale));
-                appleMeshRef.current.setMatrixAt(i, matrix);
+                _tempVec.set(currentScale, currentScale, currentScale);
+                _tempMat.identity().setPosition(a.position).scale(_tempVec);
+                appleMeshRef.current.setMatrixAt(i, _tempMat);
             });
             appleMeshRef.current.instanceMatrix.needsUpdate = true;
         }

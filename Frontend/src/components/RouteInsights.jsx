@@ -4,6 +4,15 @@ import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveCo
 import './RouteInsights.css';
 
 const RouteInsights = ({ routeQuery, routeData }) => {
+  const [isMounted, setIsMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    // Delay rendering charts until layout is stable
+    const timer = setTimeout(() => setIsMounted(true), 300);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!isMounted) return <div className="route-insights-container glass-panel mt-4" style={{ minHeight: '400px' }} />;
   // --- Data Definitions ---
 
   // 1. Demographics Data
@@ -92,8 +101,8 @@ const RouteInsights = ({ routeQuery, routeData }) => {
             <div className="insight-icon red"><Users size={20} /></div>
             <h3>Demographics & Distance</h3>
           </div>
-          <div className="insight-card-content" style={{ height: '200px' }}>
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="insight-card-content" style={{ width: '100%', minWidth: '0px' }}>
+            <ResponsiveContainer width="100%" aspect={1.6}>
               <BarChart data={popData} layout="vertical" margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
                 <XAxis type="number" hide />
                 <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{fill: 'var(--text-secondary)', fontSize: 11, fontWeight: 600}} width={80} />
@@ -128,15 +137,15 @@ const RouteInsights = ({ routeQuery, routeData }) => {
             <div className="insight-icon blue"><Train size={20} /></div>
             <h3>Transport Share</h3>
           </div>
-          <div className="insight-card-content flex items-center justify-center" style={{ height: '200px' }}>
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="insight-card-content flex items-center justify-center" style={{ width: '100%', minWidth: '0px' }}>
+            <ResponsiveContainer width="100%" aspect={1.6}>
               <PieChart>
                 <Pie
                   data={transportData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={50}
-                  outerRadius={70}
+                  innerRadius="60%"
+                  outerRadius="85%"
                   paddingAngle={5}
                   dataKey="value"
                   stroke="none"
@@ -168,8 +177,8 @@ const RouteInsights = ({ routeQuery, routeData }) => {
             <div className="insight-icon orange"><Map size={20} /></div>
             <h3>Area Potential Map</h3>
           </div>
-          <div className="insight-card-content" style={{ height: '240px' }}>
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="insight-card-content" style={{ width: '100%', minWidth: '0px' }}>
+            <ResponsiveContainer width="100%" aspect={3.5}>
               <ComposedChart data={areaData} margin={{ top: 20, right: 20, bottom: 20, left: -20 }}>
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: 'var(--text-muted)', fontSize: 11, fontWeight: 500}} dy={10} />
                 <YAxis hide />
@@ -206,9 +215,9 @@ const RouteInsights = ({ routeQuery, routeData }) => {
             <div className="insight-icon purple"><Ticket size={20} /></div>
             <h3>Tourism Hotspots</h3>
           </div>
-          <div className="insight-card-content" style={{ height: '200px' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="70%" data={tourismData}>
+          <div className="insight-card-content" style={{ width: '100%', minWidth: '0px' }}>
+            <ResponsiveContainer width="100%" aspect={1.6}>
+              <RadarChart cx="50%" cy="50%" outerRadius="75%" data={tourismData}>
                 <PolarGrid stroke="rgba(0,0,0,0.05)" />
                 <PolarAngleAxis dataKey="subject" tick={{fill: 'var(--text-secondary)', fontSize: 10}} />
                 <Radar name="Visitors" dataKey="A" stroke="var(--purple-light)" fill="var(--purple-light)" fillOpacity={0.4} />
@@ -227,7 +236,7 @@ const RouteInsights = ({ routeQuery, routeData }) => {
             <div className="insight-icon green"><MapIcon size={20} /></div>
             <h3>Route Tradeoffs</h3>
           </div>
-          <div className="insight-card-content flex flex-col justify-center gap-4" style={{ height: '200px', padding: '10px 0' }}>
+          <div className="insight-card-content flex flex-col justify-center gap-4" style={{ minHeight: '160px', padding: '10px 0' }}>
              
              {suggestedRoutes.map((route, idx) => (
                <div key={idx} className="w-full">
