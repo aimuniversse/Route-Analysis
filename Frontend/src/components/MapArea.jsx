@@ -5,10 +5,17 @@ import routeMap from "../assets/routemap.png";
 
 const MapArea = ({ routeData, routeQuery, isLoading }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
+<<<<<<< HEAD
 
   const parsedPath = routeData?.route_summary?.path?.split(" → ") || routeQuery?.split(" to ");
   const startLabel = parsedPath?.[0] || 'Origin';
   const endLabel = parsedPath?.[parsedPath.length - 1] || 'Destination';
+=======
+  
+  const parsedPath = routeData?.route_summary?.path?.split(" → ") || routeQuery?.split(" to ");
+  const startLabel = parsedPath?.[0] || routeData?.population_data?.source?.name || 'Origin';
+  const endLabel = parsedPath?.[parsedPath.length - 1] || routeData?.population_data?.destination?.name || 'Destination';
+>>>>>>> b1172839a1b6d322a3817ac511f9835fac1b91fd
 
   return (
     <div className={`route-map-shell ${isFullscreen ? 'fullscreen-active' : ''}`}>
