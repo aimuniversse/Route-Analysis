@@ -1,23 +1,3 @@
-<<<<<<< HEAD
-import React, { useState } from 'react';
-import Header from './components/Header';
-import MapArea from './components/MapArea';
-import Charts from './components/Charts';
-import BottomWidgets from './components/BottomWidgets';
-import RouteInsights from './components/RouteInsights';
-import AreaPotentialMap from './components/AreaPotentialMap';
-=======
-<<<<<<< HEAD
-import React from 'react';
->>>>>>> 6a65c60db754b236a990914d956f0373b98e1ba4
-import PremiumReportPage from './components/PremiumReportPage';
-import './App.css';
-
-function App() {
-  return (
-    <div className="app-wrapper">
-      <PremiumReportPage />
-=======
 import React, { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
@@ -25,7 +5,7 @@ import Features from "./components/Features";
 import SplashScreen from "./components/SplashScreen";
 import RouteResults from "./components/RouteResults";
 
-// Team components
+// Dashboard components
 import MapArea from "./components/MapArea";
 import Charts from "./components/Charts";
 import BottomWidgets from "./components/BottomWidgets";
@@ -38,44 +18,12 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState(null);
 
-  // Team states
+  // Route analysis states
   const [routeData, setRouteData] = useState(null);
   const [routeQuery, setRouteQuery] = useState("Chennai to Coimbatore");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-<<<<<<< HEAD
-  const analyzeRoute = async (source, destination) => {
-    if (!source.trim() || !destination.trim()) return;
-    
-    setIsLoading(true);
-    setError(null);
-    setRouteData(null);
-    setRouteQuery(`${source} to ${destination}`);
-    
-    try {
-      // Fetch from the Django API using the Vite proxy
-      const response = await fetch(`/api/route-analysis/?source=${encodeURIComponent(source)}&destination=${encodeURIComponent(destination)}`);
-      
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} ${response.statusText}`);
-      }
-      
-      const result = await response.json();
-      
-      if (result.status === 'error') {
-        throw new Error(result.message || 'Analysis failed');
-      }
-      
-      // Backend returns { status: 'success', data: { ... }, data_source: '...' }
-      setRouteData(result.data);
-    } catch (err) {
-      console.error("Failed to analyze route:", err);
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-=======
   // Splash screen timer
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -84,73 +32,59 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Route analysis function (now receives data from SearchBox -> SearchingOverlay)
+  // Route analysis function
+  const analyzeRoute = async (source, destination) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch("http://localhost:8000/api/route-analysis/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          source: source,
+          destination: destination,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch route analysis");
+      }
+
+      const result = await response.json();
+      if (result.status === "success") {
+        setRouteData(result.data);
+        setResults(result.data);
+        setRouteQuery(`${source} to ${destination}`);
+      } else {
+        throw new Error(result.message || "Error analyzing route");
+      }
+    } catch (err) {
+      console.error("Route analysis failed:", err);
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle results from Hero -> SearchBox -> SearchingOverlay
   const handleRouteResults = (data, routeString) => {
     setIsLoading(false);
     setError(null);
     setRouteData(data);
     setResults(data); // Pass down the AI data
     setRouteQuery(routeString || "Custom Route");
->>>>>>> 6a65c60db754b236a990914d956f0373b98e1ba4
   };
 
-  // Initial fetch on mount
-  React.useEffect(() => {
+  // Initial fetch (optional - commented out to show Hero first if no results)
+  /*
+  useEffect(() => {
     analyzeRoute('Chennai', 'Coimbatore');
   }, []);
+  */
 
   return (
-<<<<<<< HEAD
-    <div className="app-stack">
-      {/* Header Section 
-      <Header onAnalyze={analyzeRoute} isLoading={isLoading} />*/}
-      
-      {error && (
-        <div className="error-banner">
-          {error}
-        </div>
-      )}
-
-      {/* 1. Map Section */}
-      <section className="app-section map-section animate-fade-in">
-        <div className="section-header">
-          <h2 className="section-title">Route Overview Map</h2>
-        </div>
-        <MapArea routeData={routeData} routeQuery={routeQuery} isLoading={isLoading} />
-      </section>
-
-      {/* 1.5 Area Potential Corridor Map */}
-      <section className="app-section potential-map-section animate-fade-in-up">
-        <AreaPotentialMap routeData={routeData} isLoading={isLoading} />
-      </section>
-
-      {/* 2. Dashboard Section (Charts & Analytics) */}
-      <section className="app-section dashboard-section animate-fade-in-up">
-        <div className="section-header">
-          <h2 className="section-title">Data Analytics & Insights</h2>
-        </div>
-        <div className="dashboard-grid">
-          <div className="charts-row">
-            <Charts routeData={routeData} />
-          </div>
-          <div className="widgets-row">
-            <BottomWidgets routeData={routeData} />
-          </div>
-          <div className="insights-row">
-            <RouteInsights routeQuery={routeQuery} routeData={routeData} />
-          </div>
-        </div>
-      </section>
-
-      {/* 3. Premium Report Page Section */}
-      <section className="app-section premium-section animate-fade-in-up">
-        <div className="section-header">
-          <h2 className="section-title">Premium Corridor Report</h2>
-        </div>
-        <PremiumReportPage routeData={routeData} />
-      </section>
-
-=======
     <div className="app">
       {loading && <SplashScreen />}
 
@@ -158,44 +92,56 @@ function App() {
 
       {/* If results exist → show full dashboard */}
       {results ? (
-        <>
+        <div className="dashboard-view animate-fade-in">
           <RouteResults data={results} onBack={() => setResults(null)} />
 
           {error && <div className="error-banner">{error}</div>}
 
           {/* Map Section */}
           <section className="app-section map-section">
-            <h2>Route Overview Map</h2>
+            <div className="section-header">
+              <h2>Route Overview Map</h2>
+              <span className="route-badge">{routeQuery}</span>
+            </div>
             <MapArea routeData={routeData} routeQuery={routeQuery} isLoading={isLoading} />
           </section>
 
           {/* Dashboard Section */}
           <section className="app-section dashboard-section">
-            <h2>Data Analytics & Insights</h2>
-
-            <Charts routeData={routeData} />
-            <BottomWidgets routeData={routeData} />
-            <RouteInsights routeQuery={routeQuery} routeData={routeData} />
+            <div className="section-header">
+              <h2>Data Analytics & Insights</h2>
+            </div>
+            <div className="dashboard-grid">
+              <Charts routeData={routeData} />
+              <BottomWidgets routeData={routeData} />
+              <RouteInsights routeQuery={routeQuery} routeData={routeData} />
+            </div>
           </section>
 
           {/* Premium Section */}
           <section className="app-section premium-section">
-            <h2>Premium Corridor Report</h2>
+            <div className="section-header">
+              <h2>Premium Corridor Report</h2>
+            </div>
             <PremiumReportPage />
           </section>
-        </>
+        </div>
       ) : (
-        <>
+        <div className="landing-view">
           <Hero onResults={handleRouteResults} />
           <Features />
-        </>
+        </div>
       )}
 
->>>>>>> 6a65c60db754b236a990914d956f0373b98e1ba4
       <footer className="app-footer">
-        <p>© {new Date().getFullYear()} Route Analysis AI</p>
+        <div className="footer-content">
+          <p>© {new Date().getFullYear()} Route Analysis AI. All rights reserved.</p>
+          <div className="footer-links">
+            <a href="#privacy">Privacy Policy</a>
+            <a href="#terms">Terms of Service</a>
+          </div>
+        </div>
       </footer>
->>>>>>> 76bf54b7a29fabb6bf607653c1389d979ee0f2e0
     </div>
   );
 }

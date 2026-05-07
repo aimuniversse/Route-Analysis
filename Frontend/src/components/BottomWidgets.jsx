@@ -3,18 +3,11 @@ import { AlertCircle, CloudRain, Clock, ArrowRight } from 'lucide-react';
 import './BottomWidgets.css';
 
 const BottomWidgets = ({ routeData }) => {
-<<<<<<< HEAD
-  const distance = routeData?.route_summary?.total_distance || "505";
-  const startCity = routeData?.population_data?.source?.name || "Chennai, TN";
-  const endCity = routeData?.population_data?.destination?.name || "Coimbatore, TN";
-  const timeMins = Math.round((routeData?.route_summary?.estimated_time || 8) * 60);
-=======
   const distance = routeData?.route_summary?.total_distance || routeData?.distance?.[0]?.km || "505";
   const parsedPath = routeData?.route_summary?.path?.split(" → ");
   const startCity = parsedPath?.[0] || routeData?.distance?.[0]?.from || "Chennai, TN";
   const endCity = parsedPath?.[parsedPath.length - 1] || routeData?.distance?.[0]?.to || "Coimbatore, TN";
   const timeMins = Math.round(Number(distance) / 60 * 60); // assuming avg 60km/h for highway
->>>>>>> 6a65c60db754b236a990914d956f0373b98e1ba4
 
   const liveUpdates = Array.isArray(routeData?.dashboard_data?.live_updates) 
     ? routeData.dashboard_data.live_updates 
@@ -80,6 +73,14 @@ const BottomWidgets = ({ routeData }) => {
             <div className="search-route">
               <span className="city-pill">{startCity.split(',')[0]}</span> 
               <ArrowRight size={14} className="text-muted" /> 
+              {parsedPath?.length > 2 && (
+                <>
+                  <span className="city-pill" style={{ color: 'var(--accent-blue)', background: 'rgba(59, 130, 246, 0.1)' }}>
+                    {parsedPath[1].split(',')[0]}
+                  </span>
+                  <ArrowRight size={14} className="text-muted" />
+                </>
+              )}
               <span className="city-pill">{endCity.split(',')[0]}</span>
             </div>
             <div className="text-xs text-muted mt-1 font-medium">Just now</div>

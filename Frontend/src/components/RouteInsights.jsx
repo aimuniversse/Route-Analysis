@@ -6,100 +6,35 @@ import './RouteInsights.css';
 const RouteInsights = ({ routeQuery, routeData }) => {
   // --- Data Definitions ---
 
-<<<<<<< HEAD
-  // 1. Demographics Data
-  const popData = routeData?.population_data ? [
-    { name: routeData.population_data.source.name, value: (routeData.population_data.source.count / 1000000).toFixed(1), fill: 'url(#colorTrafficRed)' },
-    { name: routeData.population_data.destination.name, value: (routeData.population_data.destination.count / 1000000).toFixed(1), fill: 'var(--accent-blue-light)' },
-    { name: 'Via Points', value: routeData.population_data.via ? (routeData.population_data.via.count / 1000000).toFixed(1) : 0, fill: 'var(--text-muted)' },
-  ].filter(d => d.value > 0) : [
-    { name: 'Origin', value: 5.0, fill: 'url(#colorTrafficRed)' },
-    { name: 'Dest', value: 1.7, fill: 'var(--accent-blue-light)' },
-    { name: 'Corridor', value: 11.0, fill: 'var(--text-muted)' },
-  ];
-
-  // 2. Transport Data
-  const transportData = routeData?.transport_distribution ? [
-    { name: 'Bus', value: routeData.transport_distribution.bus, color: 'var(--accent-blue)' },
-    { name: 'Train', value: routeData.transport_distribution.train, color: '#f59e0b' },
-    { name: 'Car/Air', value: routeData.transport_distribution.car + (routeData.transport_distribution.flight || 0), color: '#10b981' },
-=======
   const aiPop = routeData?.population_data;
   const popData = aiPop ? [
-    { name: aiPop.source?.name || 'Origin', value: aiPop.source?.count / 1000000 || 5.0, fill: 'url(#colorTrafficRed)' },
-    { name: aiPop.destination?.name || 'Destination', value: aiPop.destination?.count / 1000000 || 1.7, fill: 'var(--accent-blue-light)' },
-    ...(aiPop.via ? [{ name: aiPop.via.name || 'Via', value: aiPop.via.count / 1000000 || 2.0, fill: 'var(--text-muted)' }] : [])
-  ] : [
-    { name: 'Chennai', value: 5.0, fill: 'url(#colorTrafficRed)' },
-    { name: 'Coimbatore', value: 1.7, fill: 'var(--accent-blue-light)' },
-    { name: 'Corridor', value: 11.0, fill: 'var(--text-muted)' },
-  ];
+    { name: aiPop.source?.name || 'Origin', value: aiPop.source?.count / 1000000 || 0, fill: 'url(#colorTrafficRed)' },
+    { name: aiPop.destination?.name || 'Destination', value: aiPop.destination?.count / 1000000 || 0, fill: 'var(--accent-blue-light)' },
+    ...(aiPop.via ? [{ name: aiPop.via.name || 'Via', value: aiPop.via.count / 1000000 || 0, fill: 'var(--text-muted)' }] : [])
+  ] : [];
 
   const aiTransport = routeData?.transport_distribution || routeData?.transport_pattern;
   const transportData = aiTransport ? [
-    { name: 'Bus', value: aiTransport.bus || 60, color: 'var(--accent-blue)' },
-    { name: 'Train', value: aiTransport.train || 30, color: '#f59e0b' },
-    { name: 'Car/Air', value: (aiTransport.car || 0) + (aiTransport.flight || 0) + (aiTransport.private || 0), color: '#10b981' },
->>>>>>> 6a65c60db754b236a990914d956f0373b98e1ba4
-  ] : [
-    { name: 'Bus', value: 60, color: 'var(--accent-blue)' },
-    { name: 'Train', value: 30, color: '#f59e0b' },
-    { name: 'Car/Air', value: 10, color: '#10b981' },
-  ];
+    { name: 'Bus', value: aiTransport.bus || 0, color: '#e11d48' },
+    { name: 'Train', value: aiTransport.train || 0, color: '#1058dd' },
+    { name: 'Car/Air', value: (aiTransport.car || 0) + (aiTransport.flight || 0) + (aiTransport.private || 0), color: '#12e47b' },
+  ] : [];
 
-<<<<<<< HEAD
-  // 3. Tourism Data
-  const tourismData = routeData?.visitor_data ? 
-    routeData.visitor_data.slice(0, 5).map(v => ({ subject: v.place_name, A: v.daily })) :
-    [
-      { subject: 'Marina', A: 100 },
-      { subject: 'Kapaleeswarar', A: 50 },
-      { subject: 'Black Thunder', A: 20 },
-      { subject: 'Perur Temple', A: 15 },
-      { subject: 'Isha Yoga', A: 60 },
-    ];
-
-  // 4. Area Data (Segmentation)
-  const areaData = routeData?.area_segmentation ? [
-    { name: 'Jobs', potential: 80, activity: 90, type: routeData.area_segmentation.job_business_areas[0] || 'Business' },
-    { name: 'Students', potential: 95, activity: 85, type: routeData.area_segmentation.student_areas[0] || 'Education' },
-    { name: 'Tourism', potential: 70, activity: 75, type: routeData.area_segmentation.tourist_areas[0] || 'Leisure' },
-=======
   const aiTourism = routeData?.visitor_data;
   const tourismData = aiTourism ? aiTourism.slice(0, 5).map(v => ({
-    subject: v.place_name, A: v.daily || Math.round(v.yearly / 365) || 50
-  })) : [
-    { subject: 'Marina', A: 100 },
-    { subject: 'Kapaleeswarar', A: 50 },
-    { subject: 'Black Thunder', A: 20 },
-    { subject: 'Perur Temple', A: 15 },
-    { subject: 'Isha Yoga', A: 60 },
-  ];
+    subject: v.place_name, A: v.daily || Math.round(v.yearly / 365) || 0
+  })) : [];
 
-  // Map AI's area_segmentation into AreaData format (or default)
+  // Map AI's area_segmentation into AreaData format
   const aiArea = routeData?.area_segmentation;
   const areaData = aiArea ? [
-    { name: 'Business', potential: 90, activity: 85, type: aiArea.job_business_areas?.[0] || 'Jobs' },
-    { name: 'Student', potential: 60, activity: 50, type: aiArea.student_areas?.[0] || 'Education' },
-    { name: 'Tourist', potential: 85, activity: 80, type: aiArea.tourist_areas?.[0] || 'Tourism' },
->>>>>>> 6a65c60db754b236a990914d956f0373b98e1ba4
-  ] : [
-    { name: 'Chennai', potential: 80, activity: 90, type: 'Origin / IT' },
-    { name: 'Sriperumbudur', potential: 95, activity: 85, type: 'Industrial' },
-    { name: 'Vellore', potential: 60, activity: 50, type: 'Education' },
-    { name: 'Salem', potential: 70, activity: 65, type: 'Transit / Trade' },
-    { name: 'Coimbatore', potential: 85, activity: 80, type: 'Textile' },
-  ];
+    { name: 'Business', potential: aiArea.job_business_areas?.[0]?.potential || 0, activity: aiArea.job_business_areas?.[0]?.activity || 0, type: aiArea.job_business_areas?.[0]?.type || 'Jobs' },
+    { name: 'Student', potential: aiArea.student_areas?.[0]?.potential || 0, activity: aiArea.student_areas?.[0]?.activity || 0, type: aiArea.student_areas?.[0]?.type || 'Education' },
+    { name: 'Tourist', potential: aiArea.tourist_areas?.[0]?.potential || 0, activity: aiArea.tourist_areas?.[0]?.activity || 0, type: aiArea.tourist_areas?.[0]?.type || 'Tourism' },
+  ] : [];
 
-<<<<<<< HEAD
-  const suggestedRoutes = routeData?.suggested_routes || [
-    { option: 1, path: 'NH 544', distance: 505, time: 8.5 },
-    { option: 2, path: 'NH 48', distance: 530, time: 9.7 },
-  ];
-=======
   // Suggested Routes
-  const aiRoutes = routeData?.suggested_routes;
->>>>>>> 6a65c60db754b236a990914d956f0373b98e1ba4
+  const suggestedRoutes = routeData?.suggested_routes || [];
 
   // --- Render ---
 
@@ -127,6 +62,7 @@ const RouteInsights = ({ routeQuery, routeData }) => {
       <div className="insights-grid">
         
         {/* 1. Demographics & Distance (Bar Chart) */}
+        {popData.length > 0 && (
         <div className="insight-card hover-lift">
           <div className="insight-card-header">
             <div className="insight-icon red"><Users size={20} /></div>
@@ -161,8 +97,10 @@ const RouteInsights = ({ routeQuery, routeData }) => {
             </div>
           </div>
         </div>
+        )}
 
         {/* 2. Transport & Logistics (Donut Chart) */}
+        {transportData.length > 0 && (
         <div className="insight-card hover-lift">
           <div className="insight-card-header">
             <div className="insight-icon blue"><Train size={20} /></div>
@@ -201,8 +139,10 @@ const RouteInsights = ({ routeQuery, routeData }) => {
              ))}
           </div>
         </div>
+        )}
 
         {/* 3. Area Segmentation (Scatter/Bubble Chart) */}
+        {areaData.length > 0 && (
         <div className="insight-card span-2 hover-lift">
           <div className="insight-card-header">
             <div className="insight-icon orange"><Map size={20} /></div>
@@ -214,7 +154,7 @@ const RouteInsights = ({ routeQuery, routeData }) => {
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: 'var(--text-muted)', fontSize: 11, fontWeight: 500}} dy={10} />
                 <YAxis hide />
                 <Tooltip 
-                  cursor={{fill: 'rgba(0,0,0,0.02)'}}
+                  cursor={{fill: 'rgba(194, 41, 41, 0.94)'}}
                   contentStyle={{ borderRadius: '12px', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-md)' }}
                   formatter={(value, name, props) => {
                     if (name === 'potential') return [value, 'Economic Potential'];
@@ -231,7 +171,7 @@ const RouteInsights = ({ routeQuery, routeData }) => {
                 <Area type="monotone" dataKey="activity" fill="url(#colorArea)" stroke="#f59e0b" strokeWidth={2} />
                 <Bar dataKey="potential" barSize={30} radius={[6, 6, 0, 0]}>
                   {areaData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={index === 1 || index === 4 ? 'var(--accent-blue)' : 'var(--accent-blue-light)'} />
+                    <Cell key={`cell-${index}`} fill={index === 1 || index === 4 ? '#e11d48' : '#dc2626'} />
                   ))}
                 </Bar>
               </ComposedChart>
@@ -239,8 +179,10 @@ const RouteInsights = ({ routeQuery, routeData }) => {
           </div>
           <div className="text-xs text-center text-muted"> Bar represents economic/tourist potential along the corridor.</div>
         </div>
+        )}
 
         {/* 4. Tourism & Visitors (Radar Chart) */}
+        {tourismData.length > 0 && (
         <div className="insight-card hover-lift">
           <div className="insight-card-header">
             <div className="insight-icon purple"><Ticket size={20} /></div>
@@ -260,8 +202,10 @@ const RouteInsights = ({ routeQuery, routeData }) => {
             </ResponsiveContainer>
           </div>
         </div>
+        )}
 
         {/* 5. Suggested Routes (Graphical Timeline) */}
+        {suggestedRoutes.length > 0 && (
         <div className="insight-card hover-lift">
           <div className="insight-card-header">
             <div className="insight-icon green"><MapIcon size={20} /></div>
@@ -284,6 +228,7 @@ const RouteInsights = ({ routeQuery, routeData }) => {
 
           </div>
         </div>
+        )}
 
       </div>
     </div>

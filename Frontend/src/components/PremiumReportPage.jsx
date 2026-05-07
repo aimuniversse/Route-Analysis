@@ -101,7 +101,11 @@ const trainFrequencies = [
 
 
 export default function PremiumReportPage({ routeData }) {
-  const routeName = routeData?.route_summary?.path || "Coimbatore to Chennai";
+  const routeName = routeData?.route_summary?.path || "Route Analysis";
+  const startCity = routeData?.population_data?.source?.name || "Origin";
+  const endCity = routeData?.population_data?.destination?.name || "Destination";
+  const viaCity = routeData?.population_data?.via?.name || "";
+  
   const [formData, setFormData] = useState({ name: '', busTravels: '', contactNo: '', message: '' });
   const [formStatus, setFormStatus] = useState(null); // null | 'success' | 'error'
 
@@ -176,54 +180,31 @@ export default function PremiumReportPage({ routeData }) {
                     <Landmark size={20} className="text-blue-main" />
                   </div>
                   <span className="dot bg-blue-main"></span>
-                  <span className="city-name">Coimbatore</span>
+                  <span className="city-name">{startCity}</span>
                 </div>
-                <div className="pop-badge bg-blue-light text-blue-main">1.6M - 2.0M</div>
+                <div className="pop-badge bg-blue-light text-blue-main">
+                  {routeData?.population_data?.source?.count 
+                    ? `${(routeData.population_data.source.count / 1000000).toFixed(1)}M` 
+                    : "1.6M"}
+                </div>
               </div>
 
-              <div className="population-item">
-                <div className="city-info-left">
-                  <div className="city-icon-badge bg-purple-light">
-                    <Building2 size={20} className="text-purple-main" />
+              {viaCity && (
+                <div className="population-item">
+                  <div className="city-info-left">
+                    <div className="city-icon-badge bg-purple-light">
+                      <Building2 size={20} className="text-purple-main" />
+                    </div>
+                    <span className="dot bg-purple-main"></span>
+                    <span className="city-name">{viaCity}</span>
                   </div>
-                  <span className="dot bg-purple-main"></span>
-                  <span className="city-name">Tirupur</span>
-                </div>
-                <div className="pop-badge bg-purple-light text-purple-main">0.8M - 1.2M</div>
-              </div>
-
-              <div className="population-item">
-                <div className="city-info-left">
-                  <div className="city-icon-badge bg-orange-light">
-                    <Activity size={20} className="text-orange-main" />
+                  <div className="pop-badge bg-purple-light text-purple-main">
+                    {routeData?.population_data?.via?.count 
+                      ? `${(routeData.population_data.via.count / 1000000).toFixed(1)}M` 
+                      : "0.8M"}
                   </div>
-                  <span className="dot bg-orange-main"></span>
-                  <span className="city-name">Erode</span>
                 </div>
-                <div className="pop-badge bg-orange-light text-orange-main">0.5M - 0.8M</div>
-              </div>
-
-              <div className="population-item">
-                <div className="city-info-left">
-                  <div className="city-icon-badge bg-green-light">
-                    <Landmark size={20} className="text-green-main" />
-                  </div>
-                  <span className="dot bg-green-main"></span>
-                  <span className="city-name">Salem</span>
-                </div>
-                <div className="pop-badge bg-green-light text-green-main">0.8M - 1.2M</div>
-              </div>
-
-              <div className="population-item">
-                <div className="city-info-left">
-                  <div className="city-icon-badge bg-pink-light">
-                    <Building2 size={20} className="text-pink-main" />
-                  </div>
-                  <span className="dot bg-pink-main"></span>
-                  <span className="city-name">Vellore</span>
-                </div>
-                <div className="pop-badge bg-pink-light text-pink-main">0.5M - 0.8M</div>
-              </div>
+              )}
 
               <div className="population-item">
                 <div className="city-info-left">
@@ -231,9 +212,13 @@ export default function PremiumReportPage({ routeData }) {
                     <Landmark size={20} className="text-indigo-main" />
                   </div>
                   <span className="dot bg-indigo-main"></span>
-                  <span className="city-name">Chennai</span>
+                  <span className="city-name">{endCity}</span>
                 </div>
-                <div className="pop-badge bg-indigo-light text-indigo-main">7.0M - 9.0M</div>
+                <div className="pop-badge bg-indigo-light text-indigo-main">
+                   {routeData?.population_data?.destination?.count 
+                    ? `${(routeData.population_data.destination.count / 1000000).toFixed(1)}M` 
+                    : "8.0M"}
+                </div>
               </div>
             </div>
 
@@ -288,7 +273,7 @@ export default function PremiumReportPage({ routeData }) {
                 </div>
                 <div className="card-text-side">
                   <h3>Education & Institutions</h3>
-                  <p>Coimbatore is home to several prestigious educational institutions, including the Coimbatore Institute of Technology and the PSG College of Technology.</p>
+                  <p>{routeData?.area_segmentation?.student_areas?.join(', ') || "Renowned educational institutions and learning hubs located along the corridor."}</p>
                 </div>
                 <div className="card-number-badge bg-orange-soft text-orange-main">01</div>
               </div>
@@ -302,7 +287,7 @@ export default function PremiumReportPage({ routeData }) {
                 </div>
                 <div className="card-text-side">
                   <h3>Temples & Heritage</h3>
-                  <p>The corridor is home to several famous temples, including the Perur Pateeswarar Temple in Coimbatore and the Kapaleeswarar Temple in Chennai.</p>
+                  <p>Historical landmarks and spiritual centers that define the cultural landscape of this route.</p>
                 </div>
                 <div className="card-number-badge bg-purple-soft text-purple-main">02</div>
               </div>
@@ -316,7 +301,7 @@ export default function PremiumReportPage({ routeData }) {
                 </div>
                 <div className="card-text-side">
                   <h3>Tourist Attractions</h3>
-                  <p>The corridor is home to several popular tourist attractions, including the Nilgiri Hills, the Kodaikanal Lake, and the Marina Beach in Chennai.</p>
+                  <p>{routeData?.area_segmentation?.tourist_areas?.join(', ') || "Scenic destinations and popular tourist spots that attract visitors year-round."}</p>
                 </div>
                 <div className="card-number-badge bg-green-soft text-green-main">03</div>
               </div>
@@ -330,7 +315,7 @@ export default function PremiumReportPage({ routeData }) {
                 </div>
                 <div className="card-text-side">
                   <h3>Companies & Industries</h3>
-                  <p>The corridor is home to several major industries, including textiles, automotive, and IT. Some of the major companies include Tata Motors, Ford India, and Hyundai India.</p>
+                  <p>{routeData?.area_segmentation?.job_business_areas?.join(', ') || "Major industrial zones and corporate hubs driving economic growth along this path."}</p>
                 </div>
                 <div className="card-number-badge bg-blue-soft text-blue-main">04</div>
               </div>
@@ -358,20 +343,24 @@ export default function PremiumReportPage({ routeData }) {
                 </div>
                 <div className="node-marker-dot"></div>
                 <div className="node-vertical-connector"></div>
-                <div className="node-desc-text">Coimbatore: The starting point of the corridor.</div>
+                <div className="node-desc-text">{startCity}: The starting point of the corridor.</div>
               </div>
 
-              {/* Node 2: Industrial Zone */}
+              {/* Node 2: Industrial Zone / Via */}
               <div className="model-timeline-node is-bottom">
                 <div className="node-content-box">
                   <div className="node-image-circle">
                     <img src={industryIcon} alt="Industrial Zone" />
                   </div>
-                  <div className="node-title-main">Industrial Zone</div>
+                  <div className="node-title-main">{viaCity || "Industrial Zone"}</div>
                 </div>
                 <div className="node-marker-dot"></div>
                 <div className="node-vertical-connector"></div>
-                <div className="node-desc-text">Tirupur, Erode, Salem: Major textile and steel manufacturing hubs.</div>
+                <div className="node-desc-text">
+                  {viaCity 
+                    ? `${viaCity}: A key intermediate point in your journey.` 
+                    : "Major manufacturing and trade hubs along the route."}
+                </div>
               </div>
 
               {/* Node 3: Tourist Zone */}
@@ -384,24 +373,11 @@ export default function PremiumReportPage({ routeData }) {
                 </div>
                 <div className="node-marker-dot"></div>
                 <div className="node-vertical-connector"></div>
-                <div className="node-desc-text">Nilgiri Hills, Kodaikanal: Scenic beauty and popular hill stations.</div>
-              </div>
-
-              {/* Node 4: Entry Zone */}
-              <div className="model-timeline-node is-bottom">
-                <div className="node-content-box">
-                  <div className="node-image-circle">
-                    <img src={pointIcon} alt="Entry Zone" />
-                  </div>
-                  <div className="node-title-main">Entry Zone</div>
-                </div>
-                <div className="node-marker-dot"></div>
-                <div className="node-vertical-connector"></div>
-                <div className="node-desc-text">Vellore: Historical city known for its fort and gold temple.</div>
+                <div className="node-desc-text">Scenic beauty and popular leisure spots available nearby.</div>
               </div>
 
               {/* Node 5: Destination */}
-              <div className="model-timeline-node is-top">
+              <div className="model-timeline-node is-bottom">
                 <div className="node-content-box">
                   <div className="node-image-circle">
                     <img src={destinationIcon} alt="Destination" />
@@ -410,7 +386,7 @@ export default function PremiumReportPage({ routeData }) {
                 </div>
                 <div className="node-marker-dot"></div>
                 <div className="node-vertical-connector"></div>
-                <div className="node-desc-text">Chennai: Major metro city, beach destination, and IT hub.</div>
+                <div className="node-desc-text">{endCity}: Your final destination and economic hub.</div>
               </div>
 
             </div>

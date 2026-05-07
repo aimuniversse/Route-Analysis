@@ -1,20 +1,55 @@
 import React, { useState } from 'react';
 import { Loader2, Maximize2, Minimize2, Map as MapIcon, Navigation } from 'lucide-react';
 import './MapArea.css';
-import routeMap from "../assets/routemap.png";
+import routeMap from "../assets/image/maparea.png";
 
 const MapArea = ({ routeData, routeQuery, isLoading }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   
-<<<<<<< HEAD
-  // Use data from props or fallbacks
-  const startLabel = routeData?.population_data?.source?.name || 'Origin';
-  const endLabel = routeData?.population_data?.destination?.name || 'Destination';
-=======
-  const parsedPath = routeData?.route_summary?.path?.split(" → ") || routeQuery?.split(" to ");
-  const startLabel = parsedPath?.[0] || 'Origin';
-  const endLabel = parsedPath?.[parsedPath.length - 1] || 'Destination';
->>>>>>> 6a65c60db754b236a990914d956f0373b98e1ba4
+  // Extract map coordinates and names from backend data
+  const sourceData = routeData?.population_data?.source;
+  const destData = routeData?.population_data?.destination;
+  
+  const sourceCoords = sourceData?.coordinates;
+  const destCoords = destData?.coordinates;
+  const sourceName = sourceData?.name;
+  const destName = destData?.name;
+  
+  // Calculate percentage positions on map for markers
+  // Source: Top-Right, Destination: Bottom-Left
+  const getMarkerPosition = (cityType) => {
+    if (cityType === 'source') {
+      // Source at top-right corner
+      return { top: 10, left: 88 };
+    } else if (cityType === 'destination') {
+      // Destination slightly lower and more to the right
+      return { top: 93, left: 17 };
+    }
+    return null;
+  };
+  
+  const sourcePosition = getMarkerPosition('source');
+  const destPosition = getMarkerPosition('destination');
+  
+  const getParsedPath = () => {
+    if (routeData?.route_summary?.path) {
+      return routeData.route_summary.path.split(/ → | -> /);
+    }
+    if (routeQuery) {
+      // Handle "A to B via C" or "A to B"
+      const viaSplit = routeQuery.split(" via ");
+      const mainPath = viaSplit[0].split(" to ");
+      if (viaSplit.length > 1) {
+        return [mainPath[0], viaSplit[1], mainPath[1]];
+      }
+      return mainPath;
+    }
+    return ['Origin', 'Destination'];
+  };
+
+  const parsedPath = getParsedPath();
+  const startLabel = parsedPath[0];
+  const endLabel = parsedPath[parsedPath.length - 1];
 
   return (
     <div className={`route-map-shell ${isFullscreen ? 'fullscreen-active' : ''}`}>
@@ -37,6 +72,12 @@ const MapArea = ({ routeData, routeQuery, isLoading }) => {
               <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 {startLabel} 
                 <ArrowIcon /> 
+                {parsedPath?.length > 2 ? (
+                  <>
+                    <span style={{ color: 'var(--accent-red)', opacity: 0.8 }}>{parsedPath[1]}</span>
+                    <ArrowIcon />
+                  </>
+                ) : null}
                 {endLabel}
               </h2>
             </div>
@@ -80,6 +121,24 @@ const MapArea = ({ routeData, routeQuery, isLoading }) => {
                 transform: isLoading ? 'scale(1.05)' : 'scale(1)'
               }}
             />
+            
+            {!isLoading && sourcePosition && destPosition && (
+              <div className="map-markers-overlay">
+                <div className="map-marker source" style={{ left: `${sourcePosition.left}%`, top: `${sourcePosition.top}%` }}>
+                  <div className="marker-icon-container">
+                    {/*<div className="marker-pin source-pin" />*/}
+                  </div>
+                  <div className="marker-label source-label">{sourceName || 'Source'}</div>
+                </div>
+                
+                <div className="map-marker destination" style={{ left: `${destPosition.left}%`, top: `${destPosition.top}%` }}>
+                  <div className="marker-icon-container destination">
+                    {/*<div className="marker-pin dest-pin" />*/}
+                  </div>
+                  <div className="marker-label dest-label">{destName || 'Destination'}</div>
+                </div>
+              </div>
+            )}
           </div>
 
           {isLoading && (
