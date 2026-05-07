@@ -226,7 +226,7 @@ export default function PremiumReportPage({ routeData: propRouteData }) {
   }, [routeData]);
 
   const dynamicBusFrequencies = useMemo(() => {
-    if (!routeData?.transport_schedule) return busFrequencies;
+    if (!routeData?.transport_schedule) return [];
     return routeData.transport_schedule.map(item => ({
       from: item.from,
       to: item.to,
@@ -237,7 +237,7 @@ export default function PremiumReportPage({ routeData: propRouteData }) {
   }, [routeData]);
 
   const dynamicTrainFrequencies = useMemo(() => {
-    if (!routeData?.transport_schedule) return trainFrequencies;
+    if (!routeData?.transport_schedule) return [];
     return routeData.transport_schedule.map(item => ({
       from: item.from,
       to: item.to,
@@ -295,30 +295,34 @@ export default function PremiumReportPage({ routeData: propRouteData }) {
 
   const combinedPotential = useMemo(() => {
     const areaSeg = routeData?.area_segmentation || {};
+    const corridorPot = routeData?.dashboard_data?.corridor_potential || {};
     const items = [];
     
     if (areaSeg.job_business_areas?.length) {
+      const businessScore = corridorPot.business ? ` (Potential: ${corridorPot.business}%)` : "";
       items.push({ 
         title: 'Job & Business', 
-        content: areaSeg.job_business_areas[0], 
+        content: `${areaSeg.job_business_areas[0]}${businessScore}`, 
         icon: <Briefcase />, 
         color: 'orange' 
       });
     }
     
     if (areaSeg.student_areas?.length) {
+      const studentScore = corridorPot.student ? ` (Potential: ${corridorPot.student}%)` : "";
       items.push({ 
         title: 'Education Hubs', 
-        content: areaSeg.student_areas[0], 
+        content: `${areaSeg.student_areas[0]}${studentScore}`, 
         icon: <GraduationCap />, 
         color: 'purple' 
       });
     }
     
     if (areaSeg.tourist_areas?.length) {
+      const touristScore = corridorPot.tourist ? ` (Potential: ${corridorPot.tourist}%)` : "";
       items.push({ 
         title: 'Tourist Hotspots', 
-        content: areaSeg.tourist_areas[0], 
+        content: `${areaSeg.tourist_areas[0]}${touristScore}`, 
         icon: <Mountain />, 
         color: 'green' 
       });
