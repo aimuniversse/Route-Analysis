@@ -209,6 +209,8 @@ Status: 200
 --- RESPONSE FOR /api/route-analysis/ ---
 Status: 200
 ------------------------------
+<<<<<<< HEAD
+=======
 
 --- REQUEST AT /api/route-analysis/ ---
 Body: {"source":"Bangalore","destination":"Chennai","via":""}
@@ -356,6 +358,7 @@ Status: 200
 --- RESPONSE FOR /api/route-analysis/ ---
 Status: 200
 ------------------------------
+<<<<<<< HEAD
 
 --- REQUEST AT /api/route-analysis/ ---
 Body: {"source":"Chennai","destination":"Coimbatore","via":""}
@@ -398,3 +401,6 @@ Status: 200
 --- RESPONSE FOR /api/route-analysis/ ---
 Status: 200
 ------------------------------
+=======
+>>>>>>> 9f4b0905da33b4c39105019c079340568d41c1f1
+>>>>>>> c05d4380a55b67810b0eb2fab0b2adf92c3746e8

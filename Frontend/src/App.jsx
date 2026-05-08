@@ -76,6 +76,11 @@ function App() {
 
   // Handle route results
   const handleSearchResults = (data, query, via = "") => {
+    if (!isLoggedIn) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+
     if (!data) {
       setRouteQuery(query);
       setViaCity(via);
