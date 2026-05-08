@@ -18,14 +18,10 @@ const RouteInsights = ({ routeQuery, routeData }) => {
   // 1. Demographics Data
   const aiPop = routeData?.population_data;
   const popData = aiPop ? [
-    { name: aiPop.source?.name || 'Origin', value: aiPop.source?.count / 1000000 || 5.0, fill: 'url(#colorTrafficRed)' },
-    { name: aiPop.destination?.name || 'Destination', value: aiPop.destination?.count / 1000000 || 1.7, fill: 'var(--accent-blue-light)' },
-    ...(aiPop.via ? [{ name: aiPop.via.name || 'Via', value: aiPop.via.count / 1000000 || 2.0, fill: 'var(--text-muted)' }] : [])
-  ] : [
-    { name: 'Chennai', value: 5.0, fill: 'url(#colorTrafficRed)' },
-    { name: 'Coimbatore', value: 1.7, fill: 'var(--accent-blue-light)' },
-    { name: 'Corridor', value: 11.0, fill: 'var(--text-muted)' },
-  ];
+    { name: aiPop.source?.name || 'Origin', value: aiPop.source?.count / 1000000 || 0, fill: 'url(#colorTrafficRed)' },
+    { name: aiPop.destination?.name || 'Destination', value: aiPop.destination?.count / 1000000 || 0, fill: 'var(--accent-blue-light)' },
+    ...(aiPop.via ? [{ name: aiPop.via.name || 'Via', value: aiPop.via.count / 1000000 || 0, fill: 'var(--text-muted)' }] : [])
+  ] : [];
 
   // 2. Transport Data
   const aiTransport = routeData?.transport_distribution || routeData?.transport_pattern;
@@ -42,14 +38,8 @@ const RouteInsights = ({ routeQuery, routeData }) => {
   // 3. Tourism Data
   const aiTourism = routeData?.visitor_data;
   const tourismData = aiTourism ? aiTourism.slice(0, 5).map(v => ({
-    subject: v.place_name, A: v.daily || Math.round(v.yearly / 365) || 50
-  })) : [
-    { subject: 'Marina', A: 100 },
-    { subject: 'Kapaleeswarar', A: 50 },
-    { subject: 'Black Thunder', A: 20 },
-    { subject: 'Perur Temple', A: 15 },
-    { subject: 'Isha Yoga', A: 60 },
-  ];
+    subject: v.place_name, A: v.daily || Math.round(v.yearly / 365) || 0
+  })) : [];
 
   // 4. Area Data (Segmentation)
   const aiArea = routeData?.area_segmentation;
@@ -96,6 +86,7 @@ const RouteInsights = ({ routeQuery, routeData }) => {
       <div className="insights-grid">
 
         {/* 1. Demographics & Distance (Bar Chart) */}
+        {popData.length > 0 && (
         <div className="insight-card hover-lift">
           <div className="insight-card-header">
             <div className="insight-icon red"><Users size={20} /></div>
@@ -130,8 +121,10 @@ const RouteInsights = ({ routeQuery, routeData }) => {
             </div>
           </div>
         </div>
+        )}
 
         {/* 2. Transport & Logistics (Donut Chart) */}
+        {transportData.length > 0 && (
         <div className="insight-card hover-lift">
           <div className="insight-card-header">
             <div className="insight-icon blue"><Train size={20} /></div>
@@ -170,8 +163,10 @@ const RouteInsights = ({ routeQuery, routeData }) => {
             ))}
           </div>
         </div>
+        )}
 
         {/* 3. Area Segmentation (Scatter/Bubble Chart) */}
+        {areaData.length > 0 && (
         <div className="insight-card span-2 hover-lift">
           <div className="insight-card-header">
             <div className="insight-icon orange"><Map size={20} /></div>
@@ -200,7 +195,7 @@ const RouteInsights = ({ routeQuery, routeData }) => {
                 <Area type="monotone" dataKey="activity" fill="url(#colorArea)" stroke="#f59e0b" strokeWidth={2} />
                 <Bar dataKey="potential" barSize={30} radius={[6, 6, 0, 0]}>
                   {areaData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={index === 1 || index === 4 ? 'var(--accent-blue)' : 'var(--accent-blue-light)'} />
+                    <Cell key={`cell-${index}`} fill={index === 1 || index === 4 ? '#e11d48' : '#dc2626'} />
                   ))}
                 </Bar>
               </ComposedChart>
@@ -208,8 +203,10 @@ const RouteInsights = ({ routeQuery, routeData }) => {
           </div>
           <div className="text-xs text-center text-muted"> Bar represents economic/tourist potential along the corridor.</div>
         </div>
+        )}
 
         {/* 4. Tourism & Visitors (Radar Chart) */}
+        {tourismData.length > 0 && (
         <div className="insight-card hover-lift">
           <div className="insight-card-header">
             <div className="insight-icon purple"><Ticket size={20} /></div>
@@ -229,8 +226,10 @@ const RouteInsights = ({ routeQuery, routeData }) => {
             </ResponsiveContainer>
           </div>
         </div>
+        )}
 
         {/* 5. Suggested Routes (Graphical Timeline) */}
+        {suggestedRoutes.length > 0 && (
         <div className="insight-card hover-lift">
           <div className="insight-card-header">
             <div className="insight-icon green"><MapIcon size={20} /></div>
@@ -253,6 +252,7 @@ const RouteInsights = ({ routeQuery, routeData }) => {
 
           </div>
         </div>
+        )}
 
       </div>
     </div>

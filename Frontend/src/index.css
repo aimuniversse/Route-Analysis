@@ -33,11 +33,7 @@
   --warning-orange: #f59e0b;
   --danger-red: #ef4444;
   --purple-light: #a855f7;
-
-  /* Borders & Glassmorphism */
-  --border-color: rgba(0, 0, 0, 0.06);
   --border-light: rgba(0, 0, 0, 0.1);
-  --glass-border: 1px solid rgba(255, 255, 255, 0.6);
 
   /* Radii */
   --border-radius: 16px;
@@ -298,4 +294,4 @@ input {
 .hover-lift:hover {
   transform: translateY(-4px);
   box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.02);
-}
+}

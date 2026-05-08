@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
 import './Charts.css';
 
@@ -25,6 +25,13 @@ const defaultTravelTimeData = [
 ];
 
 const Charts = ({ routeData }) => {
+  // Use backend data for potential values
+  const potentialValues = {
+    business: routeData?.dashboard_data?.corridor_potential?.business || 90,
+    student: routeData?.dashboard_data?.corridor_potential?.student || 60,
+    tourist: routeData?.dashboard_data?.corridor_potential?.tourist || 85
+  };
+
   // Use real data from backend if available
   const trafficTrends = routeData?.dashboard_data?.traffic_trends?.length > 0 
     ? routeData.dashboard_data.traffic_trends 
@@ -146,17 +153,32 @@ const Charts = ({ routeData }) => {
             <h3>Area Potential Map</h3>
           </div>
         </div>
+
+        <div style={{ display: 'flex', gap: '16px', padding: '0 0 16px 0', flexWrap: 'wrap', justifyContent: 'space-around' }}>
+          <div style={{ textAlign: 'center', minWidth: '100px' }}>
+            <label style={{ display: 'block', fontSize: '0.75rem', color: '#64748b', marginBottom: '6px', fontWeight: 600 }}>Business</label>
+            <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0f172a' }}>{potentialValues.business}%</div>
+          </div>
+          <div style={{ textAlign: 'center', minWidth: '100px' }}>
+            <label style={{ display: 'block', fontSize: '0.75rem', color: '#64748b', marginBottom: '6px', fontWeight: 600 }}>Student</label>
+            <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0f172a' }}>{potentialValues.student}%</div>
+          </div>
+          <div style={{ textAlign: 'center', minWidth: '100px' }}>
+            <label style={{ display: 'block', fontSize: '0.75rem', color: '#64748b', marginBottom: '6px', fontWeight: 600 }}>Tourist</label>
+            <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0f172a' }}>{potentialValues.tourist}%</div>
+          </div>
+        </div>
         
         <div className="chart-container" style={{ width: '100%', height: '180px', minHeight: 0, minWidth: 0, position: 'relative' }}>
           <ResponsiveContainer width="100%" height="100%">
             {/* Using a custom combination of Area and Bar for the requested "curved" look */}
             <AreaChart 
               data={[
-                { name: 'Business', value: routeData?.dashboard_data?.corridor_potential?.business || 90, barVal: routeData?.dashboard_data?.corridor_potential?.business || 90 },
-                { name: 'Student', value: routeData?.dashboard_data?.corridor_potential?.student || 60, barVal: routeData?.dashboard_data?.corridor_potential?.student || 60 },
-                { name: 'Tourist', value: routeData?.dashboard_data?.corridor_potential?.tourist || 85, barVal: routeData?.dashboard_data?.corridor_potential?.tourist || 85 }
+                { name: 'Business', value: potentialValues.business, barVal: potentialValues.business },
+                { name: 'Student', value: potentialValues.student, barVal: potentialValues.student },
+                { name: 'Tourist', value: potentialValues.tourist, barVal: potentialValues.tourist }
               ]} 
-              margin={{ top: 10, right: 30, left: 30, bottom: 0 }}
+              margin={{ top: 10, right: 30, left: 30, bottom: 30 }}
             >
               <defs>
                 <linearGradient id="colorPotentialOrange" x1="0" y1="0" x2="0" y2="1">
@@ -164,7 +186,7 @@ const Charts = ({ routeData }) => {
                   <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
                 </linearGradient>
               </defs>
-              <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#0f172a', fontSize: 10, fontWeight: 600}} dy={10} />
+              <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#0f172a', fontSize: 11, fontWeight: 600}} dy={8} angle={0} />
               <YAxis hide />
               <Tooltip 
                 cursor={false}
@@ -188,16 +210,17 @@ const Charts = ({ routeData }) => {
           {/* Overlay Bars Layer */}
           <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', display: 'flex', justifyContent: 'space-around', padding: '10px 30px 0 30px', alignItems: 'flex-end' }}>
             {[
-              routeData?.dashboard_data?.corridor_potential?.business || 90,
-              routeData?.dashboard_data?.corridor_potential?.student || 60,
-              routeData?.dashboard_data?.corridor_potential?.tourist || 85
+              potentialValues.business,
+              potentialValues.student,
+              potentialValues.tourist
             ].map((val, idx) => (
               <div key={idx} style={{ 
                 width: '18px', 
                 height: `${val}%`, 
-                backgroundColor: 'var(--accent-blue)', 
+                backgroundColor: '#e11d48', 
                 borderRadius: '4px 4px 0 0',
-                boxShadow: '0 4px 12px rgba(225, 29, 72, 0.2)'
+                boxShadow: '0 4px 12px rgba(225, 29, 72, 0.4)',
+                transition: 'all 0.3s ease'
               }}></div>
             ))}
           </div>
@@ -212,30 +235,6 @@ const Charts = ({ routeData }) => {
         }}>
           Bar represents economic/tourist potential along the corridor.
         </p>
-      </div>
-
-      {/* AI Recommended Time */}
-      <div className="glass-panel chart-widget ai-time-widget hover-lift">
-        <div className="confidence-badge animate-pulse-glow">96% Confidence</div>
-        <div className="widget-header">
-          <h3>AI Recommended Time</h3>
-        </div>
-        <div className="ai-time-content">
-          <div className="radial-chart">
-            <svg viewBox="0 0 100 100" className="radial-svg">
-              <circle cx="50" cy="50" r="45" className="radial-bg" />
-              <circle cx="50" cy="50" r="45" className="radial-progress" strokeDasharray="282.6" strokeDashoffset="70" />
-            </svg>
-            <div className="radial-text-container">
-              <span className="ai-icon">✨</span>
-            </div>
-          </div>
-          <div className="ai-time-details">
-            <div className="ai-time-label">Start at</div>
-            <div className="ai-time-value">{recommendedTime.time}</div>
-            <p className="ai-time-reason">{recommendedTime.reason}</p>
-          </div>
-        </div>
       </div>
     </>
   );

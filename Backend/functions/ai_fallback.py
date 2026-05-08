@@ -1,6 +1,9 @@
 import os
 import json
 import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def generate_route_analysis(source, destination, via=None):
     """
@@ -8,6 +11,7 @@ def generate_route_analysis(source, destination, via=None):
     """
     api_key = os.getenv("NVIDIA_API_KEY")
     if not api_key:
+        print("DEBUG: NVIDIA_API_KEY not found in environment.")
         return None, "NVIDIA_API_KEY is not set in the environment variables."
 
     # Prompt definition
@@ -18,7 +22,7 @@ Generate a professional Route Analysis for: {source} to {destination}{f' via {vi
 Return ONLY valid JSON. The JSON structure MUST follow this 10-point format exactly:
 
 1. route_summary: {{ "path": "Source → Via → Destination", "total_distance": km_int, "estimated_time": hours_float }}
-2. population_data: {{ "source": {{ "name": "Name", "count": int }}, "destination": {{ "name": "Name", "count": int }}, "via": {{ "name": "Name", "count": int }} (optional) }}
+2. population_data: {{ "source": {{ "name": "Name", "count": int, "coordinates": {{ "lat": float, "lng": float }} }}, "destination": {{ "name": "Name", "count": int, "coordinates": {{ "lat": float, "lng": float }} }}, "via": {{ "name": "Name", "count": int, "coordinates": {{ "lat": float, "lng": float }} }} (optional) }}
 3. area_segmentation: {{ 
       "job_business_areas": ["Top 3 diverse industries (e.g., 'City1 – IndustryA', 'City2 – IndustryB')"],
       "student_areas": ["Top 3 educational institutions representing at least 3 DIFFERENT cities"],
@@ -52,6 +56,7 @@ DATA RULES:
 - No duplicate entries.
 - Use proper capitalization and real-world names.
 - Ensure all percentages sum correctly to 100.
+- For coordinates: Use actual geographic coordinates (latitude, longitude) for Indian cities. Example: Chennai (13.0827, 80.2707), Bangalore (12.9716, 77.5946), Hyderabad (17.3850, 78.4867).
 - Job/Business areas must show diversity across different cities on the route.
 - Student areas must represent institutions from at least 3 different cities.
 - Tourist areas must include a mix of temples, nature, and landmarks.
@@ -86,27 +91,27 @@ DATA RULES:
         response_data = response.json()
         content = response_data['choices'][0]['message']['content'].strip()
         
-        # Clean up potential markdown formatting (e.g. ```json ... ```)
-        if content.startswith("```json"):
-            content = content[7:]
-        elif content.startswith("```"):
-            content = content[3:]
-            
-        if content.endswith("```"):
-            content = content[:-3]
-            
-        parsed_json = json.loads(content.strip())
-        return parsed_json, None
+        # Robust JSON extraction
+        import re
+        json_match = re.search(r'(\{.*\})', content, re.DOTALL)
+        if json_match:
+            json_str = json_match.group(1)
+        else:
+            json_str = content
+
+        try:
+            parsed_json = json.loads(json_str)
+            return parsed_json, None
+        except json.JSONDecodeError as e:
+            print(f"JSON Decode Error. Raw content: {content}")
+            return None, f"Invalid JSON format from AI: {str(e)}"
 
     except requests.exceptions.Timeout:
-        return None, "Unable to fetch route analysis at the moment (request timed out)"
+        return None, "NVIDIA API request timed out after 180 seconds."
     except requests.exceptions.RequestException as e:
-        error_msg = "Unable to fetch route analysis at the moment"
-        # Log failure internally if needed, but return user-friendly error
-        print(f"API Error: {str(e)}") 
-        return None, error_msg
-    except json.JSONDecodeError as e:
-        return None, "Unable to fetch route analysis at the moment (invalid response format)"
+        print(f"API Request Error: {str(e)}") 
+        return None, f"API Connection Error: {str(e)}"
     except Exception as e:
-        print(f"Unexpected Error: {str(e)}")
-        return None, "Unable to fetch route analysis at the moment"
+        import traceback
+        traceback.print_exc()
+        return None, f"Unexpected error: {str(e)}"
