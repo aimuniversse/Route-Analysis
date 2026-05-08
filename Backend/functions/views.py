@@ -105,17 +105,13 @@ def analyze_route_api(request):
         dest_name = request.query_params.get("destination", "").strip()
         via_name = request.query_params.get("via", "").strip()
 
-    print(f"DEBUG: analyze_route_api called with source={source_name}, dest={dest_name}, via={via_name}")
     # Record the search
     if source_name and dest_name:
         route_text = f"{source_name} → {dest_name}"
-        try:
-            popular, created = PopularSearch.objects.get_or_create(route_text=route_text)
-            if not created:
-                popular.search_count += 1
-                popular.save()
-        except Exception as e:
-            print(f"DEBUG: PopularSearch error: {str(e)}")
+        popular, created = PopularSearch.objects.get_or_create(route_text=route_text)
+        if not created:
+            popular.search_count += 1
+            popular.save()
 
     # Validation
     if not source_name or not dest_name:
@@ -127,26 +123,16 @@ def analyze_route_api(request):
     try:
         response_data, error = get_route_analysis_data(source_name, dest_name, via_name)
         if error:
-            with open('django_error.log', 'a', encoding='utf-8') as f:
-                f.write(f"\n--- API ERROR AT {timezone.now()} ---\n")
-                f.write(f"Source: {source_name}, Dest: {dest_name}, Via: {via_name}\n")
-                f.write(f"Error: {error}\n")
-                f.write("------------------------------\n")
             return Response({
                 "status": "error",
                 "message": error
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-        print(f"DEBUG: Success! Returning AI data.")
         return Response(response_data)
 
     except Exception as e:
         import traceback
-        err_detail = traceback.format_exc()
-        with open('django_error.log', 'a', encoding='utf-8') as f:
-            f.write(f"\n--- UNHANDLED EXCEPTION AT {timezone.now()} ---\n")
-            f.write(err_detail)
-            f.write("------------------------------\n")
+        traceback.print_exc()
         return Response({
             "status": "error",
             "message": f"Internal server error: {str(e)}"

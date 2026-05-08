@@ -56,7 +56,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'functions.middleware.ErrorLoggingMiddleware',
 ]
 
 ROOT_URLCONF = 'analysis.urls'

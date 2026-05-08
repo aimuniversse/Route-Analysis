@@ -12,8 +12,8 @@
     justify-content: center;
     z-index: 10000;
     animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    overflow: hidden; /* No scroll bar */
-    padding: 0;
+    overflow-y: auto; /* Allow scrolling if screen is too small */
+    padding: 40px 0;
 }
 
 @keyframes fadeIn {
@@ -39,23 +39,22 @@
 }
 
 .branding-header {
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: 900;
-    color: var(--primary);
+    color: #1A1A1A;
     letter-spacing: -1.5px;
     margin-bottom: -0.5rem;
     text-transform: none;
-    display: flex;
-    align-items: center;
-    gap: 6px;
 }
 
 .branding-header span {
     background: var(--primary);
     color: white;
-    padding: 2px 12px;
-    border-radius: 6px;
-    font-size: 1.1rem;
+    padding: 2px 10px;
+    border-radius: 8px;
+    font-size: 1rem;
+    vertical-align: middle;
+    margin-left: 5px;
     letter-spacing: 1px;
 }
 
@@ -283,7 +282,7 @@
     padding: 0;
     background: none;
     position: relative;
-    margin-left: -50px; /* Reduced negative margin for better centering */
+    margin-left: -100px; /* Moved tree slightly left */
 }
 
 .tree-container {
@@ -321,121 +320,6 @@
     0% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(216, 0, 0, 0.4); }
     70% { transform: scale(1.2); opacity: 0.5; box-shadow: 0 0 0 10px rgba(216, 0, 0, 0); }
     100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(216, 0, 0, 0); }
-}
-
-/* Responsive Design */
-@media (max-width: 1024px) {
-    .content-layout {
-        gap: 2rem;
-        max-width: 900px;
-    }
-
-    .growth-animation {
-        width: 350px;
-        margin-left: 0; /* Removed negative margin for better centering */
-    }
-
-    .tree-container {
-        width: 350px;
-        height: 350px;
-    }
-
-    .searching-info h2 {
-        font-size: 2rem;
-    }
-}
-
-@media (max-width: 850px) {
-    .searching-overlay {
-        top: 60px;
-        height: calc(100% - 60px);
-        overflow-y: auto;
-        padding: 2rem 0;
-    }
-
-    .content-layout {
-        flex-direction: column;
-        gap: 1rem;
-        padding: 0 1.5rem;
-    }
-
-    .growth-animation {
-        width: 100%;
-        margin-left: 0;
-        margin-bottom: 0;
-    }
-
-    .tree-container {
-        width: 300px;
-        height: 300px;
-    }
-
-    .searching-info {
-        max-width: 100%;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .searching-info h2 {
-        font-size: 1.8rem;
-        text-align: center;
-    }
-
-    .route-text {
-        justify-content: center;
-    }
-
-    .branding-header {
-        font-size: 1.5rem;
-        justify-content: center; /* Center the branding header */
-        width: 100%;
-        margin-bottom: 0.2rem;
-    }
-
-    .branding-header span {
-        font-size: 0.9rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .searching-overlay {
-        padding: 1rem 0;
-    }
-
-    .tree-container {
-        width: 200px; /* Even smaller for very narrow screens */
-        height: 200px;
-    }
-
-    .growth-indicator {
-        font-size: 0.65rem;
-        bottom: 0px;
-    }
-
-    .searching-info h2 {
-        font-size: 1.5rem;
-    }
-
-    .route-text {
-        font-size: 0.9rem;
-        gap: 8px;
-    }
-
-    .insight-box {
-        padding: 1rem;
-    }
-
-    .insight-text {
-        font-size: 0.75rem;
-    }
-
-    .get-data-btn {
-        width: 100%;
-        font-size: 0.8rem;
-        padding: 10px 20px;
-    }
 }
 
 

@@ -114,7 +114,7 @@
 @media (max-width: 1024px) {
     .hero {
         min-height: 700px;
-        padding-top: 6rem;
+        padding-top: 5rem;
     }
 
     .hero-text h1 {
@@ -123,53 +123,17 @@
 
     .hero-text p {
         font-size: 1.1rem;
-        max-width: 600px;
-    }
-
-    .hero .search-wrapper {
-        max-width: 90%;
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 600px) {
     .hero {
         min-height: 600px;
-        padding-top: 5rem;
-        background-position: 75% center;
-    }
-
-    .hero::before {
-        background: linear-gradient(0deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0.6) 100%);
+        background-position: 70% center;
+        /* Shift background to show bus on small screens */
     }
 
     .hero-text h1 {
-        font-size: 2.5rem;
-    }
-
-    .hero-text p {
-        font-size: 1rem;
-        margin-bottom: 1.5rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .hero {
-        min-height: 550px;
-        padding-top: 4rem;
-        padding-left: 1.5rem;
-        padding-right: 1.5rem;
-        background-position: 80% center;
-    }
-
-    .hero-text h1 {
-        font-size: 2rem;
-    }
-
-    .hero-text p {
-        font-size: 0.9rem;
-    }
-
-    .hero .search-wrapper {
-        margin-top: 0.5rem;
+        font-size: 2.2rem;
     }
 }

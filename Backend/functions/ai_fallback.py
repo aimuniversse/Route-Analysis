@@ -1,7 +1,6 @@
 import os
 import json
 import requests
-from django.utils import timezone
 
 def generate_route_analysis(source, destination, via=None):
     """
@@ -13,28 +12,50 @@ def generate_route_analysis(source, destination, via=None):
 
     # Prompt definition
     prompt = f"""
-You are a professional transportation analyst. Generate a highly detailed Route Analysis for: {source} to {destination}{f' via {via}' if via else ''}.
-Return ONLY valid JSON. No conversational filler.
+You are an expert transportation and logistics analyst. 
+Generate a professional Route Analysis for: {source} to {destination}{f' via {via}' if via else ''}.
 
-The JSON MUST follow this structure exactly:
-1. route_summary: {{ "path": "string", "total_distance": int, "estimated_time": float }}
-2. population_data: {{ "source": {{ "name": "string", "count": int }}, "destination": {{ "name": "string", "count": int }} }}
-3. area_segmentation: {{ "job_business_areas": ["string"], "student_areas": ["string"], "tourist_areas": ["string"] }}
-4. visitor_data: [ {{ "place_name": "string", "yearly": int, "daily": int }} ]
-5. demand_distribution: [ {{ "state": "string", "percentage": float, "cities": [ {{ "name": "string", "percentage": float }} ] }} ]
-6. distance_details: [ {{ "segment": "string", "distance_km": int }} ]
-7. transport_distribution: {{ "bus": float, "train": float, "car": float, "taxi": float, "flight": float }}
-8. logistics_services: {{ "parcel_movement": {{ "bus": float, "train": float, "courier": float, "taxi": float }}, "modes_used": ["string"] }}
-9. transport_schedule: [ {{ "from": "{destination}", "to": "{source}", "bus_trips": int, "train_trips": int }} ]
-10. suggested_routes: [ {{ "option": int, "path": "string", "distance": int, "time": float }} ]
+Return ONLY valid JSON. The JSON structure MUST follow this 10-point format exactly:
+
+1. route_summary: {{ "path": "Source → Via → Destination", "total_distance": km_int, "estimated_time": hours_float }}
+2. population_data: {{ "source": {{ "name": "Name", "count": int }}, "destination": {{ "name": "Name", "count": int }}, "via": {{ "name": "Name", "count": int }} (optional) }}
+3. area_segmentation: {{ 
+      "job_business_areas": ["Top 3 diverse industries (e.g., 'City1 – IndustryA', 'City2 – IndustryB')"],
+      "student_areas": ["Top 3 educational institutions representing at least 3 DIFFERENT cities"],
+      "tourist_areas": ["Mix of temples, nature, and landmarks across the route"]
+   }}
+4. visitor_data: [ {{ "place_name": "Name", "yearly": int, "daily": int }} ]
+5. demand_distribution: [ {{ 
+      "state": "Name", 
+      "percentage": float, 
+      "cities": [ {{ "name": "Name", "percentage": float }} ] 
+   }} ]
+   - Ensure State percentages sum to 100% total.
+   - Ensure City percentages sum to 100% within each state.
+6. distance_details: [ {{ "segment": "City A → City B", "distance_km": int }} ]
+7. transport_distribution: {{ "bus": float, "train": float, "car": float, "taxi": float, "flight": float }} (Total must be 100%)
+8. logistics_services: {{ "parcel_movement": {{ "bus": float, "train": float, "courier": float, "taxi": float }}, "modes_used": ["List modes"] }} (Total percentage must be 100%)
+9. transport_schedule: [ {{ "from": "{destination}", "to": "{source}", "bus_trips": int, "train_trips": int }} ] (Show ONLY the REVERSE route)
+10. suggested_routes: [ {{ "option": int, "path": "Path String", "distance": int, "time": float }} ]
 11. dashboard_data: {{
-      "traffic_trends": [ {{ "time": "string", "value": int }} ],
-      "travel_time_by_hour": [ {{ "hour": "string", "minutes": int }} ],
-      "live_updates": [ {{ "incident": "string", "severity": "Low"|"High", "time": "string" }} ],
-      "weather": {{ "impact": "Low"|"High", "details": "string" }},
-      "area_potential": [ {{ "district": "string", "population": int, "potential_score": int, "business_potential": "string", "growth_rate": float, "sectors": [ {{ "name": "string", "score": int }} ] }} ],
+      "traffic_trends": [ {{ "time": "12 AM", "value": int }}, {{ "time": "4 AM", "value": int }}, {{ "time": "8 AM", "value": int }}, {{ "time": "12 PM", "value": int }}, {{ "time": "4 PM", "value": int }}, {{ "time": "8 PM", "value": int }} ],
+      "travel_time_by_hour": [ {{ "hour": "12 AM", "minutes": int }}, {{ "hour": "6 AM", "minutes": int }}, {{ "hour": "12 PM", "minutes": int }}, {{ "hour": "6 PM", "minutes": int }} ],
+      "live_updates": [ {{ "incident": "String", "severity": "Low"|"High", "time": "Just now" }} ],
+      "weather": {{ "impact": "Low"|"High", "details": "Description" }},
+      "area_potential": [ {{ "district": "String", "population": int, "potential_score": int, "business_potential": "High"|"Medium"|"Low", "growth_rate": float, "sectors": [ {{ "name": "String", "score": int }} ] }} ],
       "corridor_potential": {{ "business": int, "student": int, "tourist": int }}
     }}
+
+DATA RULES:
+- Use realistic, professional values.
+- No leading zeros in numbers.
+- No duplicate entries.
+- Use proper capitalization and real-world names.
+- Ensure all percentages sum correctly to 100.
+- Job/Business areas must show diversity across different cities on the route.
+- Student areas must represent institutions from at least 3 different cities.
+- Tourist areas must include a mix of temples, nature, and landmarks.
+- Return ONLY the JSON object.
 """
 
     headers = {
@@ -49,7 +70,7 @@ The JSON MUST follow this structure exactly:
             {"role": "user", "content": prompt}
         ],
         "temperature": 0.1,
-        "max_tokens": 4096
+        "max_tokens": 1500
     }
     content = ""
     try:
@@ -65,20 +86,7 @@ The JSON MUST follow this structure exactly:
         response_data = response.json()
         content = response_data['choices'][0]['message']['content'].strip()
         
-        # Extract JSON from potential conversational filler
-        start_index = content.find('{')
-        end_index = content.rfind('}')
-        
-        if start_index != -1 and end_index != -1:
-            json_content = content[start_index:end_index+1]
-            try:
-                parsed_json = json.loads(json_content)
-                return parsed_json, None
-            except json.JSONDecodeError:
-                # If extraction failed, fall back to stripping markdown
-                pass
-
-        # Original cleanup logic as fallback
+        # Clean up potential markdown formatting (e.g. ```json ... ```)
         if content.startswith("```json"):
             content = content[7:]
         elif content.startswith("```"):
@@ -91,24 +99,14 @@ The JSON MUST follow this structure exactly:
         return parsed_json, None
 
     except requests.exceptions.Timeout:
-        print("API Error: Request timed out")
         return None, "Unable to fetch route analysis at the moment (request timed out)"
     except requests.exceptions.RequestException as e:
         error_msg = "Unable to fetch route analysis at the moment"
+        # Log failure internally if needed, but return user-friendly error
         print(f"API Error: {str(e)}") 
-        if hasattr(e, 'response') and e.response is not None:
-            print(f"API Response Body: {e.response.text}")
         return None, error_msg
     except json.JSONDecodeError as e:
-        import traceback
-        with open('django_error.log', 'a', encoding='utf-8') as f:
-            f.write(f"\n--- JSON DECODE ERROR AT {timezone.now()} ---\n")
-            f.write(f"Error: {str(e)}\n")
-            f.write(f"Raw Content: {content}\n")
-            f.write("------------------------------\n")
         return None, "Unable to fetch route analysis at the moment (invalid response format)"
     except Exception as e:
-        import traceback
         print(f"Unexpected Error: {str(e)}")
-        traceback.print_exc()
         return None, "Unable to fetch route analysis at the moment"

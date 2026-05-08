@@ -90,82 +90,11 @@
 
 .app-footer {
   text-align: center;
-  padding: 60px 40px 40px;
-  color: rgba(255, 255, 255, 0.8);
+  padding: 40px;
+  color: var(--text-muted);
   font-size: 14px;
-  margin-top: 60px;
-  background: var(--primary);
-  position: relative;
-  overflow: hidden;
-}
-
-.app-footer::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.footer-help-section {
-  max-width: 600px;
-  margin: 0 auto 40px;
-  position: relative;
-  z-index: 1;
-}
-
-.footer-help-section h3 {
-  color: #FFFFFF;
-  font-size: 32px;
-  margin-bottom: 16px;
-  font-weight: 800;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.footer-help-section p {
-  color: rgba(255, 255, 255, 0.9);
-  line-height: 1.6;
-  margin-bottom: 24px;
-  font-size: 16px;
-}
-
-.help-links {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.help-link {
-  color: #FFFFFF;
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  font-size: 15px;
-  padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-sm);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.help-link:hover {
-  background: #FFFFFF;
-  color: var(--primary);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.separator {
-  color: rgba(255, 255, 255, 0.3);
-}
-
-.footer-bottom {
-  padding-top: 30px;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.7);
+  border-top: 1px solid var(--border-color);
+  margin-top: 40px;
 }
 
 /* Animations */
