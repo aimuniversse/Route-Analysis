@@ -21,131 +21,22 @@ import destinationIcon from '../assets/image/destination.png';
 // import logoImg from '../assets/image/logo.webp';
 import logo1Img from '../assets/image/logo1.jpeg';
 
-const heroImage = "file:///C:/Users/DELL/.gemini/antigravity/brain/f0fc39a6-0b6f-4034-8de5-2f0a1281ca0d/route_analysis_illustration_1777438205145.png";
-
-// Data
-const transportData = [
-  { name: 'Bus', value: 65, color: '#3b82f6' },
-  { name: 'Train', value: 25, color: '#10b981' },
-  { name: 'Car', value: 7, color: '#f59e0b' },
-  { name: 'Flight', value: 3, color: '#8b5cf6' },
-];
-
-const stateVisitorData = [
-  { state: 'Tamil Nadu', visitors: 75, details: 'Chennai, Coimbatore, Tirupur' },
-  { state: 'Karnataka', visitors: 12, details: 'Bangalore, Mysore, Mangalore' },
-  { state: 'Kerala', visitors: 8, details: 'Kochi, Thiruvananthapuram' },
-  { state: 'Others', visitors: 5, details: 'Various States' },
-];
-
-const distanceMatrix = [
-  { city: 'Coimbatore', cbe: 0, trp: 45, erd: 100, slm: 160, vlr: 220, maa: 500 },
-  { city: 'Tirupur', cbe: 45, trp: 0, erd: 55, slm: 115, vlr: 175, maa: 455 },
-  { city: 'Erode', cbe: 100, trp: 55, erd: 0, slm: 60, vlr: 120, maa: 400 },
-  { city: 'Salem', cbe: 160, trp: 115, erd: 60, slm: 0, vlr: 60, maa: 340 },
-  { city: 'Vellore', cbe: 220, trp: 175, erd: 120, slm: 60, vlr: 0, maa: 280 },
-  { city: 'Chennai', cbe: 500, trp: 455, erd: 400, slm: 340, vlr: 280, maa: 0 },
-];
-
-const suggestedRoutes = [
-  {
-    id: 1,
-    name: 'Primary Industrial Route',
-    time: '8 - 10 hours',
-    distance: '500 km',
-    via: 'Tirupur - Erode - Salem - Vellore',
-    type: 'RECOMMENDED',
-    efficiency: 'Most Efficient',
-    efficiencyDesc: 'Best balance of time & distance',
-    icon: <Navigation size={22} />,
-    color: '#3b82f6'
-  },
-  {
-    id: 2,
-    name: 'Alternative Highway Route',
-    time: '9 - 11 hours',
-    distance: '520 km',
-    via: 'Dharmapuri - Krishnagiri',
-    type: 'ALTERNATIVE',
-    efficiency: 'Scenic & Smooth',
-    efficiencyDesc: 'Well-connected highway network',
-    icon: <MapPin size={22} />,
-    color: '#10b981'
-  },
-  {
-    id: 3,
-    name: 'Southern Bypass Route',
-    time: '10 - 12 hours',
-    distance: '560 km',
-    via: 'Pollachi - Dindigul - Trichy - Villupuram',
-    type: 'SCENIC BYPASS',
-    efficiency: 'Less Congestion',
-    efficiencyDesc: 'Ideal for long hauls & bulk transport',
-    icon: <Mountain size={22} />,
-    color: '#8b5cf6'
-  }
-];
-
-const busFrequencies = [
-  { from: 'CBE', to: 'Chennai', label: 'Major Metro Connection', count: '100 - 150', icon: <Landmark size={18} /> },
-  { from: 'CBE', to: 'Tirupur', label: 'Industrial Corridor', count: '50 - 100', icon: <Activity size={18} /> },
-  { from: 'CBE', to: 'Erode', label: 'Regional Link', count: '20 - 50', icon: <Mountain size={18} /> },
-  { from: 'CBE', to: 'Salem', label: 'City Connection', count: '10 - 20', icon: <Building2 size={18} /> },
-];
-
-const trainFrequencies = [
-  { from: 'CBE', to: 'Chennai', label: 'Major Metro Connection', count: '10 - 20', icon: <Landmark size={18} /> },
-  { from: 'CBE', to: 'Tirupur', label: 'Industrial Corridor', count: '5 - 10', icon: <Activity size={18} /> },
-  { from: 'CBE', to: 'Erode', label: 'Regional Link', count: '2 - 5', icon: <Mountain size={18} /> },
-  { from: 'CBE', to: 'Salem', label: 'City Connection', count: '1 - 2', icon: <Building2 size={18} /> },
-];
+const heroImage = "file:///C:/Users/DELL/.gemini/antigravity/brain/6f074f9e-ba21-4fd9-b5df-56ac4a6fbd6b/corridor_analysis_hero_1778234321074.png";
 
 
-export default function PremiumReportPage({ routeData: propRouteData }) {
-  const [internalRouteData, setInternalRouteData] = useState(null);
-  const routeData = propRouteData || internalRouteData;
-  
+
+
+export default function PremiumReportPage({ routeData }) {
   const routeName = routeData?.route_summary?.path || "Coimbatore to Chennai";
   const [formData, setFormData] = useState({ name: '', busTravels: '', contactNo: '', message: '' });
   const [formStatus, setFormStatus] = useState(null); // null | 'success' | 'error'
-  const [loading, setLoading] = useState(!routeData);
-  const [error, setError] = useState(null);
+  const [lastSyncTime, setLastSyncTime] = useState(new Date().toLocaleTimeString());
 
   useEffect(() => {
-    if (!propRouteData) {
-      fetchRouteData('Coimbatore', 'Chennai');
+    if (routeData) {
+      setLastSyncTime(new Date().toLocaleTimeString());
     }
-  }, [propRouteData]);
-
-  const fetchRouteData = async (source, destination) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch('http://localhost:8000/api/route-analysis/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ source, destination }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch route data');
-      }
-
-      const result = await response.json();
-      if (result.status === 'success') {
-        setInternalRouteData(result.data);
-      } else {
-        throw new Error(result.message || 'Error fetching data');
-      }
-    } catch (err) {
-      console.error('Fetch Error:', err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [routeData]);
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
@@ -170,7 +61,7 @@ export default function PremiumReportPage({ routeData: propRouteData }) {
 
   // Data Mapping
   const dynamicTransportData = useMemo(() => {
-    if (!routeData?.transport_distribution) return transportData;
+    if (!routeData?.transport_distribution) return [];
     const colors = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
     return Object.entries(routeData.transport_distribution).map(([name, value], idx) => {
       const modeName = name.charAt(0).toUpperCase() + name.slice(1);
@@ -209,7 +100,7 @@ export default function PremiumReportPage({ routeData: propRouteData }) {
   }, [dynamicTransportData]);
 
   const dynamicSuggestedRoutes = useMemo(() => {
-    if (!routeData?.suggested_routes) return suggestedRoutes;
+    if (!routeData?.suggested_routes) return [];
     const colors = ['#3b82f6', '#10b981', '#8b5cf6'];
     return routeData.suggested_routes.map((route, idx) => ({
       id: route.option,
@@ -397,27 +288,16 @@ export default function PremiumReportPage({ routeData: propRouteData }) {
     ];
   }, [routeData]);
 
-  if (loading) {
+  if (!routeData) {
     return (
       <div className="report-loading-container">
         <div className="loading-spinner"></div>
-        <p>Generating Premium Route Report...</p>
+        <p>Waiting for Route Analysis Data...</p>
       </div>
     );
   }
 
-  if (error) {
-    return (
-      <div className="report-error-container">
-        <Info size={48} className="text-red-500" />
-        <h2>Analysis Failed</h2>
-        <p>{error}</p>
-        <button onClick={() => fetchRouteData('Coimbatore', 'Chennai')} className="retry-btn">Retry Analysis</button>
-      </div>
-    );
-  }
-
-  const routeSummary = routeData?.route_summary || { path: "Coimbatore to Chennai", total_distance: 500, estimated_time: 9 };
+  const routeSummary = routeData?.route_summary || { path: "Bangalore to Chennai", total_distance: 350, estimated_time: 6 };
   const popData = routeData?.population_data || {};
   const areaSeg = routeData?.area_segmentation || {};
   const visitors = routeData?.visitor_data || [];
@@ -430,7 +310,13 @@ export default function PremiumReportPage({ routeData: propRouteData }) {
 
         {/* Header */}
         <header className="report-header">
-          <div className="header-badge">Corridor Report</div>
+          <div className="header-top-meta">
+            <div className="header-badge">Corridor Report</div>
+            <div className="sync-status">
+              <span className="sync-dot"></span>
+              Live Sync: {lastSyncTime}
+            </div>
+          </div>
           <h1>{routeSummary.path}</h1>
           <p className="subtitle">
             Comprehensive Route Analysis & Travel Intelligence | {routeSummary.total_distance} km | Approx. {routeSummary.estimated_time} hours
@@ -1006,7 +892,7 @@ export default function PremiumReportPage({ routeData: propRouteData }) {
               </div>
               
               <div className="freq-list">
-                {dynamicBusFrequencies.map((item, idx) => (
+                {dynamicBusFrequencies.length > 0 ? dynamicBusFrequencies.map((item, idx) => (
                   <div key={idx} className="freq-item">
                     <div className="item-left">
                       <div className="item-icon-circle">{item.icon}</div>
@@ -1020,7 +906,9 @@ export default function PremiumReportPage({ routeData: propRouteData }) {
                       <span className="sub-count">Services / Day</span>
                     </div>
                   </div>
-                ))}
+                )) : (
+                  <div className="no-freq-data">No bus service data available for this route.</div>
+                )}
               </div>
 
               <div className="freq-card-footer">
@@ -1045,7 +933,7 @@ export default function PremiumReportPage({ routeData: propRouteData }) {
               </div>
 
               <div className="freq-list">
-                {dynamicTrainFrequencies.map((item, idx) => (
+                {dynamicTrainFrequencies.length > 0 ? dynamicTrainFrequencies.map((item, idx) => (
                   <div key={idx} className="freq-item">
                     <div className="item-left">
                       <div className="item-icon-circle">{item.icon}</div>
@@ -1059,7 +947,9 @@ export default function PremiumReportPage({ routeData: propRouteData }) {
                       <span className="sub-count">Services / Day</span>
                     </div>
                   </div>
-                ))}
+                )) : (
+                  <div className="no-freq-data">No train service data available for this route.</div>
+                )}
               </div>
 
               <div className="freq-card-footer">
@@ -1080,53 +970,55 @@ export default function PremiumReportPage({ routeData: propRouteData }) {
         </section>
 
         {/* Concept 10: Suggested Routes */}
-        {/* <section className="analysis-section-box section-spacing suggested-routes-container">
-          <div className="box-header">
-            <div className="icon-wrap bg-blue-soft"><Navigation className="text-blue-main" /></div>
-            <h2>Suggested Route Options</h2>
-          </div>
-          
-          <div className="routes-grid-premium">
-            {dynamicSuggestedRoutes.map((route) => (
-              <div key={route.id} className="route-option-card hover-lift" style={{ borderTop: `4px solid ${route.color}` }}>
-                <div className="route-card-header">
-                  <div className="route-type-badge" style={{ backgroundColor: `${route.color}22`, color: route.color }}>
-                    {route.type}
+        {/* {dynamicSuggestedRoutes.length > 0 && (
+          <section className="analysis-section-box section-spacing suggested-routes-container">
+            <div className="box-header">
+              <div className="icon-wrap bg-blue-soft"><Navigation className="text-blue-main" /></div>
+              <h2>Suggested Route Options</h2>
+            </div>
+            
+            <div className="routes-grid-premium">
+              {dynamicSuggestedRoutes.map((route) => (
+                <div key={route.id} className="route-option-card hover-lift" style={{ borderTop: `4px solid ${route.color}` }}>
+                  <div className="route-card-header">
+                    <div className="route-type-badge" style={{ backgroundColor: `${route.color}22`, color: route.color }}>
+                      {route.type}
+                    </div>
+                    <div className="route-icon-box" style={{ color: route.color }}>
+                      {route.icon}
+                    </div>
                   </div>
-                  <div className="route-icon-box" style={{ color: route.color }}>
-                    {route.icon}
+                  
+                  <div className="route-card-main">
+                    <h3 className="route-name-title">{route.name}</h3>
+                    <div className="route-path-string">
+                      <span className="path-via">via</span> {route.via}
+                    </div>
+                  </div>
+  
+                  <div className="route-card-metrics">
+                    <div className="metric-item">
+                      <Clock size={16} className="text-muted" />
+                      <span>{route.time}</span>
+                    </div>
+                    <div className="metric-item">
+                      <MapPin size={16} className="text-muted" />
+                      <span>{route.distance}</span>
+                    </div>
+                  </div>
+  
+                  <div className="route-card-footer">
+                    <div className="efficiency-box">
+                      <div className="eff-title">{route.efficiency}</div>
+                      <div className="eff-desc">{route.efficiencyDesc}</div>
+                    </div>
+                    <ArrowRight className="route-arrow" size={20} />
                   </div>
                 </div>
-                
-                <div className="route-card-main">
-                  <h3 className="route-name-title">{route.name}</h3>
-                  <div className="route-path-string">
-                    <span className="path-via">via</span> {route.via}
-                  </div>
-                </div>
-
-                <div className="route-card-metrics">
-                  <div className="metric-item">
-                    <Clock size={16} className="text-muted" />
-                    <span>{route.time}</span>
-                  </div>
-                  <div className="metric-item">
-                    <MapPin size={16} className="text-muted" />
-                    <span>{route.distance}</span>
-                  </div>
-                </div>
-
-                <div className="route-card-footer">
-                  <div className="efficiency-box">
-                    <div className="eff-title">{route.efficiency}</div>
-                    <div className="eff-desc">{route.efficiencyDesc}</div>
-                  </div>
-                  <ArrowRight className="route-arrow" size={20} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </section> */}
+              ))}
+            </div>
+          </section>
+        )} */}
       </div>
 
       {/* Contact Form Section */}

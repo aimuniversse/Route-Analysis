@@ -105,6 +105,48 @@ function App() {
     });
   };
 
+  // Real-time synchronization (Polling)
+  const refreshRouteData = async () => {
+    if (!hasSearched || !routeQuery || isLoading) return;
+
+    const parts = routeQuery.split(" to ");
+    const source = parts[0]?.trim();
+    const destination = parts[1]?.trim();
+
+    if (!source || !destination) return;
+
+    try {
+      const response = await fetch("http://localhost:8000/api/route-analysis/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ source, destination, via: viaCity }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.status === "success") {
+          setRouteData(result.data);
+          console.log("Real-time data synced:", new Date().toLocaleTimeString());
+        }
+      }
+    } catch (err) {
+      console.error("Background sync failed:", err);
+    }
+  };
+
+  useEffect(() => {
+    let interval;
+    if (hasSearched && routeQuery && isLoggedIn) {
+      // Poll every 45 seconds for real-time updates
+      interval = setInterval(() => {
+        refreshRouteData();
+      }, 45000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [hasSearched, routeQuery, isLoggedIn, viaCity]);
+
   // Navbar handlers
   const handleHomeClick = () => {
     setHasSearched(false);

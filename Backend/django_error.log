@@ -51,6 +51,7 @@ Traceback (most recent call last):
 ValueError: Invalid format specifier ' "string", "total_distance": int, "estimated_time": float ' for object of type 'str'
 ------------------------------
 
+<<<<<<< HEAD
 --- JSON DECODE ERROR AT 2026-05-08 10:11:37.463720+00:00 ---
 Error: Unterminated string starting at: line 3 column 13 (char 35)
 Raw Content: 
@@ -273,4 +274,14 @@ Raw Content:
 --- API ERROR AT 2026-05-08 11:27:00.570028+00:00 ---
 Source: chennai, Dest: coimbatore, Via: 
 Error: Unable to fetch route analysis at the moment (invalid response format)
+=======
+--- API ERROR AT 2026-05-08 10:27:08.932539+00:00 ---
+Source: Coimbatore, Dest: Chennai, Via: 
+Error: Unable to fetch route analysis at the moment (request timed out)
+------------------------------
+
+--- API ERROR AT 2026-05-08 10:27:08.955307+00:00 ---
+Source: Coimbatore, Dest: Chennai, Via: 
+Error: Unable to fetch route analysis at the moment (request timed out)
+>>>>>>> ec5125e366e120048d604954595139e97c6a0cff
 ------------------------------
