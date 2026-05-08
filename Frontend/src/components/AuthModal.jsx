@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { X, Mail, Lock, User, ArrowRight, Phone, Building, MapPin } from "lucide-react";
 import "../styles/authModal.css";
 
-const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
-  const [isLogin, setIsLogin] = useState(true);
+const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialIsLogin = true }) => {
+  const [isLogin, setIsLogin] = useState(initialIsLogin);
   const [formData, setFormData] = useState({
     companyName: "",
     ownerName: "",

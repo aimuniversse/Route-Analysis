@@ -41,9 +41,9 @@ const Navbar = ({ onHomeClick, onSearchClick, onHelpClick, onAuthClick, activeTa
                 <li className="nav-divider"></li>
                 
                 {!isLoggedIn ? (
-                    <li className="auth-trigger" onClick={onAuthClick}>
-                        <button className="signin-btn">Sign In</button>
-                        <button className="signup-btn">Sign Up</button>
+                    <li className="auth-trigger">
+                        <button className="signin-btn" onClick={() => onAuthClick(true)}>Sign In</button>
+                        <button className="signup-btn" onClick={() => onAuthClick(false)}>Sign Up</button>
                     </li>
                 ) : (
                     <li className="user-profile">

@@ -37,6 +37,7 @@ function App() {
   // Auth States
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [authInitialMode, setAuthInitialMode] = useState(true);
 
   // Splash screen timer
   useEffect(() => {
@@ -48,7 +49,8 @@ function App() {
   }, []);
 
   // Auth Handlers
-  const handleAuthClick = () => {
+  const handleAuthClick = (isLogin = true) => {
+    setAuthInitialMode(isLogin);
     setIsAuthModalOpen(true);
   };
 
@@ -150,7 +152,9 @@ function App() {
 
       {/* Auth Modal */}
       <AuthModal 
+        key={isAuthModalOpen ? 'open' : 'closed'}
         isOpen={isAuthModalOpen} 
+        initialIsLogin={authInitialMode}
         onClose={() => setIsAuthModalOpen(false)} 
         onLoginSuccess={handleLoginSuccess}
       />
