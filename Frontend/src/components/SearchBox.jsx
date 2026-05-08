@@ -9,7 +9,16 @@ const SearchBox = ({ onResults }) => {
     const [showSuggestions, setShowSuggestions] = useState({ from: false, via: false, to: false });
     const [isSearching, setIsSearching] = useState(false);
 
-    const cities = ["Bangalore", "Chennai", "Hyderabad", "Vijayawada", "Pune", "Mumbai", "Delhi", "Manali", "Ahmedabad", "Surat", "Coimbatore", "Kochi", "Goa", "Mysore"];
+    const cities = [
+        "Ariyalur", "Chengalpattu", "Chennai", "Coimbatore", "Cuddalore", "Dharmapuri", 
+        "Dindigul", "Erode", "Kallakurichi", "Kanchipuram", "Kanyakumari", "Karur", 
+        "Krishnagiri", "Madurai", "Mayiladuthurai", "Nagapattinam", "Namakkal", "Nilgiris", 
+        "Perambalur", "Pudukkottai", "Ramanathapuram", "Ranipet", "Salem", "Sivaganga", 
+        "Tenkasi", "Thanjavur", "Theni", "Thoothukudi", "Tiruchirappalli", "Tirunelveli", 
+        "Tirupathur", "Tiruppur", "Tiruvallur", "Tiruvannamalai", "Tiruvarur", "Vellore", 
+        "Viluppuram", "Virudhunagar", "Bangalore", "Hyderabad", "Vijayawada", "Pune", 
+        "Mumbai", "Delhi", "Kochi", "Goa", "Mysore"
+    ];
 
     const [popularSearches, setPopularSearches] = useState([
         "Bangalore → Chennai",

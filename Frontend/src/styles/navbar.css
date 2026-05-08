@@ -29,7 +29,8 @@
 
 .logo-text h2 {
     font-size: 1.5rem;
-    color: #333;
+    color: var(--primary);
+    font-weight: 800;
 }
 
 .logo-text h2 span {
@@ -80,4 +81,41 @@
 
 .nav-links li svg {
     color: var(--primary);
+}
+
+@media (max-width: 1024px) {
+    .navbar {
+        padding: 1rem 5%;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0.8rem 1rem;
+    }
+
+    .logo {
+        gap: 8px;
+    }
+
+    .logo-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .nav-links {
+        gap: 0.8rem;
+    }
+
+    .nav-links li span {
+        display: none; /* Hide text, show only icons on mobile */
+    }
+
+    .logo-text h2 {
+        font-size: 1.1rem;
+    }
+
+    .logo-text p {
+        display: none; /* Hide subtitle on very small screens */
+    }
 }

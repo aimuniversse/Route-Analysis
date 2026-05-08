@@ -79,7 +79,14 @@ const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
                 });
 
                 if (!response.ok) {
-                    throw new Error("Failed to fetch route analysis");
+                    let errorMsg = "Failed to fetch route analysis";
+                    try {
+                        const errorData = await response.json();
+                        errorMsg = errorData.message || errorMsg;
+                    } catch (e) {
+                        // Not JSON or other error
+                    }
+                    throw new Error(errorMsg);
                 }
 
                 const result = await response.json();
@@ -111,10 +118,15 @@ const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
             });
         }, tickRate);
 
+        // Lock body scroll
+        document.body.style.overflow = 'hidden';
+
         return () => {
             clearInterval(statusInterval);
             clearInterval(insightInterval);
             clearInterval(progressInterval);
+            // Restore body scroll
+            document.body.style.overflow = 'auto';
         };
     }, [apiFinished]);
 
@@ -122,7 +134,7 @@ const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
         <div className="searching-overlay">
             <div className="searching-card">
                 <div className="branding-header">
-                    TICKMYBUS <span>AI</span>
+                    Tick MyBus <span>AI</span>
                 </div>
 
                 <div className="ai-badge">
@@ -151,7 +163,7 @@ const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
                             <div className="progress-bar" style={{ width: `${progress}%` }}></div>
                         </div>
 
-                        <p className="status-text">{error ? <span style={{color: 'var(--primary)'}}>Error: {error}</span> : statuses[statusIndex]}</p>
+                        <p className="status-text">{error ? <span style={{ color: 'var(--primary)' }}>Error: {error}</span> : statuses[statusIndex]}</p>
 
                         <div className="insight-box">
                             <div className="insight-label">{insights[insightIndex].label}</div>
