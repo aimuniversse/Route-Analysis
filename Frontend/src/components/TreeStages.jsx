@@ -144,6 +144,7 @@ const TreeStages = ({ progress }) => {
     }, []);
 
     const _tempVec = new THREE.Vector3();
+    const _tempEuler = new THREE.Euler();
     const _tempMat = new THREE.Matrix4();
     const _tempQuat = new THREE.Quaternion();
 
@@ -195,7 +196,8 @@ const TreeStages = ({ progress }) => {
                 }
                 if (scale > 0) {
                     const flutter = Math.sin(t * 1.5 + i) * 0.08;
-                    _tempQuat.setFromEuler(_tempVec.set(l.rotation.x + flutter, l.rotation.y, l.rotation.z + flutter));
+                    _tempEuler.set(l.rotation.x + flutter, l.rotation.y, l.rotation.z + flutter, 'XYZ');
+                    _tempQuat.setFromEuler(_tempEuler);
                     _tempVec.set(scale, scale, scale);
                     _tempMat.compose(l.position, _tempQuat, _tempVec);
                 } else {

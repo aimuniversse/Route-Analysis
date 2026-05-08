@@ -6,6 +6,7 @@ import Hero from "./components/Hero";
 import Features from "./components/Features";
 import SplashScreen from "./components/SplashScreen";
 import RouteResults from "./components/RouteResults";
+import AuthModal from "./components/AuthModal";
 
 // Route Analysis Components
 import Header from "./components/Header";
@@ -31,6 +32,11 @@ function App() {
 
   const [hasSearched, setHasSearched] = useState(false);
   const [viaCity, setViaCity] = useState("");
+  const [activeTab, setActiveTab] = useState("home");
+
+  // Auth States
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Splash screen timer
   useEffect(() => {
@@ -41,9 +47,27 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Auth Handlers
+  const handleAuthClick = () => {
+    setIsAuthModalOpen(true);
+  };
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+    setIsAuthModalOpen(false);
+    // After login, show the "landing page" which is the home/create UI
+    setActiveTab("home");
+    setHasSearched(false);
+  };
+
   // Route analysis function
   const analyzeRoute = async (source, destination) => {
     if (!source.trim() || !destination.trim()) return;
+
+    if (!isLoggedIn) {
+      setIsAuthModalOpen(true);
+      return;
+    }
 
     setRouteQuery(`${source} to ${destination}`);
     setViaCity("");
@@ -66,11 +90,50 @@ function App() {
     setHasSearched(true);
     setIsLoading(false);
     setError(null);
+    setActiveTab("search");
 
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
+  };
+
+  // Navbar handlers
+  const handleHomeClick = () => {
+    setHasSearched(false);
+    setActiveTab("home");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleSearchClick = () => {
+    if (!isLoggedIn) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+    setActiveTab("search");
+    if (!hasSearched) {
+      const searchBox = document.getElementById("hero-search");
+      if (searchBox) {
+        searchBox.scrollIntoView({ behavior: "smooth" });
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    } else {
+      const headerSearch = document.getElementById("header-search");
+      if (headerSearch) {
+        headerSearch.scrollIntoView({ behavior: "smooth" });
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+  };
+
+  const handleHelpClick = () => {
+    setActiveTab("help");
+    const footer = document.getElementById("app-footer");
+    if (footer) {
+      footer.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   return (
@@ -80,17 +143,31 @@ function App() {
         <SplashScreen onFinish={() => setLoading(false)} />
       )}
 
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+        onLoginSuccess={handleLoginSuccess}
+      />
+
       {/* Navbar */}
-      <Navbar />
+      <Navbar 
+        onHomeClick={handleHomeClick} 
+        onSearchClick={handleSearchClick} 
+        onHelpClick={handleHelpClick}
+        onAuthClick={handleAuthClick}
+        activeTab={activeTab}
+        isLoggedIn={isLoggedIn}
+      />
 
       {/* Home / Hero Section */}
       {!hasSearched ? (
-        <>
+        <div id="hero-search">
           <Hero onResults={handleSearchResults} />
-          <Features />
-        </>
+          {!isLoggedIn && <Features />}
+        </div>
       ) : (
-        <div className="results-view-header">
+        <div className="results-view-header" id="header-search">
           <Header onAnalyze={analyzeRoute} isLoading={isLoading} />
 
           <div className="app-section pt-4">
@@ -194,12 +271,27 @@ function App() {
         <RouteResults results={results} />
       )}
 
-      {/* Footer */}
-      <footer className="app-footer">
-        <p>
-          © {new Date().getFullYear()} Route Analysis AI | Powered by AIM UNIVERSSE
-        </p>
-      </footer>
+      {/* Footer / Help Section */}
+      {!hasSearched && (
+        <footer className="app-footer" id="app-footer">
+          <div className="footer-help-section">
+            <h3>Need Help?</h3>
+            <p>Get the most out of our AI-powered route intelligence. Whether you're looking for new route opportunities or analyzing existing ones, we're here to help.</p>
+            <div className="help-links">
+              <a href="mailto:support@tickmybus.com" className="help-link">Contact Support</a>
+              <span className="separator">|</span>
+              <a href="#" className="help-link">Documentation</a>
+              <span className="separator">|</span>
+              <a href="#" className="help-link">FAQs</a>
+            </div>
+          </div>
+          <div className="footer-bottom">
+            <p>
+              © {new Date().getFullYear()} Route Analysis AI | Powered by AIM UNIVERSSE
+            </p>
+          </div>
+        </footer>
+      )}
     </div>
   );
 }

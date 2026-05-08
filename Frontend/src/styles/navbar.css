@@ -29,7 +29,8 @@
 
 .logo-text h2 {
     font-size: 1.5rem;
-    color: #333;
+    color: var(--primary);
+    font-weight: 800;
 }
 
 .logo-text h2 span {
@@ -80,4 +81,109 @@
 
 .nav-links li svg {
     color: var(--primary);
+}
+
+.nav-divider {
+    width: 1px;
+    height: 24px;
+    background: var(--border-light);
+    margin: 0 4px;
+}
+
+.auth-trigger {
+    display: flex !important;
+    gap: 12px !important;
+}
+
+.signin-btn {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+}
+
+.signin-btn:hover {
+    background: var(--bg-panel-hover);
+}
+
+.signup-btn {
+    font-size: 0.9rem;
+    font-weight: 600;
+    background: var(--primary);
+    color: var(--white) !important;
+    padding: 8px 20px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.signup-btn:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.user-profile {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 12px 4px 4px;
+    background: var(--bg-panel-hover);
+    border-radius: var(--radius-full);
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    background: var(--primary);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.user-profile span {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+@media (max-width: 1024px) {
+    .navbar {
+        padding: 1rem 5%;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0.8rem 1rem;
+    }
+
+    .logo {
+        gap: 8px;
+    }
+
+    .logo-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .nav-links {
+        gap: 0.8rem;
+    }
+
+    .nav-links li span {
+        display: none; /* Hide text, show only icons on mobile */
+    }
+
+    .logo-text h2 {
+        font-size: 1.1rem;
+    }
+
+    .logo-text p {
+        display: none; /* Hide subtitle on very small screens */
+    }
 }
