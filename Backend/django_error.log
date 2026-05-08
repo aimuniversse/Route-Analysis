@@ -50,3 +50,13 @@ Traceback (most recent call last):
                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ValueError: Invalid format specifier ' "string", "total_distance": int, "estimated_time": float ' for object of type 'str'
 ------------------------------
+
+--- API ERROR AT 2026-05-08 10:27:08.932539+00:00 ---
+Source: Coimbatore, Dest: Chennai, Via: 
+Error: Unable to fetch route analysis at the moment (request timed out)
+------------------------------
+
+--- API ERROR AT 2026-05-08 10:27:08.955307+00:00 ---
+Source: Coimbatore, Dest: Chennai, Via: 
+Error: Unable to fetch route analysis at the moment (request timed out)
+------------------------------
