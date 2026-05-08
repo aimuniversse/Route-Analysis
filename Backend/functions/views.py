@@ -8,7 +8,6 @@ from django.db.models import Q
 from collections import deque
 import json
 import re
-from django.conf import settings
 
 from .models import (
     ParcelService, SuggestedRoute, RouteAnalysisCache, PopularSearch
@@ -95,87 +94,62 @@ def analyze_route_api(request):
     Django REST Framework API endpoint for React frontend.
     POST /api/route-analysis/
     """
+    if request.method == "POST":
+        # DRF's request.data handles both JSON and Form data automatically
+        source_name = request.data.get("source", "").strip()
+        dest_name = request.data.get("destination", "").strip()
+        via_name = request.data.get("via", "").strip()
+    else:
+        # Handle GET for testing in browser
+        source_name = request.query_params.get("source", "").strip()
+        dest_name = request.query_params.get("destination", "").strip()
+        via_name = request.query_params.get("via", "").strip()
+
+    print(f"DEBUG: analyze_route_api called with source={source_name}, dest={dest_name}, via={via_name}")
+    # Record the search
+    if source_name and dest_name:
+        route_text = f"{source_name} → {dest_name}"
+        try:
+            popular, created = PopularSearch.objects.get_or_create(route_text=route_text)
+            if not created:
+                popular.search_count += 1
+                popular.save()
+        except Exception as e:
+            print(f"DEBUG: PopularSearch error: {str(e)}")
+
+    # Validation
+    if not source_name or not dest_name:
+        return Response({
+            "status": "error",
+            "message": "Source and destination are required"
+        }, status=status.HTTP_400_BAD_REQUEST)
+
     try:
-        if request.method == "POST":
-            # DRF's request.data handles both JSON and Form data automatically
-            source_name = request.data.get("source", "").strip()
-            dest_name = request.data.get("destination", "").strip()
-            via_name = request.data.get("via", "").strip()
-        else:
-            # Handle GET for testing in browser
-            source_name = request.query_params.get("source", "").strip()
-            dest_name = request.query_params.get("destination", "").strip()
-            via_name = request.query_params.get("via", "").strip()
-
-        # Record the search (Safely)
-        if source_name and dest_name:
-            try:
-                route_text = f"{source_name} -> {dest_name}"
-                popular, created = PopularSearch.objects.get_or_create(route_text=route_text)
-                if not created:
-                    popular.search_count += 1
-                    popular.save()
-            except Exception as db_err:
-                print(f"Database logging error (ignored): {db_err}")
-
-        # Validation
-        if not source_name or not dest_name:
-            return Response({
-                "status": "error",
-                "message": "Source and destination are required"
-            }, status=status.HTTP_400_BAD_REQUEST)
-
         response_data, error = get_route_analysis_data(source_name, dest_name, via_name)
         if error:
-            print(f"AI API failed ({error}), returning mock fallback data.")
-            # Mock Fallback Data to prevent 500 error
-            mock_data = {
-                "status": "success",
-                "data_source": "mock_fallback",
-                "data": {
-                    "route_summary": { "path": f"{source_name} -> {dest_name}", "total_distance": 505, "estimated_time": 8.5 },
-                    "population_data": { 
-                        "source": { "name": source_name, "count": 8000000, "coordinates": { "lat": 13.0827, "lng": 80.2707 } },
-                        "destination": { "name": dest_name, "count": 2000000, "coordinates": { "lat": 11.0026, "lng": 76.9969 } }
-                    },
-                    "area_segmentation": {
-                        "job_business_areas": ["Manufacturing", "IT Services", "Textiles"],
-                        "student_areas": ["Anna University", "PSG Tech", "NIT"],
-                        "tourist_areas": ["Marina Beach", "Western Ghats"]
-                    },
-                    "visitor_data": [ { "place_name": "Major Landmark", "yearly": 1000000, "daily": 2700 } ],
-                    "demand_distribution": [ { "state": "Tamil Nadu", "percentage": 100, "cities": [ { "name": source_name, "percentage": 60 }, { "name": dest_name, "percentage": 40 } ] } ],
-                    "distance_details": [ { "segment": f"{source_name} -> {dest_name}", "distance_km": 505 } ],
-                    "transport_distribution": { "bus": 40, "train": 30, "car": 20, "taxi": 5, "flight": 5 },
-                    "logistics_services": { "parcel_movement": { "bus": 50, "train": 30, "courier": 20, "taxi": 0 }, "modes_used": ["Bus", "Train"] },
-                    "transport_schedule": [ { "from": dest_name, "to": source_name, "bus_trips": 12, "train_trips": 4 } ],
-                    "suggested_routes": [ { "option": 1, "path": "NH 544", "distance": 505, "time": 8.5 } ],
-                    "dashboard_data": {
-                        "traffic_trends": [ { "time": "8 AM", "value": 80 }, { "time": "12 PM", "value": 60 }, { "time": "6 PM", "value": 90 } ],
-                        "travel_time_by_hour": [ { "hour": "8 AM", "minutes": 510 }, { "hour": "12 PM", "minutes": 480 } ],
-                        "live_updates": [ { "incident": "Heavy Traffic", "severity": "Medium", "time": "Just now" } ],
-                        "weather": { "impact": "Low", "details": "Clear skies" },
-                        "area_potential": [ { "district": source_name, "population": 8000000, "potential_score": 95, "business_potential": "High", "growth_rate": 5.2, "sectors": [ { "name": "IT", "score": 90 } ] } ],
-                        "corridor_potential": { "business": 85, "student": 70, "tourist": 60 }
-                    }
-                }
-            }
-            return Response(mock_data)
+            with open('django_error.log', 'a', encoding='utf-8') as f:
+                f.write(f"\n--- API ERROR AT {timezone.now()} ---\n")
+                f.write(f"Source: {source_name}, Dest: {dest_name}, Via: {via_name}\n")
+                f.write(f"Error: {error}\n")
+                f.write("------------------------------\n")
+            return Response({
+                "status": "error",
+                "message": error
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
+        print(f"DEBUG: Success! Returning AI data.")
         return Response(response_data)
 
     except Exception as e:
         import traceback
-<<<<<<< HEAD
-        error_trace = traceback.format_exc()
-        print(f"CRITICAL API ERROR:\n{error_trace}")
-=======
-        traceback.print_exc()
->>>>>>> 771eebd139687fb38169f080d4a74e9dff8f7394
+        err_detail = traceback.format_exc()
+        with open('django_error.log', 'a', encoding='utf-8') as f:
+            f.write(f"\n--- UNHANDLED EXCEPTION AT {timezone.now()} ---\n")
+            f.write(err_detail)
+            f.write("------------------------------\n")
         return Response({
             "status": "error",
-            "message": f"Internal server error: {str(e)}",
-            "debug_trace": error_trace if settings.DEBUG else None
+            "message": f"Internal server error: {str(e)}"
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
@@ -190,11 +164,11 @@ def get_popular_searches(request):
     # Fallback if no searches recorded yet
     if not data:
         data = [
-            "Bangalore -> Chennai",
-            "Hyderabad -> Vijayawada",
-            "Pune -> Mumbai",
-            "Delhi -> Manali",
-            "Ahmedabad -> Surat"
+            "Bangalore → Chennai",
+            "Hyderabad → Vijayawada",
+            "Pune → Mumbai",
+            "Delhi → Manali",
+            "Ahmedabad → Surat"
         ]
         
     return Response({
