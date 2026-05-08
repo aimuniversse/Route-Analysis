@@ -9,6 +9,12 @@ const MapArea = ({ routeData, routeQuery, isLoading }) => {
   const startLabel = parsedPath?.[0] || routeData?.population_data?.source?.name || 'Origin';
   const endLabel = parsedPath?.[parsedPath.length - 1] || routeData?.population_data?.destination?.name || 'Destination';
 
+  const sourceName = routeData?.population_data?.source?.name || 'Source';
+  const destName = routeData?.population_data?.destination?.name || 'Destination';
+
+  const sourcePosition = { left: 88, top: 8 };
+  const destPosition = { left: 17.6, top: 94 };
+
   return (
     <div className={`route-map-shell ${isFullscreen ? 'fullscreen-active' : ''}`}>
       <div className={`route-map-card ${isFullscreen ? 'fullscreen-card' : ''}`}>
