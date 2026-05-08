@@ -6,6 +6,7 @@ import Hero from "./components/Hero";
 import Features from "./components/Features";
 import SplashScreen from "./components/SplashScreen";
 import RouteResults from "./components/RouteResults";
+import AuthModal from "./components/AuthModal";
 
 // Route Analysis Components
 import Header from "./components/Header";
@@ -33,6 +34,10 @@ function App() {
   const [viaCity, setViaCity] = useState("");
   const [activeTab, setActiveTab] = useState("home");
 
+  // Auth States
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   // Splash screen timer
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -42,9 +47,27 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Auth Handlers
+  const handleAuthClick = () => {
+    setIsAuthModalOpen(true);
+  };
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+    setIsAuthModalOpen(false);
+    // After login, show the "landing page" which is the home/create UI
+    setActiveTab("home");
+    setHasSearched(false);
+  };
+
   // Route analysis function
   const analyzeRoute = async (source, destination) => {
     if (!source.trim() || !destination.trim()) return;
+
+    if (!isLoggedIn) {
+      setIsAuthModalOpen(true);
+      return;
+    }
 
     setRouteQuery(`${source} to ${destination}`);
     setViaCity("");
@@ -83,6 +106,10 @@ function App() {
   };
 
   const handleSearchClick = () => {
+    if (!isLoggedIn) {
+      setIsAuthModalOpen(true);
+      return;
+    }
     setActiveTab("search");
     if (!hasSearched) {
       const searchBox = document.getElementById("hero-search");
@@ -116,19 +143,28 @@ function App() {
         <SplashScreen onFinish={() => setLoading(false)} />
       )}
 
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+        onLoginSuccess={handleLoginSuccess}
+      />
+
       {/* Navbar */}
       <Navbar 
         onHomeClick={handleHomeClick} 
         onSearchClick={handleSearchClick} 
         onHelpClick={handleHelpClick}
+        onAuthClick={handleAuthClick}
         activeTab={activeTab}
+        isLoggedIn={isLoggedIn}
       />
 
       {/* Home / Hero Section */}
       {!hasSearched ? (
         <div id="hero-search">
           <Hero onResults={handleSearchResults} />
-          <Features />
+          {!isLoggedIn && <Features />}
         </div>
       ) : (
         <div className="results-view-header" id="header-search">
