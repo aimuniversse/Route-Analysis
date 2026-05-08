@@ -25,11 +25,43 @@ const RouteInsights = ({ routeQuery, routeData }) => {
 
   // 2. Transport Data
   const aiTransport = routeData?.transport_distribution || routeData?.transport_pattern;
-  const transportData = aiTransport ? [
-    { name: 'Bus', value: aiTransport.bus || 60, color: 'var(--accent-blue)' },
-    { name: 'Train', value: aiTransport.train || 30, color: '#f59e0b' },
-    { name: 'Car/Air', value: (aiTransport.car || 0) + (aiTransport.flight || 0) + (aiTransport.private || 0), color: '#10b981' },
-  ] : [
+  const transportData = aiTransport ? Object.entries(aiTransport).map(([key, value]) => {
+    const transportColors = {
+      bus: 'var(--accent-blue)',
+      train: '#f59e0b',
+      car: '#10b981',
+      flight: '#10b981',
+      private: '#10b981',
+      taxi: '#10b981'
+    };
+
+    const transportNames = {
+      bus: 'Bus',
+      train: 'Train',
+      car: 'Car',
+      flight: 'Flight',
+      private: 'Private',
+      taxi: 'Taxi'
+    };
+
+    // Group car-related modes into Car/Air
+    if (['car', 'flight', 'private', 'taxi'].includes(key.toLowerCase())) {
+      return null; // Will be handled separately
+    }
+
+    return {
+      name: transportNames[key.toLowerCase()] || key.charAt(0).toUpperCase() + key.slice(1),
+      value: value || 0,
+      color: transportColors[key.toLowerCase()] || 'var(--accent-blue)'
+    };
+  }).filter(Boolean).concat([
+    // Add combined Car/Air category
+    {
+      name: 'Car/Air',
+      value: (aiTransport.car || 0) + (aiTransport.flight || 0) + (aiTransport.private || 0) + (aiTransport.taxi || 0),
+      color: '#10b981'
+    }
+  ]).filter(item => item.value > 0) : [
     { name: 'Bus', value: 60, color: 'var(--accent-blue)' },
     { name: 'Train', value: 30, color: '#f59e0b' },
     { name: 'Car/Air', value: 10, color: '#10b981' },
@@ -44,15 +76,28 @@ const RouteInsights = ({ routeQuery, routeData }) => {
   // 4. Area Data (Segmentation)
   const aiArea = routeData?.area_segmentation;
   const areaData = aiArea ? [
-    { name: 'Business', potential: 90, activity: 85, type: aiArea.job_business_areas?.[0] || 'Jobs' },
-    { name: 'Student', potential: 60, activity: 50, type: aiArea.student_areas?.[0] || 'Education' },
-    { name: 'Tourist', potential: 85, activity: 80, type: aiArea.tourist_areas?.[0] || 'Leisure' },
+    {
+      name: aiArea.business_areas?.[0]?.name || 'Business',
+      potential: aiArea.business_areas?.[0]?.potential || 90,
+      activity: aiArea.business_areas?.[0]?.activity || 85,
+      type: aiArea.business_areas?.[0]?.type || 'Jobs'
+    },
+    {
+      name: aiArea.student_areas?.[0]?.name || 'Student',
+      potential: aiArea.student_areas?.[0]?.potential || 60,
+      activity: aiArea.student_areas?.[0]?.activity || 50,
+      type: aiArea.student_areas?.[0]?.type || 'Education'
+    },
+    {
+      name: aiArea.tourist_areas?.[0]?.name || 'Tourist',
+      potential: aiArea.tourist_areas?.[0]?.potential || 85,
+      activity: aiArea.tourist_areas?.[0]?.activity || 80,
+      type: aiArea.tourist_areas?.[0]?.type || 'Leisure'
+    },
   ] : [
-    { name: 'Chennai', potential: 80, activity: 90, type: 'Origin / IT' },
-    { name: 'Sriperumbudur', potential: 95, activity: 85, type: 'Industrial' },
-    { name: 'Vellore', potential: 60, activity: 50, type: 'Education' },
-    { name: 'Salem', potential: 70, activity: 65, type: 'Transit / Trade' },
-    { name: 'Coimbatore', potential: 85, activity: 80, type: 'Textile' },
+    { name: 'Business', potential: 90, activity: 85, type: 'Jobs' },
+    { name: 'Student', potential: 60, activity: 50, type: 'Education' },
+    { name: 'Tourist', potential: 85, activity: 80, type: 'Leisure' },
   ];
 
   const suggestedRoutes = routeData?.suggested_routes || [
@@ -154,11 +199,11 @@ const RouteInsights = ({ routeQuery, routeData }) => {
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="flex justify-center gap-4 text-xs font-medium">
+          <div className="flex justify-center items-center gap-6 text-xs font-medium flex-nowrap" style={{ flexWrap: 'nowrap' }}>
             {transportData.map((d, i) => (
-              <div key={i} className="flex items-center gap-1">
-                <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: d.color }}></div>
-                <span>{d.name}</span>
+              <div key={i} className="flex items-center gap-1 whitespace-nowrap">
+                <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: d.color, flexShrink: 0 }}></div>
+                <span className="font-medium">{d.name}</span>
               </div>
             ))}
           </div>
@@ -170,7 +215,7 @@ const RouteInsights = ({ routeQuery, routeData }) => {
         <div className="insight-card span-2 hover-lift">
           <div className="insight-card-header">
             <div className="insight-icon orange"><Map size={20} /></div>
-            <h3>Area Potential Map</h3>
+            <h3>Area Potential sector</h3>
           </div>
           <div className="insight-card-content" style={{ width: '100%', minWidth: '0px' }}>
             <ResponsiveContainer width="100%" aspect={3.5}>
