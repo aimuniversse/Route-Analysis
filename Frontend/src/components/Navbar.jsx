@@ -2,9 +2,10 @@ import React from "react";
 import logo from "../assets/Tickmybus logo.svg";
 import "../styles/navbar.css";
 
-const Navbar = ({ onHomeClick, onSearchClick, onHelpClick, onAuthClick, activeTab = "home", isLoggedIn }) => {
+const Navbar = ({ onHomeClick, onSearchClick, onHelpClick, onAuthClick, onProfileClick, userData, activeTab = "home", isLoggedIn }) => {
     return (
         <nav className="navbar animate-slide-down">
+            {/* ... logo ... */}
             <div className="logo" onClick={onHomeClick} style={{ cursor: 'pointer' }}>
                 <div className="logo-icon">
                     <img src={logo} alt="Tickmybus Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
@@ -16,6 +17,7 @@ const Navbar = ({ onHomeClick, onSearchClick, onHelpClick, onAuthClick, activeTa
             </div>
 
             <ul className="nav-links">
+                {/* ... nav links ... */}
                 <li 
                     className={activeTab === "home" ? "active" : ""} 
                     onClick={onHomeClick}
@@ -43,12 +45,16 @@ const Navbar = ({ onHomeClick, onSearchClick, onHelpClick, onAuthClick, activeTa
                 {!isLoggedIn ? (
                     <li className="auth-trigger">
                         <button className="signin-btn" onClick={() => onAuthClick(true)}>Sign In</button>
-                        <button className="signup-btn" onClick={() => onAuthClick(false)}>Sign Up</button>
+                        <button className="signup-btn" onClick={() => onAuthClick(false)}>Register</button>
                     </li>
                 ) : (
-                    <li className="user-profile">
-                        <div className="user-avatar">JD</div>
-                        <span>John Doe</span>
+                    <li className="auth-trigger">
+                        <div className="user-profile clickable" onClick={onProfileClick}>
+                            <div className="user-avatar">
+                                {userData?.ownerName?.charAt(0) || "U"}
+                            </div>
+                            <span>{userData?.ownerName?.split(' ')[0] || "Profile"}</span>
+                        </div>
                     </li>
                 )}
             </ul>

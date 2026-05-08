@@ -123,13 +123,14 @@
     box-shadow: var(--shadow-md);
 }
 
-.user-profile {
-    display: flex !important;
-    align-items: center;
-    gap: 10px;
-    padding: 4px 12px 4px 4px;
+.user-profile.clickable {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.user-profile.clickable:hover {
     background: var(--bg-panel-hover);
-    border-radius: var(--radius-full);
+    transform: scale(1.02);
 }
 
 .user-avatar {
@@ -149,6 +150,27 @@
     font-size: 0.85rem;
     font-weight: 600;
     color: var(--text-dark);
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    padding: 6px 12px;
+    border-radius: var(--radius-md);
+    transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+    background: rgba(225, 29, 72, 0.08);
+    color: var(--primary);
+}
+
+.logout-btn svg {
+    color: currentColor !important;
 }
 
 @media (max-width: 1024px) {
