@@ -5,60 +5,18 @@ import routeMap from "../assets/image/maparea.png";
 
 const MapArea = ({ routeData, routeQuery, isLoading }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
-  
-  // Extract map coordinates and names from backend data
-  const sourceData = routeData?.population_data?.source;
-  const destData = routeData?.population_data?.destination;
-  
-  const sourceCoords = sourceData?.coordinates;
-  const destCoords = destData?.coordinates;
-  const sourceName = sourceData?.name;
-  const destName = destData?.name;
-  
-  // Calculate percentage positions on map for markers
-  // Source: Top-Right, Destination: Bottom-Left
-  const getMarkerPosition = (cityType) => {
-    if (cityType === 'source') {
-      // Source at top-right corner
-      return { top: 10, left: 88 };
-    } else if (cityType === 'destination') {
-      // Destination slightly lower and more to the right
-      return { top: 93, left: 17 };
-    }
-    return null;
-  };
-  
-  const sourcePosition = getMarkerPosition('source');
-  const destPosition = getMarkerPosition('destination');
-  
-  const getParsedPath = () => {
-    if (routeData?.route_summary?.path) {
-      return routeData.route_summary.path.split(/ → | -> /);
-    }
-    if (routeQuery) {
-      // Handle "A to B via C" or "A to B"
-      const viaSplit = routeQuery.split(" via ");
-      const mainPath = viaSplit[0].split(" to ");
-      if (viaSplit.length > 1) {
-        return [mainPath[0], viaSplit[1], mainPath[1]];
-      }
-      return mainPath;
-    }
-    return ['Origin', 'Destination'];
-  };
-
-  const parsedPath = getParsedPath();
-  const startLabel = parsedPath[0];
-  const endLabel = parsedPath[parsedPath.length - 1];
+  const parsedPath = routeData?.route_summary?.path?.split(" → ") || routeQuery?.split(" to ");
+  const startLabel = parsedPath?.[0] || routeData?.population_data?.source?.name || 'Origin';
+  const endLabel = parsedPath?.[parsedPath.length - 1] || routeData?.population_data?.destination?.name || 'Destination';
 
   return (
     <div className={`route-map-shell ${isFullscreen ? 'fullscreen-active' : ''}`}>
       <div className={`route-map-card ${isFullscreen ? 'fullscreen-card' : ''}`}>
         <div className="route-map-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <div style={{ 
-              background: 'rgba(225, 29, 72, 0.1)', 
-              padding: '10px', 
+            <div style={{
+              background: 'rgba(225, 29, 72, 0.1)',
+              padding: '10px',
               borderRadius: '12px',
               display: 'flex',
               alignItems: 'center',
@@ -70,23 +28,17 @@ const MapArea = ({ routeData, routeQuery, isLoading }) => {
             <div>
               <p className="eyebrow" style={{ marginBottom: '2px', opacity: 0.7 }}>Premium Route Analysis</p>
               <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                {startLabel} 
-                <ArrowIcon /> 
-                {parsedPath?.length > 2 ? (
-                  <>
-                    <span style={{ color: 'var(--accent-red)', opacity: 0.8 }}>{parsedPath[1]}</span>
-                    <ArrowIcon />
-                  </>
-                ) : null}
+                {startLabel}
+                <ArrowIcon />
                 {endLabel}
               </h2>
             </div>
           </div>
-          
+
           <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-            <div className="route-chip" style={{ 
-              background: 'var(--bg-panel)', 
-              color: 'var(--text-primary)', 
+            <div className="route-chip" style={{
+              background: 'var(--bg-panel)',
+              color: 'var(--text-primary)',
               border: '1px solid var(--border-color)',
               boxShadow: 'none',
               display: 'flex',
@@ -108,13 +60,13 @@ const MapArea = ({ routeData, routeQuery, isLoading }) => {
 
         <div className="route-map-frame" style={{ height: isFullscreen ? '100%' : '650px' }}>
           <div className="static-map-container">
-            <img 
-              src={routeMap} 
-              alt={`Route visualization from ${startLabel} to ${endLabel}`} 
+            <img
+              src={routeMap}
+              alt={`Route visualization from ${startLabel} to ${endLabel}`}
               className="static-map-image"
-              style={{ 
-                objectFit: 'cover', 
-                width: '100%', 
+              style={{
+                objectFit: 'cover',
+                width: '100%',
                 height: '100%',
                 opacity: isLoading ? 0.3 : 1,
                 transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',

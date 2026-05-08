@@ -1,17 +1,29 @@
-
-/* App.css is mostly empty as global styles are in index.css */
-.app {
+/* Global App Layout */
+.app-wrapper {
   width: 100%;
+  min-height: 100vh;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
 }
 
 .app-stack {
   width: 100%;
-  min-height: 100vh;
-  background-color: var(--bg-main);
   display: flex;
   flex-direction: column;
   gap: 40px;
   padding-bottom: 60px;
+}
+
+.dashboard-container {
+  width: 100%;
+}
+
+.dashboard-content-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
 }
 
 .app-section {
@@ -43,20 +55,22 @@
   letter-spacing: -0.03em;
   background: linear-gradient(to right, var(--text-primary), var(--text-secondary));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .error-banner {
-  margin: 0 40px;
+  margin: 20px 40px;
   background-color: rgba(239, 68, 68, 0.1);
   color: #ef4444;
   padding: 16px;
   border-radius: 12px;
   border: 1px solid #ef4444;
   text-align: center;
+  z-index: 10;
 }
 
-/* Dashboard Grid Layout in Stacked View */
+/* Dashboard Grid Layout */
 .dashboard-grid {
   display: flex;
   flex-direction: column;
@@ -74,12 +88,6 @@
   width: 100%;
 }
 
-@media (max-width: 1024px) {
-  .charts-row {
-    grid-template-columns: 1fr;
-  }
-}
-
 .app-footer {
   text-align: center;
   padding: 40px;
@@ -87,27 +95,6 @@
   font-size: 14px;
   border-top: 1px solid var(--border-color);
   margin-top: 40px;
-}
-
-/* Responsive Adjustments */
-@media (max-width: 1024px) {
-  .app-section {
-    padding: 0 24px;
-  }
-}
-
-@media (max-width: 768px) {
-  .app-stack {
-    gap: 30px;
-  }
-  
-  .section-title {
-    font-size: 20px;
-  }
-  
-  .app-section {
-    padding: 0 16px;
-  }
 }
 
 /* Animations */
@@ -127,5 +114,27 @@
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(30px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .app-section {
+    padding: 0 24px;
+  }
+  .charts-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-stack {
+    gap: 30px;
+  }
+  .section-title {
+    font-size: 20px;
+  }
+  .app-section {
+    padding: 0 16px;
+  }
 }
 
