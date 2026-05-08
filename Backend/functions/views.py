@@ -142,15 +142,12 @@ def analyze_route_api(request):
 
     except Exception as e:
         import traceback
-<<<<<<< HEAD
         traceback.print_exc()
-=======
         err_detail = traceback.format_exc()
         with open('django_error.log', 'a', encoding='utf-8') as f:
             f.write(f"\n--- UNHANDLED EXCEPTION AT {timezone.now()} ---\n")
             f.write(err_detail)
             f.write("------------------------------\n")
->>>>>>> 6476d3073b75020b7f2949e689f27fcc79a97680
         return Response({
             "status": "error",
             "message": f"Internal server error: {str(e)}"
