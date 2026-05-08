@@ -168,7 +168,7 @@ function App() {
         </div>
       ) : (
         <div className="results-view-header" id="header-search">
-          <Header onAnalyze={analyzeRoute} isLoading={isLoading} />
+          {/*<Header onAnalyze={analyzeRoute} isLoading={isLoading} /> */}
 
           <div className="app-section pt-4">
             <button

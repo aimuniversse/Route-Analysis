@@ -12,7 +12,7 @@ const MapArea = ({ routeData, routeQuery, isLoading }) => {
   const sourceName = routeData?.population_data?.source?.name || 'Source';
   const destName = routeData?.population_data?.destination?.name || 'Destination';
 
-  const sourcePosition = { left: 88, top: 8 };
+  const sourcePosition = { left: 88, top: 9 };
   const destPosition = { left: 17.6, top: 94 };
 
   return (
@@ -54,13 +54,6 @@ const MapArea = ({ routeData, routeQuery, isLoading }) => {
               {/*<Navigation size={14} />
               Live Overview*/}
             </div>
-            {/*<button
-              onClick={() => setIsFullscreen(!isFullscreen)}
-              className="fullscreen-toggle"
-              title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
-            >
-              {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
-            </button>*/}
           </div>
         </div>
 
@@ -79,6 +72,24 @@ const MapArea = ({ routeData, routeQuery, isLoading }) => {
                 transform: isLoading ? 'scale(1.05)' : 'scale(1)'
               }}
             />
+            
+            {!isLoading && sourcePosition && destPosition && (
+              <div className="map-markers-overlay">
+                <div className="map-marker source" style={{ left: `${sourcePosition.left}%`, top: `${sourcePosition.top}%` }}>
+                  <div className="marker-icon-container">
+                    {/*<div className="marker-pin source-pin" />*/}
+                  </div>
+                  <div className="marker-label source-label">{sourceName || 'Source'}</div>
+                </div>
+                
+                <div className="map-marker destination" style={{ left: `${destPosition.left}%`, top: `${destPosition.top}%` }}>
+                  <div className="marker-icon-container destination">
+                    {/*<div className="marker-pin dest-pin" />*/}
+                  </div>
+                  <div className="marker-label dest-label">{destName || 'Destination'}</div>
+                </div>
+              </div>
+            )}
             
           </div>
 
