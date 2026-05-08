@@ -51,6 +51,7 @@
 .section-title {
   font-size: 28px;
   font-weight: 800;
+  font-family: sans-serif;
   color: var(--text-primary);
   letter-spacing: -0.03em;
   background: linear-gradient(to right, var(--text-primary), var(--text-secondary));
