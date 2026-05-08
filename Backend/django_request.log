@@ -101,14 +101,6 @@ Body: {"source":"Bangalore","destination":"Chennai","via":""}
 --- RESPONSE FOR /api/route-analysis/ ---
 Status: 200
 ------------------------------
-<<<<<<< HEAD
-
---- REQUEST AT /api/route-analysis/ ---
-Body: {"source":"Bangalore","destination":"Chennai","via":""}
-------------------------------
---- RESPONSE FOR /api/route-analysis/ ---
-Status: 200
-------------------------------
 --- RESPONSE FOR /api/route-analysis/ ---
 Status: 200
 ------------------------------
@@ -156,6 +148,27 @@ Status: 200
 ------------------------------
 
 --- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Chennai","destination":"Coimbatore","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Chennai","destination":"Coimbatore","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Chennai","destination":"Coimbatore","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
 Body: {"source":"Bangalore","destination":"Chennai","via":""}
 ------------------------------
 
@@ -172,8 +185,27 @@ Body: {"source":"Bangalore","destination":"Chennai","via":""}
 --- RESPONSE FOR /api/route-analysis/ ---
 Status: 200
 ------------------------------
-=======
->>>>>>> 8de7b57170f0ae74a5210022a15ad1a94287e962
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
 --- RESPONSE FOR /api/route-analysis/ ---
 Status: 200
 ------------------------------
