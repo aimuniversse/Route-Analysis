@@ -432,6 +432,7 @@
   margin: 4px 0 0;
   color: #0e0f0f;
   font-size: 14px;
+  margin-bottom: 50px;
 }
 
 .title-with-logo {
@@ -1018,6 +1019,7 @@
   flex-direction: column;
   gap: 12px;
   margin: 20px 0 30px;
+  margin-bottom: 100px;
 }
 
 .population-item {
@@ -1029,6 +1031,7 @@
   border-radius: 12px;
   border: 1px solid #f1f5f9;
   transition: all 0.3s ease;
+  margin-bottom: 20px;
 }
 
 .population-item:hover {
@@ -1104,6 +1107,7 @@
   font-weight: 700;
   color: #1e3a8a;
   font-size: 16px;
+ 
 }
 
 .total-right {
