@@ -74,23 +74,6 @@ const MapArea = ({ routeData, routeQuery, isLoading }) => {
               }}
             />
             
-            {!isLoading && sourcePosition && destPosition && (
-              <div className="map-markers-overlay">
-                <div className="map-marker source" style={{ left: `${sourcePosition.left}%`, top: `${sourcePosition.top}%` }}>
-                  <div className="marker-icon-container">
-                    {/*<div className="marker-pin source-pin" />*/}
-                  </div>
-                  <div className="marker-label source-label">{sourceName || 'Source'}</div>
-                </div>
-                
-                <div className="map-marker destination" style={{ left: `${destPosition.left}%`, top: `${destPosition.top}%` }}>
-                  <div className="marker-icon-container destination">
-                    {/*<div className="marker-pin dest-pin" />*/}
-                  </div>
-                  <div className="marker-label dest-label">{destName || 'Destination'}</div>
-                </div>
-              </div>
-            )}
           </div>
 
           {isLoading && (
