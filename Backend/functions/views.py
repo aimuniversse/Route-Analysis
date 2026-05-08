@@ -142,6 +142,10 @@ def analyze_route_api(request):
 
     except Exception as e:
         import traceback
+<<<<<<< HEAD
+=======
+        traceback.print_exc()
+>>>>>>> 094a02353237f2df3801de2fca6c3e7905931942
         err_detail = traceback.format_exc()
         with open('django_error.log', 'a', encoding='utf-8') as f:
             f.write(f"\n--- UNHANDLED EXCEPTION AT {timezone.now()} ---\n")

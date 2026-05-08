@@ -209,6 +209,8 @@ Status: 200
 --- RESPONSE FOR /api/route-analysis/ ---
 Status: 200
 ------------------------------
+<<<<<<< HEAD
+=======
 
 --- REQUEST AT /api/route-analysis/ ---
 Body: {"source":"Bangalore","destination":"Chennai","via":""}
@@ -295,14 +297,26 @@ Status: 200
 ------------------------------
 
 --- REQUEST AT /api/route-analysis/ ---
+<<<<<<< HEAD
 Body: {"source":"coimbatore","destination":"nagapattinam","via":""}
+=======
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+>>>>>>> 094a02353237f2df3801de2fca6c3e7905931942
 ------------------------------
 --- RESPONSE FOR /api/route-analysis/ ---
 Status: 200
 ------------------------------
 
 --- REQUEST AT /api/route-analysis/ ---
+<<<<<<< HEAD
 Body: {"source":"coimbatore","destination":"nagapattinam","via":""}
+=======
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+>>>>>>> 094a02353237f2df3801de2fca6c3e7905931942
 ------------------------------
 --- RESPONSE FOR /api/route-analysis/ ---
 Status: 200
@@ -312,11 +326,26 @@ Status: 200
 ------------------------------
 
 --- REQUEST AT /api/route-analysis/ ---
+<<<<<<< HEAD
 Body: {"source":"coimbatore","destination":"nagapattinam","via":""}
 ------------------------------
 
 --- REQUEST AT /api/route-analysis/ ---
 Body: {"source":"coimbatore","destination":"nagapattinam","via":""}
+=======
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+>>>>>>> 094a02353237f2df3801de2fca6c3e7905931942
 ------------------------------
 --- RESPONSE FOR /api/route-analysis/ ---
 Status: 200
@@ -326,8 +355,75 @@ Status: 200
 ------------------------------
 
 --- REQUEST AT /api/route-analysis/ ---
+<<<<<<< HEAD
 Body: {"source":"coimbatore","destination":"nagapattinam","via":""}
+=======
+Body: {"source":"Chennai","destination":"Coimbatore","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Chennai","destination":"Coimbatore","via":""}
+>>>>>>> 094a02353237f2df3801de2fca6c3e7905931942
 ------------------------------
 --- RESPONSE FOR /api/route-analysis/ ---
 Status: 200
 ------------------------------
+<<<<<<< HEAD
+=======
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Chennai","destination":"Coimbatore","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+<<<<<<< HEAD
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Chennai","destination":"Coimbatore","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Chennai","destination":"Coimbatore","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Chennai","destination":"Coimbatore","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+=======
+>>>>>>> 9f4b0905da33b4c39105019c079340568d41c1f1
+>>>>>>> c05d4380a55b67810b0eb2fab0b2adf92c3746e8
+>>>>>>> 094a02353237f2df3801de2fca6c3e7905931942
