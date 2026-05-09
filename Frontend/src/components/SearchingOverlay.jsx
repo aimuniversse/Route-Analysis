@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+import { Bus } from "lucide-react";
 import Scene from "./Scene";
 import "../styles/searchingoverlay.css";
+
+const TOTAL_DURATION = 300; // 5 minutes in seconds
 
 const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
     const [progress, setProgress] = useState(0);
@@ -9,7 +12,13 @@ const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
     const [insightIndex, setInsightIndex] = useState(0);
     const [apiData, setApiData] = useState(null);
     const [error, setError] = useState(null);
-    const [apiFinished, setApiFinished] = useState(false);
+    const [timerDone, setTimerDone] = useState(false);
+
+    // Refs so intervals always read the latest values
+    const startTimeRef = useRef(Date.now());
+    const timerDoneRef = useRef(false);
+
+    const isReady = apiData !== null && timerDone;
 
     const getViaCities = (f, v, t) => {
         let route = [];
@@ -41,9 +50,8 @@ const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
         { label: "Security", text: "Every booking is monitored by our 24/7 AI Security Layer for your peace of mind." }
     ];
 
-    // Growth Stages based on progress (0 to 100)
+    // Growth stage label (0–4) based on progress
     const growthStage = Math.min(Math.floor(progress / 20), 4);
-
     const growthLabels = [
         "Initializing Neural Seed...",
         "Sprouting Digital Life...",
@@ -53,29 +61,40 @@ const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
     ];
 
     useEffect(() => {
-        // Rotate Statuses
+        // Lock body scroll
+        document.body.style.overflow = "hidden";
+
+        // ── Real-time progress clock (runs every 1 second) ──────────────────
+        const progressInterval = setInterval(() => {
+            const elapsed = (Date.now() - startTimeRef.current) / 1000;
+            const newProgress = Math.min((elapsed / TOTAL_DURATION) * 100, 100);
+
+            setProgress(newProgress);
+
+            if (elapsed >= TOTAL_DURATION && !timerDoneRef.current) {
+                timerDoneRef.current = true;
+                setTimerDone(true);
+                clearInterval(progressInterval);
+            }
+        }, 1000);
+
+        // ── Rotate status messages ───────────────────────────────────────────
         const statusInterval = setInterval(() => {
             setStatusIndex((prev) => (prev + 1) % statuses.length);
         }, 4000);
 
-        // Rotate Insights
+        // ── Rotate insight cards ─────────────────────────────────────────────
         const insightInterval = setInterval(() => {
             setInsightIndex((prev) => (prev + 1) % insights.length);
         }, 8000);
 
-        // Fetch Data from Backend
+        // ── Fetch backend data ───────────────────────────────────────────────
         const fetchData = async () => {
             try {
                 const response = await fetch("/api/route-analysis/", {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        source: from,
-                        destination: to,
-                        via: via
-                    }),
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ source: from, destination: to, via }),
                 });
 
                 if (!response.ok) {
@@ -83,52 +102,39 @@ const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
                     try {
                         const errorData = await response.json();
                         errorMsg = errorData.message || errorMsg;
-                    } catch (e) {
-                        // Not JSON or other error
-                    }
+                    } catch (e) { /* not JSON */ }
                     throw new Error(errorMsg);
                 }
 
                 const result = await response.json();
                 if (result.status === "success") {
                     setApiData(result.data);
-                    setApiFinished(true);
                 } else {
                     throw new Error(result.message || "Error analyzing route");
                 }
             } catch (err) {
                 setError(err.message);
-                setApiFinished(true);
             }
         };
 
         fetchData();
 
-        // Progress Animation: Slow while loading, fast-forward when done
-        const tickRate = apiFinished ? 20 : 3000; // Exactly 5 mins total (3000ms * 100), or zoom to 100% if done
-
-        const progressInterval = setInterval(() => {
-            setProgress((prev) => {
-                if (prev >= 95 && !apiFinished) return 95; // Wait at 95% if API is not yet done
-                if (prev >= 100) {
-                    clearInterval(progressInterval);
-                    return 100;
-                }
-                return prev + (apiFinished ? 2 : 1); // Jump faster if finished
-            });
-        }, tickRate);
-
-        // Lock body scroll
-        document.body.style.overflow = 'hidden';
-
         return () => {
+            clearInterval(progressInterval);
             clearInterval(statusInterval);
             clearInterval(insightInterval);
-            clearInterval(progressInterval);
-            // Restore body scroll
-            document.body.style.overflow = 'auto';
+            document.body.style.overflow = "auto";
         };
-    }, [apiFinished]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // Determine status text
+    const statusText = () => {
+        if (error) return <span style={{ color: "var(--primary)" }}>Error: {error}</span>;
+        if (apiData && timerDone) return <span className="success-status">✓ Neural Analysis Complete! Tap Get Data.</span>;
+        if (apiData) return <span className="success-status">✓ Neural Analysis Complete! Waiting for full scan…</span>;
+        return statuses[statusIndex];
+    };
 
     const overlayContent = (
         <div className="searching-overlay">
@@ -159,11 +165,28 @@ const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
                             ))} <span>→</span> {to}
                         </div>
 
-                        <div className="progress-bar-container">
-                            <div className="progress-bar" style={{ width: `${progress}%` }}></div>
+                        <div className="progress-section">
+                            <div className="progress-header-row">
+                                <div className="loading-label">Analysis in progress…</div>
+                            </div>
+
+                            {/* Bus animation track */}
+                            <div className="bus-track">
+                                <div className="moving-bus" style={{ left: `${Math.min(progress, 97)}%` }}>
+                                    <Bus size={20} />
+                                    <div className="bus-exhaust"></div>
+                                </div>
+                            </div>
+
+                            {/* Progress bar */}
+                            <div className="progress-bar-container">
+                                <div className="progress-bar" style={{ width: `${progress}%` }}></div>
+                            </div>
+
+
                         </div>
 
-                        <p className="status-text">{error ? <span style={{ color: 'var(--primary)' }}>Error: {error}</span> : statuses[statusIndex]}</p>
+                        <p className="status-text">{statusText()}</p>
 
                         <div className="insight-box">
                             <div className="insight-label">{insights[insightIndex].label}</div>
@@ -173,12 +196,12 @@ const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
                 </div>
 
                 <button
-                    className={`get-data-btn ${apiData ? 'blinking' : ''}`}
-                    disabled={!apiData}
+                    className={`get-data-btn ${isReady ? "blinking" : ""}`}
+                    disabled={!isReady}
                     onClick={() => onDataReady(apiData)}
-                    style={{ opacity: apiData ? 1 : 0.5, cursor: apiData ? 'pointer' : 'not-allowed' }}
+                    style={{ opacity: isReady ? 1 : 0.5, cursor: isReady ? "pointer" : "not-allowed" }}
                 >
-                    Get Data
+                    {isReady ? " Get Data" : "Scanning…"}
                 </button>
 
                 <button className="cancel-btn" onClick={onCancel}>

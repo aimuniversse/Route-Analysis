@@ -43,11 +43,56 @@ const SearchBox = ({ onResults }) => {
         fetchPopular();
     }, []);
 
-    const filteredCities = (input) => cities.filter(city => city.toLowerCase().includes(input.toLowerCase()) && input !== "");
+    const cityShortcuts = {
+        "cbe": "Coimbatore",
+        "blr": "Bangalore",
+        "hyd": "Hyderabad",
+        "maa": "Chennai",
+        "bom": "Mumbai",
+        "del": "Delhi",
+        "pnq": "Pune",
+        "tjy": "Thanjavur",
+        "trichi": "Tiruchirappalli",
+        "try": "Tiruchirappalli",
+        "trz": "Tiruchirappalli",
+        "tpj": "Tiruchirappalli",
+        "tpy": "Tirupathur",
+        "vlr": "Vellore",
+        "slm": "Salem",
+        "mdu": "Madurai",
+        "tcr": "Tiruppur",
+        "kchi": "Kochi",
+        "cok": "Kochi"
+    };
+
+    const filteredCities = (input) => {
+        if (!input) return [];
+        const lowerInput = input.toLowerCase();
+        
+        const matches = cities.filter(city => city.toLowerCase().includes(lowerInput));
+        
+        // Add shortcut match if not already in matches
+        const shortcutMatch = cityShortcuts[lowerInput];
+        if (shortcutMatch && !matches.includes(shortcutMatch)) {
+            matches.unshift(shortcutMatch);
+        }
+        
+        return matches;
+    };
+
+    const resolveCity = (name) => {
+        if (!name) return "";
+        const lower = name.trim().toLowerCase();
+        return cityShortcuts[lower] || name;
+    };
 
     const handleSearch = () => {
-        if (fromCity && toCity) {
-            if (onResults) onResults(null, `${fromCity} to ${toCity}`, viaCity);
+        const from = resolveCity(fromCity);
+        const to = resolveCity(toCity);
+        const via = resolveCity(viaCity);
+        
+        if (from && to) {
+            if (onResults) onResults(null, `${from} to ${to}`, via);
         } else {
             alert("Please enter both source and destination cities.");
         }
