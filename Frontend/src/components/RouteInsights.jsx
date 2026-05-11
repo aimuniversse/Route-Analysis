@@ -215,7 +215,7 @@ const RouteInsights = ({ routeQuery, routeData }) => {
         <div className="insight-card span-2 hover-lift">
           <div className="insight-card-header">
             <div className="insight-icon orange"><Map size={20} /></div>
-            <h3>Area Potential sector</h3>
+            <h3>Area Potential Sectors</h3>
           </div>
           <div className="insight-card-content" style={{ width: '100%', minWidth: '0px' }}>
             <ResponsiveContainer width="100%" aspect={3.5}>
