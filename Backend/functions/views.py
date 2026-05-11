@@ -46,12 +46,8 @@ def get_route_analysis_data(source_name, dest_name, via_name):
     ai_data, ai_error = generate_route_analysis(source_name, dest_name, via_name)
     
     if ai_data and not ai_error:
-        # Success: Return in the specific 'data_source': 'nvidia_api' format
-        return {
-            "status": "success",
-            "data_source": "nvidia_api",
-            "data": ai_data
-        }, None
+        # The AI now returns the full structure including status and data_source
+        return ai_data, None
 
     # Error: API failed or returned invalid data
     return None, ai_error or "Unable to fetch route analysis"

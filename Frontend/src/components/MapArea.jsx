@@ -5,7 +5,8 @@ import routeMap from "../assets/image/maparea.png";
 
 const MapArea = ({ routeData, routeQuery, isLoading }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const parsedPath = routeData?.route_summary?.path?.split(" → ") || routeQuery?.split(" to ");
+  const pathData = routeData?.route_summary?.path;
+  const parsedPath = Array.isArray(pathData) ? pathData : (pathData?.split(" → ") || routeQuery?.split(" to "));
   const startLabel = parsedPath?.[0] || routeData?.population_data?.source?.name || 'Origin';
   const endLabel = parsedPath?.[parsedPath.length - 1] || routeData?.population_data?.destination?.name || 'Destination';
 
@@ -138,7 +139,7 @@ const MapArea = ({ routeData, routeQuery, isLoading }) => {
                       fontWeight: '600',
                       borderBottom: '1px solid var(--border-light)'
                     }}>
-                      {routeData.route_summary.total_distance || 'N/A'} km
+                      {routeData.route_summary.total_distance_km || routeData.route_summary.total_distance || 'N/A'} km
                     </td>
                   </tr>
                   <tr>
@@ -154,7 +155,7 @@ const MapArea = ({ routeData, routeQuery, isLoading }) => {
                       textAlign: 'right',
                       fontWeight: '600'
                     }}>
-                      {routeData.route_summary.estimated_time || 'N/A'} hrs
+                      {routeData.route_summary.estimated_time_hours || routeData.route_summary.estimated_time || 'N/A'} hrs
                     </td>
                   </tr>
                 </tbody>
