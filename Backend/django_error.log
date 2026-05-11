@@ -51,6 +51,230 @@ Traceback (most recent call last):
 ValueError: Invalid format specifier ' "string", "total_distance": int, "estimated_time": float ' for object of type 'str'
 ------------------------------
 
+<<<<<<< HEAD
+--- JSON DECODE ERROR AT 2026-05-08 10:11:37.463720+00:00 ---
+Error: Unterminated string starting at: line 3 column 13 (char 35)
+Raw Content: 
+{
+  "route_summary": {
+    "path": "Chennai - Coimbatore: NH 45, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH
+------------------------------
+
+--- API ERROR AT 2026-05-08 10:11:37.498537+00:00 ---
+Source: chennai, Dest: coimbatore, Via: 
+Error: Unable to fetch route analysis at the moment (invalid response format)
+------------------------------
+
+--- JSON DECODE ERROR AT 2026-05-08 10:21:30.759199+00:00 ---
+Error: Unterminated string starting at: line 3 column 13 (char 35)
+Raw Content: 
+{
+  "route_summary": {
+    "path": "Chennai - Coimbatore: NH 45, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH 209, NH
+------------------------------
+
+--- API ERROR AT 2026-05-08 10:21:30.854169+00:00 ---
+Source: chennai, Dest: coimbatore, Via: 
+Error: Unable to fetch route analysis at the moment (invalid response format)
+------------------------------
+
+--- JSON DECODE ERROR AT 2026-05-08 11:27:00.459866+00:00 ---
+Error: Expecting property name enclosed in double quotes: line 14 column 18 (char 284)
+Raw Content: 
+{
+  "route_summary": {
+    "path": "Chennai - Coimbatore: NH 45",
+    "total_distance": 341,
+    "estimated_time": 5.5
+  },
+  "population_data": {
+    "source": {
+      "name": "Chennai",
+      "count": 4491954
+    },
+    "destination": {
+      "name": "Coimbatore",
+      "count": 1,048,925
+    }
+  },
+  "area_segmentation": {
+    "job_business_areas": [
+      "IT Park",
+      "Tidel Park",
+      "EPIP Zone"
+    ],
+    "student_areas": [
+      "Anna University",
+      "Madras University",
+      "SRM University"
+    ],
+    "tourist_areas": [
+      "Marina Beach",
+      "Guindy National Park",
+      "VGP Universal Kingdom"
+    ]
+  },
+  "visitor_data": [
+    {
+      "place_name": "Chennai",
+      "yearly": 1000000,
+      "daily": 25000
+    },
+    {
+      "place_name": "Coimbatore",
+      "yearly": 500000,
+      "daily": 15000
+    }
+  ],
+  "demand_distribution": [
+    {
+      "state": "Tamil Nadu",
+      "percentage": 80.0,
+      "cities": [
+        {
+          "name": "Chennai",
+          "percentage": 60.0
+        },
+        {
+          "name": "Coimbatore",
+          "percentage": 20.0
+        }
+      ]
+    }
+  ],
+  "distance_details": [
+    {
+      "segment": "Chennai to Salem",
+      "distance_km": 170
+    },
+    {
+      "segment": "Salem to Coimbatore",
+      "distance_km": 171
+    }
+  ],
+  "transport_distribution": {
+    "bus": 40.0,
+    "train": 30.0,
+    "car": 20.0,
+    "taxi": 5.0,
+    "flight": 5.0
+  },
+  "logistics_services": {
+    "parcel_movement": {
+      "bus": 30.0,
+      "train": 20.0,
+      "courier": 20.0,
+      "taxi": 30.0
+    },
+    "modes_used": [
+      "Road",
+      "Rail"
+    ]
+  },
+  "transport_schedule": [
+    {
+      "from": "Coimbatore",
+      "to": "Chennai",
+      "bus_trips": 50,
+      "train_trips": 20
+    }
+  ],
+  "suggested_routes": [
+    {
+      "option": 1,
+      "path": "Chennai - Salem - Coimbatore",
+      "distance": 341,
+      "time": 5.5
+    },
+    {
+      "option": 2,
+      "path": "Chennai - Erode - Coimbatore",
+      "distance": 350,
+      "time": 6.0
+    }
+  ],
+  "dashboard_data": {
+    "traffic_trends": [
+      {
+        "time": "Morning",
+        "value": 50
+      },
+      {
+        "time": "Evening",
+        "value": 30
+      }
+    ],
+    "travel_time_by_hour": [
+      {
+        "hour": "6:00 AM",
+        "minutes": 30
+      },
+      {
+        "hour": "12:00 PM",
+        "minutes": 45
+      }
+    ],
+    "live_updates": [
+      {
+        "incident": "Road Closure",
+        "severity": "High",
+        "time": "10:00 AM"
+      }
+    ],
+    "weather": {
+      "impact": "Low",
+      "details": "Sunny with a high of 28°C"
+    },
+    "area_potential": [
+      {
+        "district": "Chennai",
+        "population": 4491954,
+        "potential_score": 80,
+        "business_potential": "High",
+        "growth_rate": 2.5,
+        "sectors": [
+          {
+            "name": "IT",
+            "score": 90
+          },
+          {
+            "name": "Manufacturing",
+            "score": 70
+          }
+        ]
+      },
+      {
+        "district": "Coimbatore",
+        "population": 1048925,
+        "potential_score": 60,
+        "business_potential": "Medium",
+        "growth_rate": 3.0,
+        "sectors": [
+          {
+            "name": "Textiles",
+            "score": 80
+          },
+          {
+            "name": "Automotive",
+            "score": 60
+          }
+        ]
+      }
+    ],
+    "corridor_potential": {
+      "business": 70,
+      "student": 30,
+      "tourist": 20
+    }
+  }
+}
+
+------------------------------
+
+--- API ERROR AT 2026-05-08 11:27:00.570028+00:00 ---
+Source: chennai, Dest: coimbatore, Via: 
+Error: Unable to fetch route analysis at the moment (invalid response format)
+=======
 --- API ERROR AT 2026-05-08 10:27:08.932539+00:00 ---
 Source: Coimbatore, Dest: Chennai, Via: 
 Error: Unable to fetch route analysis at the moment (request timed out)
@@ -58,6 +282,12 @@ Error: Unable to fetch route analysis at the moment (request timed out)
 
 --- API ERROR AT 2026-05-08 10:27:08.955307+00:00 ---
 Source: Coimbatore, Dest: Chennai, Via: 
+Error: Unable to fetch route analysis at the moment (request timed out)
+>>>>>>> ec5125e366e120048d604954595139e97c6a0cff
+------------------------------
+
+--- API ERROR AT 2026-05-09 09:46:53.658130+00:00 ---
+Source: Chennai, Dest: Coimbatore, Via: 
 Error: Unable to fetch route analysis at the moment (request timed out)
 ------------------------------
 

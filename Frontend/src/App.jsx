@@ -7,6 +7,7 @@ import Features from "./components/Features";
 import SplashScreen from "./components/SplashScreen";
 import RouteResults from "./components/RouteResults";
 import AuthModal from "./components/AuthModal";
+import ProfileModal from "./components/ProfileModal";
 
 // Route Analysis Components
 import Header from "./components/Header";
@@ -36,8 +37,15 @@ function App() {
 
   // Auth States
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    return localStorage.getItem("isLoggedIn") === "true";
+  });
   const [authInitialMode, setAuthInitialMode] = useState(true);
+  const [userData, setUserData] = useState(() => {
+    const saved = localStorage.getItem("userData");
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   // Splash screen timer
   useEffect(() => {
@@ -54,12 +62,33 @@ function App() {
     setIsAuthModalOpen(true);
   };
 
-  const handleLoginSuccess = () => {
+  const handleLoginSuccess = (data) => {
+    setUserData(data);
     setIsLoggedIn(true);
+    localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("userData", JSON.stringify(data));
     setIsAuthModalOpen(false);
     // After login, show the "landing page" which is the home/create UI
     setActiveTab("home");
     setHasSearched(false);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUserData(null);
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("userData");
+    setHasSearched(false);
+    setActiveTab("home");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleProfileClick = () => {
+    setIsProfileModalOpen(true);
+  };
+
+  const handleUpdateUser = (updatedData) => {
+    setUserData(updatedData);
   };
 
   // Route analysis function
@@ -207,8 +236,19 @@ function App() {
         onSearchClick={handleSearchClick} 
         onHelpClick={handleHelpClick}
         onAuthClick={handleAuthClick}
+        onProfileClick={handleProfileClick}
+        userData={userData}
         activeTab={activeTab}
         isLoggedIn={isLoggedIn}
+      />
+
+      {/* Profile Modal */}
+      <ProfileModal 
+        isOpen={isProfileModalOpen} 
+        onClose={() => setIsProfileModalOpen(false)} 
+        userData={userData} 
+        onLogout={handleLogout} 
+        onUpdateUser={handleUpdateUser}
       />
 
       {/* Home / Hero Section */}

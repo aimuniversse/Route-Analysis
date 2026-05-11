@@ -26,8 +26,17 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialIsLogin = true }) =
 
     // Simulate API call
     console.log("Form submitted:", formData);
-    // In a real app, you'd validate and send to backend
-    onLoginSuccess();
+    
+    // Pass user data to parent
+    const userData = isLogin ? {
+      companyName: "Tickmybus Partner",
+      ownerName: formData.email.split('@')[0].charAt(0).toUpperCase() + formData.email.split('@')[0].slice(1),
+      email: formData.email,
+      MobileNumber: "9876543210",
+      Location: "Chennai, TN"
+    } : formData;
+
+    onLoginSuccess(userData);
     onClose();
   };
 

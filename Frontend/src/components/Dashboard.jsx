@@ -91,7 +91,7 @@ const Dashboard = () => {
               <BottomWidgets routeData={routeData} />
             </div>
             <div className="insights-container">
-              <RouteInsights routeQuery={routeQuery} />
+              <RouteInsights routeQuery={routeQuery} routeData={routeData} />
             </div>
           </div>
         </div>
