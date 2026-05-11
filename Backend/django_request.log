@@ -2727,6 +2727,22 @@ Status: 200
 ------------------------------
 
 --- REQUEST AT /api/route-analysis/ ---
+<<<<<<< HEAD
+Body: {"source":"Chennai","destination":"Coimbatore","via":""}
+=======
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+>>>>>>> bcf10137420b53ed1f82d74cd4551117f1f11585
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+<<<<<<< HEAD
+
+--- REQUEST AT /api/route-analysis/ ---
 Body: {"source":"Chennai","destination":"Coimbatore","via":""}
 ------------------------------
 --- RESPONSE FOR /api/route-analysis/ ---
@@ -2750,13 +2766,8 @@ Status: 200
 --- REQUEST AT /api/route-analysis/ ---
 Body: {"source":"Chennai","destination":"Coimbatore","via":""}
 ------------------------------
---- RESPONSE FOR /api/route-analysis/ ---
-Status: 200
-------------------------------
-
---- REQUEST AT /api/route-analysis/ ---
-Body: {"source":"Chennai","destination":"Coimbatore","via":""}
-------------------------------
+=======
+>>>>>>> bcf10137420b53ed1f82d74cd4551117f1f11585
 --- RESPONSE FOR /api/route-analysis/ ---
 Status: 200
 ------------------------------
@@ -2776,42 +2787,108 @@ Status: 200
 ------------------------------
 
 --- REQUEST AT /api/route-analysis/ ---
+<<<<<<< HEAD
 Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+=======
+Body: {"source":"Hyderabad","destination":"Vijayawada","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Hyderabad","destination":"Vijayawada","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+>>>>>>> bcf10137420b53ed1f82d74cd4551117f1f11585
 ------------------------------
 --- RESPONSE FOR /api/route-analysis/ ---
 Status: 200
 ------------------------------
 
 --- REQUEST AT /api/route-analysis/ ---
+<<<<<<< HEAD
 Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+=======
+Body: {"source":"Hyderabad","destination":"Vijayawada","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Hyderabad","destination":"Vijayawada","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+>>>>>>> bcf10137420b53ed1f82d74cd4551117f1f11585
 ------------------------------
 --- RESPONSE FOR /api/route-analysis/ ---
 Status: 200
 ------------------------------
 
 --- REQUEST AT /api/route-analysis/ ---
+<<<<<<< HEAD
 Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+=======
+Body: {"source":"Hyderabad","destination":"Vijayawada","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Hyderabad","destination":"Vijayawada","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+>>>>>>> bcf10137420b53ed1f82d74cd4551117f1f11585
 ------------------------------
 --- RESPONSE FOR /api/route-analysis/ ---
 Status: 200
 ------------------------------
 
 --- REQUEST AT /api/route-analysis/ ---
+<<<<<<< HEAD
 Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+=======
+Body: {"source":"Hyderabad","destination":"Vijayawada","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Hyderabad","destination":"Vijayawada","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+>>>>>>> bcf10137420b53ed1f82d74cd4551117f1f11585
 ------------------------------
 --- RESPONSE FOR /api/route-analysis/ ---
 Status: 200
 ------------------------------
 
 --- REQUEST AT /api/route-analysis/ ---
+<<<<<<< HEAD
 Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+=======
+Body: {"source":"Hyderabad","destination":"Vijayawada","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Hyderabad","destination":"Vijayawada","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+>>>>>>> bcf10137420b53ed1f82d74cd4551117f1f11585
 ------------------------------
 --- RESPONSE FOR /api/route-analysis/ ---
 Status: 200
 ------------------------------
 
 --- REQUEST AT /api/route-analysis/ ---
+<<<<<<< HEAD
 Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+=======
+Body: {"source":"Hyderabad","destination":"Vijayawada","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Hyderabad","destination":"Vijayawada","via":""}
+>>>>>>> bcf10137420b53ed1f82d74cd4551117f1f11585
 ------------------------------
 --- RESPONSE FOR /api/route-analysis/ ---
 Status: 200

@@ -291,6 +291,7 @@ Source: Chennai, Dest: Coimbatore, Via:
 Error: Unable to fetch route analysis at the moment (request timed out)
 ------------------------------
 
+<<<<<<< HEAD
 --- API ERROR AT 2026-05-08 11:33:56.143741+00:00 ---
 Source: Coimbatore, Dest: Chennai, Via: 
 Error: Unable to fetch route analysis at the moment (request timed out)
@@ -304,4 +305,438 @@ Error: Unable to fetch route analysis at the moment (request timed out)
 --- API ERROR AT 2026-05-08 11:36:39.625603+00:00 ---
 Source: Coimbatore, Dest: Chennai, Via: 
 Error: Unable to fetch route analysis at the moment (request timed out)
+=======
+--- JSON DECODE ERROR AT 2026-05-11 05:34:57.918223+00:00 ---
+Error: Expecting property name enclosed in double quotes: line 14 column 18 (char 297)
+Raw Content: 
+{
+  "route_summary": {
+    "path": "Chennai -> Thiruvannamalai -> Coimbatore",
+    "total_distance": 540,
+    "estimated_time": 8.5
+  },
+  "population_data": {
+    "source": {
+      "name": "Chennai",
+      "count": 4491954
+    },
+    "destination": {
+      "name": "Coimbatore",
+      "count": 1,060,450
+    }
+  },
+  "area_segmentation": {
+    "job_business_areas": [
+      "Tidel Park",
+      "Guindy",
+      "Anna Nagar"
+    ],
+    "student_areas": [
+      "T Nagar",
+      "Purasawalkam",
+      "Adyar"
+    ],
+    "tourist_areas": [
+      "Marina Beach",
+      "Fort St. George",
+      "Valluvar Kottam"
+    ]
+  },
+  "visitor_data": [
+    {
+      "place_name": "Thiruvannamalai Temple",
+      "yearly": 500000,
+      "daily": 15000
+    },
+    {
+      "place_name": "Kumbakonam",
+      "yearly": 200000,
+      "daily": 5000
+    }
+  ],
+  "demand_distribution": [
+    {
+      "state": "Tamil Nadu",
+      "percentage": 80.0,
+      "cities": [
+        {
+          "name": "Chennai",
+          "percentage": 60.0
+        },
+        {
+          "name": "Coimbatore",
+          "percentage": 20.0
+        }
+      ]
+    },
+    {
+      "state": "Andhra Pradesh",
+      "percentage": 10.0,
+      "cities": [
+        {
+          "name": "Visakhapatnam",
+          "percentage": 5.0
+        }
+      ]
+    }
+  ],
+  "distance_details": [
+    {
+      "segment": "Chennai to Thiruvannamalai",
+      "distance_km": 180
+    },
+    {
+      "segment": "Thiruvannamalai to Coimbatore",
+      "distance_km": 360
+    }
+  ],
+  "transport_distribution": {
+    "bus": 40.0,
+    "train": 30.0,
+    "car": 20.0,
+    "taxi": 5.0,
+    "flight": 5.0
+  },
+  "logistics_services": {
+    "parcel_movement": {
+      "bus": 60.0,
+      "train": 20.0,
+      "courier": 10.0,
+      "taxi": 10.0
+    },
+    "modes_used": [
+      "Bus",
+      "Train",
+      "Courier",
+      "Taxi"
+    ]
+  },
+  "transport_schedule": [
+    {
+      "from": "Chennai",
+      "to": "Thiruvannamalai",
+      "bus_trips": 20,
+      "train_trips": 10
+    },
+    {
+      "from": "Thiruvannamalai",
+      "to": "Coimbatore",
+      "bus_trips": 15,
+      "train_trips": 8
+    }
+  ],
+  "suggested_routes": [
+    {
+      "option": 1,
+      "path": "Chennai -> Thiruvannamalai -> Coimbatore",
+      "distance": 540,
+      "time": 8.5
+    },
+    {
+      "option": 2,
+      "path": "Chennai -> Salem -> Coimbatore",
+      "distance": 520,
+      "time": 8.0
+    }
+  ],
+  "dashboard_data": {
+    "traffic_trends": [
+      {
+        "time": "06:00",
+        "value": 100
+      },
+      {
+        "time": "12:00",
+        "value": 200
+      }
+    ],
+    "travel_time_by_hour": [
+      {
+        "hour": "06:00",
+        "minutes": 30
+      },
+      {
+        "hour": "12:00",
+        "minutes": 45
+      }
+    ],
+    "live_updates": [
+      {
+        "incident": "Traffic Jam",
+        "severity": "High",
+        "time": "10:00"
+      }
+    ],
+    "weather": {
+      "impact": "Low",
+      "details": "Sunny"
+    },
+    "area_potential": [
+      {
+        "district": "Chennai",
+        "population": 4491954,
+        "potential_score": 80,
+        "business_potential": "High",
+        "growth_rate": 2.5,
+        "sectors": [
+          {
+            "name": "IT",
+            "score": 90
+          },
+          {
+            "name": "Manufacturing",
+            "score": 80
+          }
+        ]
+      },
+      {
+        "district": "Coimbatore",
+        "population": 1060450,
+        "potential_score": 70,
+        "business_potential": "Medium",
+        "growth_rate": 3.0,
+        "sectors": [
+          {
+            "name": "Textiles",
+            "score": 85
+          },
+          {
+            "name": "Automotive",
+            "score": 75
+          }
+        ]
+      }
+    ],
+    "corridor_potential": {
+      "business": 80,
+      "student": 60,
+      "tourist": 40
+    }
+  }
+}
+
+------------------------------
+
+--- API ERROR AT 2026-05-11 05:34:57.930031+00:00 ---
+Source: Chennai, Dest: Coimbatore, Via: Thiruvannamalai
+Error: Unable to fetch route analysis at the moment (invalid response format)
+------------------------------
+
+--- JSON DECODE ERROR AT 2026-05-11 05:46:13.543826+00:00 ---
+Error: Expecting property name enclosed in double quotes: line 14 column 18 (char 297)
+Raw Content: 
+{
+  "route_summary": {
+    "path": "Chennai -> Thiruvannamalai -> Coimbatore",
+    "total_distance": 560,
+    "estimated_time": 8.5
+  },
+  "population_data": {
+    "source": {
+      "name": "Chennai",
+      "count": 4491954
+    },
+    "destination": {
+      "name": "Coimbatore",
+      "count": 1,422,615
+    }
+  },
+  "area_segmentation": {
+    "job_business_areas": [
+      "Tidel Park",
+      "Guindy Industrial Estate",
+      "Thiruvannamalai Industrial Estate"
+    ],
+    "student_areas": [
+      "Anna University",
+      "PSG College of Technology",
+      "Sri Eshwara College of Engineering"
+    ],
+    "tourist_areas": [
+      "Marina Beach",
+      "Kapaleeswarar Temple",
+      "Coimbatore Junction"
+    ]
+  },
+  "visitor_data": [
+    {
+      "place_name": "Chennai",
+      "yearly": 1000000,
+      "daily": 25000
+    },
+    {
+      "place_name": "Thiruvannamalai",
+      "yearly": 500000,
+      "daily": 15000
+    },
+    {
+      "place_name": "Coimbatore",
+      "yearly": 2000000,
+      "daily": 50000
+    }
+  ],
+  "demand_distribution": [
+    {
+      "state": "Tamil Nadu",
+      "percentage": 80.0,
+      "cities": [
+        {
+          "name": "Chennai",
+          "percentage": 60.0
+        },
+        {
+          "name": "Coimbatore",
+          "percentage": 20.0
+        }
+      ]
+    }
+  ],
+  "distance_details": [
+    {
+      "segment": "Chennai to Thiruvannamalai",
+      "distance_km": 200
+    },
+    {
+      "segment": "Thiruvannamalai to Coimbatore",
+      "distance_km": 360
+    }
+  ],
+  "transport_distribution": {
+    "bus": 40.0,
+    "train": 30.0,
+    "car": 20.0,
+    "taxi": 5.0,
+    "flight": 5.0
+  },
+  "logistics_services": {
+    "parcel_movement": {
+      "bus": 40.0,
+      "train": 30.0,
+      "courier": 20.0,
+      "taxi": 10.0
+    },
+    "modes_used": [
+      "Bus",
+      "Train",
+      "Courier",
+      "Taxi"
+    ]
+  },
+  "transport_schedule": [
+    {
+      "from": "Chennai",
+      "to": "Coimbatore",
+      "bus_trips": 50,
+      "train_trips": 20
+    }
+  ],
+  "suggested_routes": [
+    {
+      "option": 1,
+      "path": "Chennai -> Thiruvannamalai -> Coimbatore",
+      "distance": 560,
+      "time": 8.5
+    },
+    {
+      "option": 2,
+      "path": "Chennai -> Salem -> Coimbatore",
+      "distance": 580,
+      "time": 9.0
+    }
+  ],
+  "dashboard_data": {
+    "traffic_trends": [
+      {
+        "time": "08:00",
+        "value": 100
+      },
+      {
+        "time": "12:00",
+        "value": 200
+      },
+      {
+        "time": "16:00",
+        "value": 300
+      }
+    ],
+    "travel_time_by_hour": [
+      {
+        "hour": "08:00",
+        "minutes": 30
+      },
+      {
+        "hour": "12:00",
+        "minutes": 45
+      },
+      {
+        "hour": "16:00",
+        "minutes": 60
+      }
+    ],
+    "live_updates": [
+      {
+        "incident": "Traffic Jam",
+        "severity": "High",
+        "time": "2023-02-20 12:00:00"
+      },
+      {
+        "incident": "Road Closure",
+        "severity": "High",
+        "time": "2023-02-20 14:00:00"
+      }
+    ],
+    "weather": {
+      "impact": "Low",
+      "details": "Sunny with a high of 28°C"
+    },
+    "area_potential": [
+      {
+        "district": "Chennai",
+        "population": 4491954,
+        "potential_score": 80,
+        "business_potential": "High",
+        "growth_rate": 2.5,
+        "sectors": [
+          {
+            "name": "IT",
+            "score": 90
+          },
+          {
+            "name": "Manufacturing",
+            "score": 70
+          }
+        ]
+      },
+      {
+        "district": "Coimbatore",
+        "population": 1422615,
+        "potential_score": 60,
+        "business_potential": "Medium",
+        "growth_rate": 3.0,
+        "sectors": [
+          {
+            "name": "IT",
+            "score": 80
+          },
+          {
+            "name": "Manufacturing",
+            "score": 50
+          }
+        ]
+      }
+    ],
+    "corridor_potential": {
+      "business": 80,
+      "student": 60,
+      "tourist": 40
+    }
+  }
+}
+
+------------------------------
+
+--- API ERROR AT 2026-05-11 05:46:13.548518+00:00 ---
+Source: Chennai, Dest: Coimbatore, Via: Thiruvannamalai
+Error: Unable to fetch route analysis at the moment (invalid response format)
+>>>>>>> bcf10137420b53ed1f82d74cd4551117f1f11585
 ------------------------------

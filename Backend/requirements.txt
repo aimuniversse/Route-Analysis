@@ -5,3 +5,4 @@ mysqlclient>=2.2.0
 djangorestframework
 requests
 django-cors-headers
+djangorestframework-simplejwt
