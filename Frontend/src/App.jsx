@@ -15,7 +15,7 @@ import MapArea from "./components/MapArea";
 import Charts from "./components/Charts";
 import BottomWidgets from "./components/BottomWidgets";
 import RouteInsights from "./components/RouteInsights";
-import AreaPotentialMap from "./components/AreaPotentialMap";
+//import AreaPotentialMap from "./components/AreaPotentialMap";
 import PremiumReportPage from "./components/PremiumReportPage";
 import SearchingOverlay from "./components/SearchingOverlay";
 
@@ -311,12 +311,12 @@ function App() {
           </section>
 
           {/* Area Potential Map */}
-          <section className="app-section potential-map-section animate-fade-in-up">
+          {/* <section className="app-section potential-map-section animate-fade-in-up">
             <AreaPotentialMap
               routeData={routeData}
               isLoading={isLoading}
             />
-          </section>
+          </section> */}
 
           {/* Dashboard */}
           <section className="app-section dashboard-section animate-fade-in-up">

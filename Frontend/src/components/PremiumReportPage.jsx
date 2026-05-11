@@ -154,9 +154,9 @@ export default function PremiumReportPage({ routeData }) {
       const districtData = areaPotential.find(d => d.district.toLowerCase().includes(city.toLowerCase()));
       
       // Assign type and icon based on segmentation data
-      const isIndustrial = (segmentation.job_business_areas || []).some(s => s.toLowerCase().includes(city.toLowerCase()));
-      const isTourist = (segmentation.tourist_areas || []).some(s => s.toLowerCase().includes(city.toLowerCase()));
-      const isStudent = (segmentation.student_areas || []).some(s => s.toLowerCase().includes(city.toLowerCase()));
+      const isIndustrial = (segmentation.business_areas || []).some(s => s?.name?.toLowerCase().includes(city.toLowerCase()));
+      const isTourist = (segmentation.tourist_areas || []).some(s => s?.name?.toLowerCase().includes(city.toLowerCase()));
+      const isStudent = (segmentation.student_areas || []).some(s => s?.name?.toLowerCase().includes(city.toLowerCase()));
 
       if (idx === 0) {
         type = 'Origin';
