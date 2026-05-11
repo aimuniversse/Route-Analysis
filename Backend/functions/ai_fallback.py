@@ -5,40 +5,95 @@ from django.utils import timezone
 
 def generate_route_analysis(source, destination, via=None):
     """
-    Calls the NVIDIA API to generate route analysis data in the expected JSON format.
+    Calls the NVIDIA API to generate a HIGH-ACCURACY, REALISTIC, and STRICTLY STRUCTURED 
+    Route Analysis JSON response as a Senior Transportation Data Engineer.
     """
     api_key = os.getenv("NVIDIA_API_KEY")
     if not api_key:
         return None, "NVIDIA_API_KEY is not set in the environment variables."
 
-    # Prompt definition
+    # Prompt definition based on Senior Transportation Data Engineer requirements
     prompt = f"""
-You are a professional transportation analyst. Generate a highly detailed Route Analysis for: {source} to {destination}{f' via {via}' if via else ''}.
-Return ONLY valid JSON. No conversational filler.
+You are a Senior Transportation Data Engineer and AI Data Validator.
+Generate a HIGH-ACCURACY, REALISTIC, and STRICTLY STRUCTURED Route Analysis for: {source} to {destination}{f' via {via}' if via else ''}.
 
-The JSON MUST follow this structure exactly:
-1. route_summary: {{ "path": "string", "total_distance": int, "estimated_time": float }}
-2. population_data: {{ "source": {{ "name": "string", "count": int }}, "destination": {{ "name": "string", "count": int }} }}
-3. area_segmentation: {{
-    "business_areas": [ {{ "name": "string", "potential": int, "activity": int, "type": "string" }} ],
-    "student_areas": [ {{ "name": "string", "potential": int, "activity": int, "type": "string" }} ],
-    "tourist_areas": [ {{ "name": "string", "potential": int, "activity": int, "type": "string" }} ]
+CORE OBJECTIVE:
+Transform this request into a production-grade transport analytics dataset with realistic Indian geography-based models.
+
+HARD RULES:
+1. ALL percentages MUST sum exactly to 100.
+2. NO fake small populations. Use realistic metro values (e.g., Chennai ~8M-12M, Coimbatore ~2M-4M, Tier-2 cities scaled realistically).
+3. Demand Distribution MUST include TOP 3 STATES only, with exactly 5 cities per state. Balanced weighting.
+4. Transport Distribution MUST reflect real-world usage (Bus: 40-65%, Train: 20-35%, others minimal). MUST sum to 100.
+5. Logistics MUST be percentage-based only (NO company names). MUST sum to 100.
+6. Distance MUST show ONLY SOURCE → DESTINATION total distance (No segment breakdowns).
+7. Transport Schedule MUST show ONLY DIRECT SOURCE → DESTINATION trips. Realistic frequency: Bus 80-300/day, Train 10-40/day.
+8. Area Segmentation: Max 5 meaningful entries per category. Format: "Entity Name (City Name)".
+9. RETURN ONLY CLEAN JSON. NO explanation, NO markdown, NO comments.
+
+OUTPUT STRUCTURE:
+{{
+"status": "success",
+"data_source": "ai_generated",
+"data": {{
+"route_summary": {{
+  "path": ["string"],
+  "total_distance_km": number,
+  "estimated_time_hours": number
+}},
+"population_data": {{
+  "source": {{ "name": "string", "population": number }},
+  "destination": {{ "name": "string", "population": number }},
+  "via": {{ "name": "string", "population": number }}
+}},
+"area_segmentation": {{
+  "starting_point": "string",
+  "final_destination": "string",
+  "important_stops": ["string"],
+  "job_business_areas": ["string"],
+  "student_areas": ["string"],
+  "tourist_places": ["string"]
+}},
+"visitor_data": {{
+  "source": {{ "yearly_total": number, "daily_normal": number, "daily_peak": number }},
+  "destination": {{ "yearly_total": number, "daily_normal": number, "daily_peak": number }}
+}},
+"demand_distribution": [
+  {{
+    "state": "string",
+    "percentage": number,
+    "top_cities": [
+      {{ "name": "string", "percentage": number, "visitor_count": number }},
+      {{ "name": "string", "percentage": number, "visitor_count": number }},
+      {{ "name": "string", "percentage": number, "visitor_count": number }},
+      {{ "name": "string", "percentage": number, "visitor_count": number }},
+      {{ "name": "string", "percentage": number, "visitor_count": number }}
+    ]
   }}
-4. visitor_data: [ {{ "place_name": "string", "yearly": int, "daily": int }} ]
-5. demand_distribution: [ {{ "state": "string", "percentage": float, "cities": [ {{ "name": "string", "percentage": float }} ] }} ]
-6. distance_details: [ {{ "segment": "string", "distance_km": int }} ]
-7. transport_distribution: {{ "bus": float, "train": float, "car": float, "taxi": float, "flight": float }}
-8. logistics_services: {{ "parcel_movement": {{ "bus": float, "train": float, "courier": float, "taxi": float }}, "modes_used": ["string"] }}
-9. transport_schedule: [ {{ "from": "{destination}", "to": "{source}", "bus_trips": int, "train_trips": int }} ]
-10. suggested_routes: [ {{ "option": int, "path": "string", "distance": int, "time": float }} ]
-11. dashboard_data: {{
-      "traffic_trends": [ {{ "time": "string", "value": int }} ],
-      "travel_time_by_hour": [ {{ "hour": "string", "minutes": int }} ],
-      "live_updates": [ {{ "incident": "string", "severity": "Low"|"High", "time": "string" }} ],
-      "weather": {{ "impact": "Low"|"High", "details": "string" }},
-      "area_potential": [ {{ "district": "string", "population": int, "potential_score": int, "business_potential": "string", "growth_rate": float, "sectors": [ {{ "name": "string", "score": int }} ] }} ],
-      "corridor_potential": {{ "business": int, "student": int, "tourist": int }}
-    }}
+],
+"distance_details": {{
+  "from": "string",
+  "to": "string",
+  "distance_km": number
+}},
+"transport_distribution": {{
+  "bus": number,
+  "train": number,
+  "car": number,
+  "taxi": number,
+  "flight": number
+}},
+"logistics_services": {{
+  "bus": number,
+  "train": number,
+  "courier": number,
+  "taxi": number
+}},
+"transport_schedule": [
+  {{ "from": "string", "to": "string", "type": "bus | train", "trips_per_day": number }}
+]
+}}
+}}
 """
 
     headers = {
