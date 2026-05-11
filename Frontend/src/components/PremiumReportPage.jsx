@@ -31,6 +31,8 @@ export default function PremiumReportPage({ routeData, isLoading }) {
   const [formData, setFormData] = useState({ name: '', busTravels: '', contactNo: '', message: '' });
   const [formStatus, setFormStatus] = useState(null); // null | 'success' | 'error'
   const [lastSyncTime, setLastSyncTime] = useState(new Date().toLocaleTimeString());
+  const [hoveredMatrixCell, setHoveredMatrixCell] = useState(null);
+  const [selectedMatrixCell, setSelectedMatrixCell] = useState(null);
 
   useEffect(() => {
     if (routeData) {
@@ -265,8 +267,13 @@ export default function PremiumReportPage({ routeData, isLoading }) {
     }
 
     // Build N x N matrix
+    let maxDistance = 0;
     const matrix = cities.map((_, i) => {
-      return cities.map((_, j) => Math.abs(cumulativeDistances[j] - cumulativeDistances[i]));
+      return cities.map((_, j) => {
+        const dist = Math.abs(cumulativeDistances[j] - cumulativeDistances[i]);
+        if (dist > maxDistance) maxDistance = dist;
+        return dist;
+      });
     });
 
     const getAbbr = (name) => {
@@ -275,7 +282,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
       return name.slice(0, 3).toUpperCase();
     };
 
-    return { cities, matrix, getAbbr };
+    return { cities, matrix, getAbbr, maxDistance };
   }, [routeData]);
 
   const dynamicLogisticsData = useMemo(() => {
@@ -463,11 +470,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
 
         {/* Concept 3: Area Segmentation Map */}
         <section className="section-spacing animate-fade-in">
-<<<<<<< HEAD
-          <AreaPotentialMap routeData={routeData} isLoading={isLoading} />
-=======
           <AreaPotentialMap routeData={routeData} isLoading={false} />
->>>>>>> f4f1a2e13fee7b59f9a8aa10aa30e7bde464c12e
         </section>
 
         {/* Concept 3: Area Segmentation Timeline */}
@@ -479,6 +482,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
           <div className="segmentation-model-container">
             <div className="timeline-horizontal-line"></div>
             <div className="timeline-nodes-wrapper">
+              
               {dynamicTimelineNodes.map((node, idx) => (
                 <div key={idx} className={`model-timeline-node ${idx % 2 === 0 ? 'is-top' : 'is-bottom'}`}>
                   <div className="node-content-box">
@@ -492,6 +496,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                   <div className="node-desc-text">{node.desc}</div>
                 </div>
               ))}
+
             </div>
           </div>
         </section>
@@ -660,7 +665,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
               <div className="icon-wrap bg-orange-light"><Navigation className="text-orange-main" /></div>
               <div>
                 <h2>Distance Matrix (km)</h2>
-                <p className="subtitle-small">Distance matrix between key points on the {routeName} corridor</p>
+                <p className="subtitle-small">Distance between major cities in Tamil Nadu</p>
               </div>
             </div>
             <div className="route-visual-top">
@@ -693,8 +698,9 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                   </th>
                   {matrixData.cities.map((city, idx) => {
                     const node = dynamicTimelineNodes[idx];
+                    const isHoveredCol = hoveredMatrixCell?.col === idx;
                     return (
-                      <th key={idx}>
+                      <th key={idx} className={isHoveredCol ? "hovered-header" : ""}>
                         <div className="city-header-icon">
                           <img src={node?.icon} alt="" style={{ width: '20px', height: '20px', marginBottom: '4px' }} />
                           <br/>{matrixData.getAbbr(city)}
@@ -705,26 +711,111 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                 </tr>
               </thead>
               <tbody>
-                {matrixData.matrix.map((row, i) => (
-                  <tr key={i} className="dist-row">
-                    <td className="row-label">
+                {matrixData.matrix.map((row, i) => {
+                  const isHoveredRow = hoveredMatrixCell?.row === i;
+                  return (
+                  <tr key={i} className={`dist-row ${isHoveredRow ? "hovered-row-container" : ""}`}>
+                    <td className={`row-label ${isHoveredRow ? "hovered-header" : ""}`}>
                       <div className="city-label">
                         <img src={dynamicTimelineNodes[i]?.icon} alt="" style={{ width: '18px', height: '18px', marginRight: '8px' }} />
                         {matrixData.cities[i]}
                       </div>
                     </td>
-                    {row.map((dist, j) => (
-                      <td key={j} className={dist === 0 ? "zero-cell" : ""}>{dist}</td>
-                    ))}
+                    {row.map((dist, j) => {
+                      const isHovered = hoveredMatrixCell?.row === i || hoveredMatrixCell?.col === j;
+                      const isSelected = selectedMatrixCell?.row === i && selectedMatrixCell?.col === j;
+                      const intensity = matrixData.maxDistance > 0 ? (dist / matrixData.maxDistance) : 0;
+                      
+                      // Using a safe heat map color gradient calculation
+                      const bgOpacity = intensity * 0.4; // Max 40% opacity for readability
+                      const heatColor = `rgba(249, 115, 22, ${bgOpacity})`;
+                      
+                      return (
+                        <td 
+                          key={j} 
+                          className={`
+                            ${dist === 0 ? "zero-cell" : "dist-cell"} 
+                            ${isHovered ? "hovered-cell" : ""}
+                            ${isSelected ? "selected-cell" : ""}
+                          `}
+                          style={{ backgroundColor: dist !== 0 ? heatColor : undefined }}
+                          onMouseEnter={() => setHoveredMatrixCell({ row: i, col: j, dist })}
+                          onMouseLeave={() => setHoveredMatrixCell(null)}
+                          onClick={() => setSelectedMatrixCell({ row: i, col: j, dist })}
+                        >
+                          {dist}
+                        </td>
+                      );
+                    })}
                   </tr>
-                ))}
+                )})}
               </tbody>
             </table>
           </div>
+          
+          {/* Dynamic Details Panel for Distance Matrix */}
+          {(hoveredMatrixCell || selectedMatrixCell) && (
+            <div className="matrix-details-panel">
+              {(() => {
+                const activeCell = selectedMatrixCell || hoveredMatrixCell;
+                if (!activeCell || activeCell.row === activeCell.col) return null;
+                const origin = matrixData.cities[activeCell.row];
+                const destination = matrixData.cities[activeCell.col];
+                const distance = activeCell.dist;
+                // Assuming average speed of 50 km/h for estimated time
+                const estHours = (distance / 50).toFixed(1);
+                
+                return (
+                  <div className="details-panel-content animate-slide-up">
+                    <div className="details-header">
+                      <Navigation size={18} className="text-orange-main" />
+                      <h4>Route Segment Details</h4>
+                    </div>
+                    <div className="details-body">
+                      <div className="route-endpoints">
+                        <div className="endpoint">
+                          <span className="endpoint-label">From</span>
+                          <span className="endpoint-value">{origin}</span>
+                        </div>
+                        <div className="endpoint-connector">
+                          <ArrowRight size={16} className="text-slate-light" />
+                        </div>
+                        <div className="endpoint">
+                          <span className="endpoint-label">To</span>
+                          <span className="endpoint-value">{destination}</span>
+                        </div>
+                      </div>
+                      <div className="route-stats">
+                        <div className="stat-box">
+                          <MapPin size={16} className="text-orange-main" />
+                          <div>
+                            <span className="stat-val">{distance} km</span>
+                            <span className="stat-desc">Distance</span>
+                          </div>
+                        </div>
+                        <div className="stat-box">
+                          <Timer size={16} className="text-orange-main" />
+                          <div>
+                            <span className="stat-val">~{estHours} hrs</span>
+                            <span className="stat-desc">Est. Time</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {selectedMatrixCell && (
+                       <button className="close-panel-btn" onClick={() => setSelectedMatrixCell(null)}>
+                         ✕
+                       </button>
+                    )}
+                  </div>
+                );
+              })()}
+            </div>
+          )}
 
           <div className="info-footer-banner orange">
             <Info size={16} className="text-orange-main" />
-            <span>All distances are approximate road distances in kilometers.</span>
+            <span> All distances are approximate road distances in kilometers. Click a cell for segment details.</span>
           </div>
         </section>
 
