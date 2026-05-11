@@ -26,13 +26,20 @@ const heroImage = "file:///C:/Users/DELL/.gemini/antigravity/brain/6f074f9e-ba21
 
 
 
+<<<<<<< HEAD
 export default function PremiumReportPage({ routeData }) {
   const routeName = Array.isArray(routeData?.route_summary?.path) 
     ? routeData.route_summary.path.join(' → ') 
     : (routeData?.route_summary?.path || "Coimbatore to Chennai");
+=======
+export default function PremiumReportPage({ routeData, isLoading }) {
+  const routeName = routeData?.route_summary?.path || "Coimbatore to Chennai";
+>>>>>>> 60abf5066aea624cfd14785be3f4b4577a83019c
   const [formData, setFormData] = useState({ name: '', busTravels: '', contactNo: '', message: '' });
   const [formStatus, setFormStatus] = useState(null); // null | 'success' | 'error'
   const [lastSyncTime, setLastSyncTime] = useState(new Date().toLocaleTimeString());
+  const [hoveredMatrixCell, setHoveredMatrixCell] = useState(null);
+  const [selectedMatrixCell, setSelectedMatrixCell] = useState(null);
 
   useEffect(() => {
     if (routeData) {
@@ -249,12 +256,15 @@ export default function PremiumReportPage({ routeData }) {
     const areaSeg = routeData?.area_segmentation || {};
     const corridorPot = routeData?.dashboard_data?.corridor_potential || {};
     const items = [];
+
+    // Helper: area entries can be objects {name,...} or plain strings
+    const getName = (entry) => (entry?.name ?? entry ?? '');
     
-    if (areaSeg.job_business_areas?.length) {
+    if (areaSeg.business_areas?.length) {
       const businessScore = corridorPot.business ? ` (Potential: ${corridorPot.business}%)` : "";
       items.push({ 
         title: 'Job & Business', 
-        content: `${areaSeg.job_business_areas[0]}${businessScore}`, 
+        content: `${getName(areaSeg.business_areas[0])}${businessScore}`, 
         icon: <Briefcase />, 
         color: 'orange' 
       });
@@ -264,7 +274,7 @@ export default function PremiumReportPage({ routeData }) {
       const studentScore = corridorPot.student ? ` (Potential: ${corridorPot.student}%)` : "";
       items.push({ 
         title: 'Education Hubs', 
-        content: `${areaSeg.student_areas[0]}${studentScore}`, 
+        content: `${getName(areaSeg.student_areas[0])}${studentScore}`, 
         icon: <GraduationCap />, 
         color: 'purple' 
       });
@@ -274,23 +284,23 @@ export default function PremiumReportPage({ routeData }) {
       const touristScore = corridorPot.tourist ? ` (Potential: ${corridorPot.tourist}%)` : "";
       items.push({ 
         title: 'Tourist Hotspots', 
-        content: `${areaSeg.tourist_areas[0]}${touristScore}`, 
+        content: `${getName(areaSeg.tourist_areas[0])}${touristScore}`, 
         icon: <Mountain />, 
         color: 'green' 
       });
     }
 
-    // Add more if we have space (up to 4)
-    if (items.length < 4 && areaSeg.job_business_areas?.length > 1) {
+    // Add a 4th card from a second business area if available
+    if (items.length < 4 && areaSeg.business_areas?.length > 1) {
       items.push({ 
         title: 'Industrial Center', 
-        content: areaSeg.job_business_areas[1], 
+        content: getName(areaSeg.business_areas[1]), 
         icon: <Factory />, 
         color: 'blue' 
       });
     }
 
-    // Fallbacks if data is missing
+    // Fallbacks if API returned no usable segmentation data
     const fallbacks = [
       { title: 'Job & Business', content: 'Major Industrial Hubs', icon: <Briefcase />, color: 'orange' },
       { title: 'Institutions', content: 'Education & Research Centers', icon: <GraduationCap />, color: 'purple' },
@@ -328,8 +338,13 @@ export default function PremiumReportPage({ routeData }) {
     }
 
     // Build N x N matrix
+    let maxDistance = 0;
     const matrix = cities.map((_, i) => {
-      return cities.map((_, j) => Math.abs(cumulativeDistances[j] - cumulativeDistances[i]));
+      return cities.map((_, j) => {
+        const dist = Math.abs(cumulativeDistances[j] - cumulativeDistances[i]);
+        if (dist > maxDistance) maxDistance = dist;
+        return dist;
+      });
     });
 
     const getAbbr = (name) => {
@@ -338,7 +353,7 @@ export default function PremiumReportPage({ routeData }) {
       return name.slice(0, 3).toUpperCase();
     };
 
-    return { cities, matrix, getAbbr };
+    return { cities, matrix, getAbbr, maxDistance };
   }, [routeData]);
 
   const dynamicDistanceDetails = useMemo(() => {
@@ -512,7 +527,7 @@ export default function PremiumReportPage({ routeData }) {
                 <div className="icon-wrap bg-orange-soft"><Briefcase className="text-orange-main" /></div>
                 <div>
                   <h2 className="title-split">Potential <span className="text-pink-main">of the Area</span></h2>
-                  <p className="subtitle-small">The Coimbatore to Chennai corridor has a diverse range of attractions and industries, including:</p>
+                  <p className="subtitle-small">The {routeSummary.path} corridor has a diverse range of attractions and industries, including:</p>
                 </div>
               </div>
               <div className="growth-visual-top">
@@ -569,6 +584,7 @@ export default function PremiumReportPage({ routeData }) {
           <div className="segmentation-model-container">
             <div className="timeline-horizontal-line"></div>
             <div className="timeline-nodes-wrapper">
+              
               {dynamicTimelineNodes.map((node, idx) => (
                 <div key={idx} className={`model-timeline-node ${idx % 2 === 0 ? 'is-top' : 'is-bottom'}`}>
                   <div className="node-content-box">
@@ -582,6 +598,7 @@ export default function PremiumReportPage({ routeData }) {
                   <div className="node-desc-text">{node.desc}</div>
                 </div>
               ))}
+
             </div>
           </div>
         </section>
@@ -721,14 +738,14 @@ export default function PremiumReportPage({ routeData }) {
             </div>
         </section>
 
-        {/* Concept 6: Distance Matrix - Redesigned */}
+        {/* Concept 6: Distance Matrix - Dynamic API-Driven */}
         <section className="analysis-section-box section-spacing distance-matrix-container">
           <div className="visitor-header-flex">
             <div className="visitor-title-box">
               <div className="icon-wrap bg-orange-light"><Navigation className="text-orange-main" /></div>
               <div>
                 <h2>Distance Matrix (km)</h2>
-                <p className="subtitle-small">Distance matrix between key points on the {routeName} corridor</p>
+                <p className="subtitle-small">Distance between major cities along the {routeSummary.path} corridor</p>
               </div>
             </div>
             <div className="route-visual-top">
@@ -760,11 +777,12 @@ export default function PremiumReportPage({ routeData }) {
                     </div>
                   </th>
                   {matrixData.cities.map((city, idx) => {
-                    const node = dynamicTimelineNodes[idx];
+                    const icons = [Landmark, Activity, Building2];
+                    const CityIcon = icons[idx % icons.length];
                     return (
                       <th key={idx}>
                         <div className="city-header-icon">
-                          <img src={node?.icon} alt="" style={{ width: '20px', height: '20px', marginBottom: '4px' }} />
+                          <CityIcon size={20} className="text-orange-main" />
                           <br/>{matrixData.getAbbr(city)}
                         </div>
                       </th>
@@ -773,19 +791,34 @@ export default function PremiumReportPage({ routeData }) {
                 </tr>
               </thead>
               <tbody>
-                {matrixData.matrix.map((row, i) => (
-                  <tr key={i} className="dist-row">
-                    <td className="row-label">
-                      <div className="city-label">
-                        <img src={dynamicTimelineNodes[i]?.icon} alt="" style={{ width: '18px', height: '18px', marginRight: '8px' }} />
-                        {matrixData.cities[i]}
-                      </div>
-                    </td>
-                    {row.map((dist, j) => (
-                      <td key={j} className={dist === 0 ? "zero-cell" : ""}>{dist}</td>
-                    ))}
-                  </tr>
-                ))}
+                {matrixData.matrix.map((row, i) => {
+                  const icons = [Landmark, Activity, Building2];
+                  const RowIcon = icons[i % icons.length];
+                  return (
+                    <tr key={i} className="dist-row">
+                      <td className="row-label">
+                        <div className="city-label">
+                          <RowIcon size={18} className="text-orange-main" />
+                          {matrixData.cities[i]}
+                        </div>
+                      </td>
+                      {row.map((dist, j) => {
+                        const intensity = matrixData.maxDistance > 0 ? (dist / matrixData.maxDistance) : 0;
+                        const bgOpacity = intensity * 0.35;
+                        const heatColor = `rgba(249, 115, 22, ${bgOpacity})`;
+                        return (
+                          <td
+                            key={j}
+                            className={dist === 0 ? "zero-cell" : "dist-cell"}
+                            style={dist !== 0 ? { backgroundColor: heatColor } : undefined}
+                          >
+                            {dist === 0 ? <strong>0</strong> : dist}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

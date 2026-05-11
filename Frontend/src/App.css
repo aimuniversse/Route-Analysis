@@ -1,11 +1,12 @@
 /* Global App Layout */
 .app-wrapper {
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
   background-color: var(--bg-main);
   color: var(--text-primary);
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
 }
 
 .app-stack {
@@ -27,10 +28,16 @@
 }
 
 .app-section {
-  max-width: 1400px;
   width: 100%;
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 20px;
+}
+
+/* Large screen optimizations */
+@media (min-width: 1440px) {
+  .app-section {
+    padding: 0 40px;
+  }
 }
 
 .section-header {
@@ -49,8 +56,8 @@
 }
 
 .section-title {
-  font-size: 28px;
-  font-weight: 800;
+  font-size: 25px;
+  font-weight: 600;
   font-family: sans-serif;
   color: var(--text-primary);
   letter-spacing: -0.03em;
@@ -80,7 +87,7 @@
 
 .charts-row {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 24px;
   width: 100%;
 }
@@ -98,6 +105,7 @@
   background: var(--primary);
   position: relative;
   overflow: hidden;
+ 
 }
 
 .app-footer::before {

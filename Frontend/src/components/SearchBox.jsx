@@ -10,13 +10,13 @@ const SearchBox = ({ onResults }) => {
     const [isSearching, setIsSearching] = useState(false);
 
     const cities = [
-        "Ariyalur", "Chengalpattu", "Chennai", "Coimbatore", "Cuddalore", "Dharmapuri", 
-        "Dindigul", "Erode", "Kallakurichi", "Kanchipuram", "Kanyakumari", "Karur", 
-        "Krishnagiri", "Madurai", "Mayiladuthurai", "Nagapattinam", "Namakkal", "Nilgiris", 
-        "Perambalur", "Pudukkottai", "Ramanathapuram", "Ranipet", "Salem", "Sivaganga", 
-        "Tenkasi", "Thanjavur", "Theni", "Thoothukudi", "Tiruchirappalli", "Tirunelveli", 
-        "Tirupathur", "Tiruppur", "Tiruvallur", "Tiruvannamalai", "Tiruvarur", "Vellore", 
-        "Viluppuram", "Virudhunagar", "Bangalore", "Hyderabad", "Vijayawada", "Pune", 
+        "Ariyalur", "Chengalpattu", "Chennai", "Coimbatore", "Cuddalore", "Dharmapuri",
+        "Dindigul", "Erode", "Kallakurichi", "Kanchipuram", "Kanyakumari", "Karur",
+        "Krishnagiri", "Madurai", "Mayiladuthurai", "Nagapattinam", "Namakkal", "Nilgiris",
+        "Perambalur", "Pudukkottai", "Ramanathapuram", "Ranipet", "Salem", "Sivaganga",
+        "Tenkasi", "Thanjavur", "Theni", "Thoothukudi", "Tiruchirappalli", "Tirunelveli",
+        "Tirupathur", "Tiruppur", "Tiruvallur", "Tiruvannamalai", "Tiruvarur", "Vellore",
+        "Viluppuram", "Virudhunagar", "Bangalore", "Hyderabad", "Vijayawada", "Pune",
         "Mumbai", "Delhi", "Kochi", "Goa", "Mysore"
     ];
 
@@ -68,15 +68,15 @@ const SearchBox = ({ onResults }) => {
     const filteredCities = (input) => {
         if (!input) return [];
         const lowerInput = input.toLowerCase();
-        
+
         const matches = cities.filter(city => city.toLowerCase().includes(lowerInput));
-        
+
         // Add shortcut match if not already in matches
         const shortcutMatch = cityShortcuts[lowerInput];
         if (shortcutMatch && !matches.includes(shortcutMatch)) {
             matches.unshift(shortcutMatch);
         }
-        
+
         return matches;
     };
 
@@ -90,7 +90,7 @@ const SearchBox = ({ onResults }) => {
         const from = resolveCity(fromCity);
         const to = resolveCity(toCity);
         const via = resolveCity(viaCity);
-        
+
         if (from && to) {
             if (onResults) onResults(null, `${from} to ${to}`, via);
         } else {
@@ -189,7 +189,7 @@ const SearchBox = ({ onResults }) => {
                 </div>
 
                 <div className="popular-searches">
-                    <span className="label">Popular Searches <span className="icon">⚡</span></span>
+                    <span className="label">Popular Searches </span>
                     <div className="tags-container">
                         <div className="tags">
                             {popularSearches.map((search, index) => (

@@ -21,7 +21,7 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 2.5rem; /* Increased spacing */
     width: 100%;
-    max-width: 1200px; /* Wider for better spacing */
+    max-width: 1400px; /* Increased for better full screen utilization */
     margin: 0 auto;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }

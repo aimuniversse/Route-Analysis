@@ -4,7 +4,11 @@ import { Bus } from "lucide-react";
 import Scene from "./Scene";
 import "../styles/searchingoverlay.css";
 
+<<<<<<< HEAD
 const TOTAL_DURATION = 10; // 5 minutes in seconds
+=======
+const TOTAL_DURATION = 8; // seconds — short splash; button unlocks as soon as API responds
+>>>>>>> 60abf5066aea624cfd14785be3f4b4577a83019c
 
 const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
     const [progress, setProgress] = useState(0);
@@ -132,7 +136,7 @@ const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
     const statusText = () => {
         if (error) return <span style={{ color: "var(--primary)" }}>Error: {error}</span>;
         if (apiData && timerDone) return <span className="success-status">✓ Neural Analysis Complete! Tap Get Data.</span>;
-        if (apiData) return <span className="success-status">✓ Neural Analysis Complete! Waiting for full scan…</span>;
+
         return statuses[statusIndex];
     };
 

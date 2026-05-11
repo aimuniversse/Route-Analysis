@@ -30,11 +30,11 @@ const appleMaterial = new THREE.MeshStandardMaterial({
 });
 
 const seedMaterial = new THREE.MeshStandardMaterial({ 
-    color: "#8D6E63", 
-    roughness: 0.75,
-    metalness: 0.1,
-    emissive: "#4E342E",
-    emissiveIntensity: 0.2
+    color: "#A1887F", 
+    roughness: 0.6,
+    metalness: 0.15,
+    emissive: "#6D4C41",
+    emissiveIntensity: 0.4
 });
 
 // High-fidelity Geometries
@@ -48,9 +48,13 @@ leafShape.bezierCurveTo(-0.45, 0.5, -0.25, 0.12, 0, 0);
 const leafGeometry = new THREE.ShapeGeometry(leafShape);
 
 const appleGeometry = new THREE.SphereGeometry(0.22, 24, 24);
-const seedGeometry = new THREE.IcosahedronGeometry(0.45, 2);
+const seedGeometry = new THREE.IcosahedronGeometry(0.38, 2);
 
 const easeOut = (t) => 1 - Math.pow(1 - t, 3); 
+const easeInOut = (t) => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+
+// Trunk height in local group space
+const TRUNK_LENGTH = 3.2;
 
 const TreeStages = ({ progress }) => {
     const groupRef = useRef();
@@ -64,20 +68,26 @@ const TreeStages = ({ progress }) => {
         const generatedLeaves = [];
         const generatedApples = [];
 
+        // Each level takes 8% progress. Trunk starts at 2% so:
+        // depth 0 (trunk): 2–10%  (~6 sec into 5min)
+        // depth 1:        ~6–14%
+        // depth 2:        ~9–17%
+        // depth 3:        ~13–21%  → leaves start appearing
+        // depth 4+: 18–30%
+        const BRANCH_DURATION = 8;
+
         function generateBranch(startPos, direction, length, thickness, depth, pStart) {
             const endPos = startPos.clone().add(direction.clone().multiplyScalar(length));
             const quaternion = new THREE.Quaternion();
             quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.clone().normalize());
 
-            const duration = 10; 
-            const pEnd = Math.min(pStart + duration, 90); 
+            const pEnd = Math.min(pStart + BRANCH_DURATION, 92); 
 
             generatedBranches.push({
                 startPos, quaternion, length, thickness, pStart, pEnd, depth
             });
 
             if (depth < MAX_DEPTH) {
-                // More children for denser canopy
                 const numChildren = depth === 0 ? 4 : depth <= 2 ? 3 : 2;
                 const angleStep = (Math.PI * 2) / numChildren;
                 const baseOffset = Math.random() * Math.PI * 2;
@@ -95,22 +105,22 @@ const TreeStages = ({ progress }) => {
 
                     const childLength = length * (0.7 + Math.random() * 0.12);
                     const childThickness = thickness * (0.58 + Math.random() * 0.06);
-                    const childPStart = pStart + duration * 0.45;
+                    // Children start at 50% into the parent's grow time
+                    const childPStart = pStart + BRANCH_DURATION * 0.5;
                     
-                    if (childPStart < 85) {
+                    if (childPStart < 88) {
                         generateBranch(endPos, childDir, childLength, childThickness, depth + 1, childPStart);
                     }
                 }
             }
 
-            // Dense leaf & apple placement — starts from depth 3
+            // Leaves start appearing from depth 2 (much earlier)
             if (depth >= MAX_DEPTH - 4) {
                 const numLeaves = depth === MAX_DEPTH ? 30 : depth >= MAX_DEPTH - 1 ? 18 : 10;
                 for (let i = 0; i < numLeaves; i++) {
                     const t = 0.35 + Math.random() * 0.65;
                     const pos = startPos.clone().lerp(endPos, t);
                     
-                    // Wider, fuller leaf cluster spread
                     const leafOffset = new THREE.Vector3(
                         (Math.random() - 0.5) * 2.8,
                         (Math.random() - 0.5) * 2.5,
@@ -120,17 +130,17 @@ const TreeStages = ({ progress }) => {
                     const leafRot = new THREE.Euler(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
                     const leafScale = 1.0 + Math.random() * 0.6;
                     
-                    const leafPStart = Math.max(30, pStart + (pEnd - pStart) * t);
-                    const leafPEnd = Math.min(leafPStart + 12, 95);
+                    // Leaves start at branch pEnd, ensuring branches appear first
+                    const leafPStart = Math.max(pEnd, pStart + (pEnd - pStart) * t);
+                    const leafPEnd = Math.min(leafPStart + 10, 95);
 
                     generatedLeaves.push({
                         position: leafPos, rotation: leafRot, baseScale: leafScale, pStart: leafPStart, pEnd: leafPEnd
                     });
 
-                    // More apples — lower threshold for density
                     if (depth >= MAX_DEPTH - 2 && Math.random() > 0.6) {
-                        const applePStart = 78 + Math.random() * 12;
-                        const applePEnd = applePStart + 10;
+                        const applePStart = 70 + Math.random() * 15;
+                        const applePEnd = applePStart + 8;
                         generatedApples.push({
                             position: leafPos.clone().add(new THREE.Vector3(
                                 (Math.random() - 0.5) * 0.4,
@@ -144,8 +154,8 @@ const TreeStages = ({ progress }) => {
             }
         }
 
-        // Taller, wider starting trunk
-        generateBranch(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 1, 0), 3.0, 0.22, 0, 10);
+        // Trunk starts at progress=2 (very early — ~6 seconds into 5min timer)
+        generateBranch(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 1, 0), TRUNK_LENGTH, 0.22, 0, 2);
 
         return { branches: generatedBranches, leaves: generatedLeaves, apples: generatedApples };
     }, []);
@@ -163,15 +173,28 @@ const TreeStages = ({ progress }) => {
             groupRef.current.rotation.z = Math.sin(t * 0.3) * 0.012;
         }
 
+        // Seed: sits at GROUND LEVEL (y = 0.3), trunk grows UP out of it.
+        // Seed fades as the trunk emerges from it — just like a real sprouting seed.
         if (seedRef.current) {
-            let sScale = 0;
-            if (progress < 5) sScale = progress / 5;
-            else if (progress < 15) sScale = 1;
-            else sScale = Math.max(0, 1 - (progress - 15) / 6);
-            
-            seedRef.current.scale.set(sScale, sScale, sScale);
+            // Seed stays at the base — gently bobs in place
+            seedRef.current.position.y = 0.3 + Math.sin(t * 2.0) * 0.06;
             seedRef.current.rotation.y = t * 0.6;
-            seedRef.current.position.y = 4.5 + Math.sin(t * 2.2) * 0.12;
+
+            let sScale;
+            if (progress < 1) {
+                // Fade in immediately
+                sScale = progress;
+            } else if (progress < 3) {
+                // Fully visible — seed is planted, about to sprout
+                sScale = 1;
+            } else if (progress < 8) {
+                // Fade out as trunk shoots up through the seed
+                sScale = Math.max(0, 1 - (progress - 3) / 5);
+            } else {
+                sScale = 0;
+            }
+
+            seedRef.current.scale.set(sScale, sScale, sScale);
         }
 
         if (branchMeshRef.current) {
@@ -203,7 +226,6 @@ const TreeStages = ({ progress }) => {
                     scale = easeOut(rawT) * l.baseScale;
                 }
                 if (scale > 0) {
-                    // Gentle independent leaf flutter
                     const flutter = Math.sin(t * 1.8 + i * 0.7) * 0.1;
                     const flutterZ = Math.cos(t * 1.3 + i * 0.5) * 0.06;
                     _tempEuler.set(l.rotation.x + flutter, l.rotation.y, l.rotation.z + flutterZ, 'XYZ');
@@ -226,7 +248,6 @@ const TreeStages = ({ progress }) => {
                     scale = easeOut(rawT) * a.baseScale;
                 }
                 if (scale > 0) {
-                    // Gentle apple dangle
                     const dangle = Math.sin(t * 0.9 + i * 1.1) * 0.05;
                     _tempVec.set(scale, scale, scale);
                     const dangledPos = a.position.clone().add(new THREE.Vector3(dangle, 0, dangle));
@@ -242,9 +263,10 @@ const TreeStages = ({ progress }) => {
     });
 
     return (
-        // Bigger scale: 0.55 → 0.75, positioned lower to fill canvas
+        // Group positioned so the trunk base is at the bottom of the canvas view
         <group ref={groupRef} position={[0, -5.5, 0]} scale={[0.75, 0.75, 0.75]}>
-            <mesh ref={seedRef} geometry={seedGeometry} material={seedMaterial} position={[0, 4.5, 0]} />
+            {/* Seed at ground level — trunk grows straight UP from the seed */}
+            <mesh ref={seedRef} geometry={seedGeometry} material={seedMaterial} position={[0, 0.3, 0]} scale={[0, 0, 0]} />
             <instancedMesh ref={branchMeshRef} args={[branchGeometry, branchMaterial, branches.length]} castShadow receiveShadow />
             <instancedMesh ref={leafMeshRef} args={[leafGeometry, leafMaterial, leaves.length]} castShadow />
             <instancedMesh ref={appleMeshRef} args={[appleGeometry, appleMaterial, apples.length]} castShadow />
