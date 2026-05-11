@@ -291,6 +291,21 @@ Source: Chennai, Dest: Coimbatore, Via:
 Error: Unable to fetch route analysis at the moment (request timed out)
 ------------------------------
 
+<<<<<<< HEAD
+--- API ERROR AT 2026-05-08 11:33:56.143741+00:00 ---
+Source: Coimbatore, Dest: Chennai, Via: 
+Error: Unable to fetch route analysis at the moment (request timed out)
+------------------------------
+
+--- API ERROR AT 2026-05-08 11:35:38.879515+00:00 ---
+Source: Coimbatore, Dest: Chennai, Via: 
+Error: Unable to fetch route analysis at the moment (request timed out)
+------------------------------
+
+--- API ERROR AT 2026-05-08 11:36:39.625603+00:00 ---
+Source: Coimbatore, Dest: Chennai, Via: 
+Error: Unable to fetch route analysis at the moment (request timed out)
+=======
 --- JSON DECODE ERROR AT 2026-05-11 05:34:57.918223+00:00 ---
 Error: Expecting property name enclosed in double quotes: line 14 column 18 (char 297)
 Raw Content: 
@@ -723,6 +738,22 @@ Raw Content:
 --- API ERROR AT 2026-05-11 05:46:13.548518+00:00 ---
 Source: Chennai, Dest: Coimbatore, Via: Thiruvannamalai
 Error: Unable to fetch route analysis at the moment (invalid response format)
+>>>>>>> bcf10137420b53ed1f82d74cd4551117f1f11585
+------------------------------
+
+--- API ERROR AT 2026-05-11 08:42:36.541827+00:00 ---
+Source: Coimbatore, Dest: Chennai, Via: 
+Error: Unable to fetch route analysis at the moment (request timed out)
+------------------------------
+
+--- API ERROR AT 2026-05-11 08:48:19.813744+00:00 ---
+Source: Coimbatore, Dest: Chennai, Via: 
+Error: Unable to fetch route analysis at the moment (request timed out)
+------------------------------
+
+--- API ERROR AT 2026-05-11 09:09:45.783411+00:00 ---
+Source: Coimbatore, Dest: Chennai, Via: 
+Error: Unable to fetch route analysis at the moment (request timed out)
 ------------------------------
 
 --- EXCEPTION AT /api/accounts/login/ ---

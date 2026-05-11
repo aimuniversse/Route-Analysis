@@ -5,14 +5,22 @@ import routeMap from "../assets/image/maparea.png";
 
 const MapArea = ({ routeData, routeQuery, isLoading }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const parsedPath = routeData?.route_summary?.path?.split(" → ") || routeQuery?.split(" to ");
+  const routePath = routeData?.route_summary?.path || routeQuery;
+  const parsedPath = routePath?.includes(' → ')
+    ? routePath.split(' → ').map(c => c.trim())
+    : routePath?.includes(' to ')
+      ? routePath.split(' to ').map(c => c.trim())
+      : [routePath?.trim()];
+
   const startLabel = parsedPath?.[0] || routeData?.population_data?.source?.name || 'Origin';
   const endLabel = parsedPath?.[parsedPath.length - 1] || routeData?.population_data?.destination?.name || 'Destination';
+  const viaName = parsedPath?.length === 3 ? parsedPath[1] : routeData?.population_data?.via?.name;
 
-  const sourceName = routeData?.population_data?.source?.name || 'Source';
-  const destName = routeData?.population_data?.destination?.name || 'Destination';
+  const sourceName = routeData?.population_data?.source?.name || startLabel;
+  const destName = routeData?.population_data?.destination?.name || endLabel;
 
   const sourcePosition = { left: 88.5, top: 8.2 };
+  const viaPosition = { left: 50, top: 45 };
   const destPosition = { left: 17.6, top: 94 };
 
   return (
@@ -33,10 +41,8 @@ const MapArea = ({ routeData, routeQuery, isLoading }) => {
             </div>
             <div>
               <p className="eyebrow" style={{ marginBottom: '2px', opacity: 0.7 }}>Premium Route Analysis</p>
-              <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                {startLabel}
-                {/* <ArrowIcon />
-                {endLabel} */}
+              <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', margin: 0 }}>
+                {parsedPath?.join(' → ')}
               </h2>
             </div>
           </div>
@@ -49,10 +55,12 @@ const MapArea = ({ routeData, routeQuery, isLoading }) => {
               boxShadow: 'none',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px'
+              gap: '6px',
+              padding: '10px 14px',
+              borderRadius: '999px'
             }}>
-              {/*<Navigation size={14} />
-              Live Overview*/}
+              <Navigation size={14} />
+              <span>{viaName ? `Via ${viaName}` : 'Direct Corridor'}</span>
             </div>
           </div>
         </div>
@@ -123,6 +131,26 @@ const MapArea = ({ routeData, routeQuery, isLoading }) => {
                       {destName?.length > 10 ? `${destName.substring(0, 10)}...` : destName}
                     </td>
                   </tr>
+                  {viaName && (
+                  <tr>
+                    <td style={{
+                      color: 'var(--text-muted)',
+                      padding: '4px 0',
+                      borderBottom: '1px solid var(--border-light)'
+                    }}>
+                      Via
+                    </td>
+                    <td style={{
+                      color: 'var(--accent-orange, #f59e0b)',
+                      padding: '4px 0',
+                      textAlign: 'right',
+                      fontWeight: '600',
+                      borderBottom: '1px solid var(--border-light)'
+                    }}>
+                      {viaName?.length > 10 ? `${viaName.substring(0, 10)}...` : viaName}
+                    </td>
+                  </tr>
+                  )}
                   <tr>
                     <td style={{
                       color: 'var(--text-muted)',
@@ -185,6 +213,15 @@ const MapArea = ({ routeData, routeQuery, isLoading }) => {
                   </div>
                   <div className="marker-label source-label">{sourceName || 'Source'}</div>
                 </div>
+
+                {viaName && (
+                <div className="map-marker via" style={{ left: `${viaPosition.left}%`, top: `${viaPosition.top}%` }}>
+                  <div className="marker-icon-container via">
+                    {/*<div className="marker-pin via-pin" />*/}
+                  </div>
+                  <div className="marker-label via-label">{viaName}</div>
+                </div>
+                )}
                 
                 <div className="map-marker destination" style={{ left: `${destPosition.left}%`, top: `${destPosition.top}%` }}>
                   <div className="marker-icon-container destination">
