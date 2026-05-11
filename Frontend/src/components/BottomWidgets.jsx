@@ -72,8 +72,8 @@ const BottomWidgets = ({ routeData }) => {
           <div className="flex-1">
             <div className="search-route">
               <span className="city-pill">{startCity.split(',')[0]}</span>
-              <ArrowRight size={14} className="text-muted" />
-              <span className="city-pill">{endCity.split(',')[0]}</span>
+              {/* <ArrowRight size={14} className="text-muted" />
+              <span className="city-pill">{endCity.split(',')[0]}</span> */}
             </div>
             <div className="text-xs text-muted mt-1 font-medium">Just now</div>
           </div>
