@@ -3,11 +3,12 @@ import { AlertCircle, CloudRain, Clock, ArrowRight } from 'lucide-react';
 import './BottomWidgets.css';
 
 const BottomWidgets = ({ routeData }) => {
-  const distance = routeData?.route_summary?.total_distance || routeData?.distance?.[0]?.km || "505";
-  const parsedPath = routeData?.route_summary?.path?.split(" → ");
+  const distance = routeData?.route_summary?.total_distance_km || routeData?.route_summary?.total_distance || routeData?.distance?.[0]?.km || "505";
+  const pathData = routeData?.route_summary?.path;
+  const parsedPath = Array.isArray(pathData) ? pathData : pathData?.split(" → ");
   const startCity = parsedPath?.[0] || routeData?.population_data?.source?.name || routeData?.distance?.[0]?.from || "Chennai, TN";
   const endCity = parsedPath?.[parsedPath.length - 1] || routeData?.population_data?.destination?.name || routeData?.distance?.[0]?.to || "Coimbatore, TN";
-  const timeMins = Math.round((routeData?.route_summary?.estimated_time || 8) * 60);
+  const timeMins = Math.round((routeData?.route_summary?.estimated_time_hours || routeData?.route_summary?.estimated_time || 8) * 60);
 
   const liveUpdates = Array.isArray(routeData?.dashboard_data?.live_updates)
     ? routeData.dashboard_data.live_updates

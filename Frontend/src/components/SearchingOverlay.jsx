@@ -132,7 +132,7 @@ const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
     const statusText = () => {
         if (error) return <span style={{ color: "var(--primary)" }}>Error: {error}</span>;
         if (apiData && timerDone) return <span className="success-status">✓ Neural Analysis Complete! Tap Get Data.</span>;
-        if (apiData) return <span className="success-status">✓ Neural Analysis Complete! Waiting for full scan…</span>;
+
         return statuses[statusIndex];
     };
 

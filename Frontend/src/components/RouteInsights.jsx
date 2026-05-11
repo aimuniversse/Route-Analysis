@@ -69,30 +69,32 @@ const RouteInsights = ({ routeQuery, routeData }) => {
 
   // 3. Tourism Data
   const aiTourism = routeData?.visitor_data;
-  const tourismData = aiTourism ? aiTourism.slice(0, 5).map(v => ({
-    subject: v.place_name, A: v.daily || Math.round(v.yearly / 365) || 0
-  })) : [];
+  const tourismData = aiTourism ? [
+    { subject: routeData?.population_data?.source?.name || 'Origin', A: aiTourism.source?.daily_normal || 0 },
+    { subject: routeData?.population_data?.destination?.name || 'Destination', A: aiTourism.destination?.daily_normal || 0 }
+  ] : [];
 
   // 4. Area Data (Segmentation)
   const aiArea = routeData?.area_segmentation;
+  const getName = (entry) => (entry?.name ?? entry ?? '');
   const areaData = aiArea ? [
     {
-      name: aiArea.business_areas?.[0]?.name || 'Business',
-      potential: aiArea.business_areas?.[0]?.potential || 90,
-      activity: aiArea.business_areas?.[0]?.activity || 85,
-      type: aiArea.business_areas?.[0]?.type || 'Jobs'
+      name: getName(aiArea.job_business_areas?.[0]) || 'Business',
+      potential: 90,
+      activity: 85,
+      type: 'Jobs'
     },
     {
-      name: aiArea.student_areas?.[0]?.name || 'Student',
-      potential: aiArea.student_areas?.[0]?.potential || 60,
-      activity: aiArea.student_areas?.[0]?.activity || 50,
-      type: aiArea.student_areas?.[0]?.type || 'Education'
+      name: getName(aiArea.student_areas?.[0]) || 'Student',
+      potential: 60,
+      activity: 50,
+      type: 'Education'
     },
     {
-      name: aiArea.tourist_areas?.[0]?.name || 'Tourist',
-      potential: aiArea.tourist_areas?.[0]?.potential || 85,
-      activity: aiArea.tourist_areas?.[0]?.activity || 80,
-      type: aiArea.tourist_areas?.[0]?.type || 'Leisure'
+      name: getName(aiArea.tourist_places?.[0]) || 'Tourist',
+      potential: 85,
+      activity: 80,
+      type: 'Leisure'
     },
   ] : [
     { name: 'Business', potential: 90, activity: 85, type: 'Jobs' },
