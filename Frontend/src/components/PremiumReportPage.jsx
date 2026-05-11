@@ -463,7 +463,7 @@ export default function PremiumReportPage({ routeData }) {
 
         {/* Concept 3: Area Segmentation Map */}
         <section className="section-spacing animate-fade-in">
-          <AreaPotentialMap routeData={routeData} isLoading={loading} />
+          <AreaPotentialMap routeData={routeData} isLoading={false} />
         </section>
 
         {/* Concept 3: Area Segmentation Timeline */}
