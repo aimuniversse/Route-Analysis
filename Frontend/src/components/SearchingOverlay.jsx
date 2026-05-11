@@ -4,7 +4,7 @@ import { Bus } from "lucide-react";
 import Scene from "./Scene";
 import "../styles/searchingoverlay.css";
 
-const TOTAL_DURATION = 300; // 5 minutes in seconds
+const TOTAL_DURATION = 10; // 5 minutes in seconds
 
 const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
     const [progress, setProgress] = useState(0);
