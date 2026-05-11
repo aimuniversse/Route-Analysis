@@ -1434,3 +1434,181 @@ Body: {"source":"Chennai","destination":"Coimbatore","via":""}
 Status: 200
 ------------------------------
 >>>>>>> f4f1a2e13fee7b59f9a8aa10aa30e7bde464c12e
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Bangalore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------

@@ -19,7 +19,11 @@ Return ONLY valid JSON. No conversational filler.
 The JSON MUST follow this structure exactly:
 1. route_summary: {{ "path": "string", "total_distance": int, "estimated_time": float }}
 2. population_data: {{ "source": {{ "name": "string", "count": int }}, "destination": {{ "name": "string", "count": int }} }}
-3. area_segmentation: {{ "job_business_areas": ["string"], "student_areas": ["string"], "tourist_areas": ["string"] }}
+3. area_segmentation: {{
+    "business_areas": [ {{ "name": "string", "potential": int, "activity": int, "type": "string" }} ],
+    "student_areas": [ {{ "name": "string", "potential": int, "activity": int, "type": "string" }} ],
+    "tourist_areas": [ {{ "name": "string", "potential": int, "activity": int, "type": "string" }} ]
+  }}
 4. visitor_data: [ {{ "place_name": "string", "yearly": int, "daily": int }} ]
 5. demand_distribution: [ {{ "state": "string", "percentage": float, "cities": [ {{ "name": "string", "percentage": float }} ] }} ]
 6. distance_details: [ {{ "segment": "string", "distance_km": int }} ]
