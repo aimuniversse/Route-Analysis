@@ -4,7 +4,7 @@ import { Bus } from "lucide-react";
 import Scene from "./Scene";
 import "../styles/searchingoverlay.css";
 
-const TOTAL_DURATION = 8; // seconds — short splash; button unlocks as soon as API responds
+const TOTAL_DURATION = 10; // seconds — short splash; button unlocks as soon as API responds
 
 const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
     const [progress, setProgress] = useState(0);
