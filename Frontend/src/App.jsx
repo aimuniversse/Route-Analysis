@@ -352,7 +352,7 @@ function App() {
               </h2>
             </div>
 
-            <PremiumReportPage routeData={routeData} />
+            <PremiumReportPage routeData={routeData} isLoading={isLoading} />
           </section>
         </div>
       )}
