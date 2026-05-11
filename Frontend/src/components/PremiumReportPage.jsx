@@ -26,7 +26,7 @@ const heroImage = "file:///C:/Users/DELL/.gemini/antigravity/brain/6f074f9e-ba21
 
 
 
-export default function PremiumReportPage({ routeData }) {
+export default function PremiumReportPage({ routeData, isLoading }) {
   const routeName = routeData?.route_summary?.path || "Coimbatore to Chennai";
   const [formData, setFormData] = useState({ name: '', busTravels: '', contactNo: '', message: '' });
   const [formStatus, setFormStatus] = useState(null); // null | 'success' | 'error'
@@ -463,7 +463,7 @@ export default function PremiumReportPage({ routeData }) {
 
         {/* Concept 3: Area Segmentation Map */}
         <section className="section-spacing animate-fade-in">
-          <AreaPotentialMap routeData={routeData} isLoading={loading} />
+          <AreaPotentialMap routeData={routeData} isLoading={isLoading} />
         </section>
 
         {/* Concept 3: Area Segmentation Timeline */}
