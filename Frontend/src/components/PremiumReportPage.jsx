@@ -190,12 +190,15 @@ export default function PremiumReportPage({ routeData, isLoading }) {
     const areaSeg = routeData?.area_segmentation || {};
     const corridorPot = routeData?.dashboard_data?.corridor_potential || {};
     const items = [];
+
+    // Helper: area entries can be objects {name,...} or plain strings
+    const getName = (entry) => (entry?.name ?? entry ?? '');
     
-    if (areaSeg.job_business_areas?.length) {
+    if (areaSeg.business_areas?.length) {
       const businessScore = corridorPot.business ? ` (Potential: ${corridorPot.business}%)` : "";
       items.push({ 
         title: 'Job & Business', 
-        content: `${areaSeg.job_business_areas[0]}${businessScore}`, 
+        content: `${getName(areaSeg.business_areas[0])}${businessScore}`, 
         icon: <Briefcase />, 
         color: 'orange' 
       });
@@ -205,7 +208,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
       const studentScore = corridorPot.student ? ` (Potential: ${corridorPot.student}%)` : "";
       items.push({ 
         title: 'Education Hubs', 
-        content: `${areaSeg.student_areas[0]}${studentScore}`, 
+        content: `${getName(areaSeg.student_areas[0])}${studentScore}`, 
         icon: <GraduationCap />, 
         color: 'purple' 
       });
@@ -215,23 +218,23 @@ export default function PremiumReportPage({ routeData, isLoading }) {
       const touristScore = corridorPot.tourist ? ` (Potential: ${corridorPot.tourist}%)` : "";
       items.push({ 
         title: 'Tourist Hotspots', 
-        content: `${areaSeg.tourist_areas[0]}${touristScore}`, 
+        content: `${getName(areaSeg.tourist_areas[0])}${touristScore}`, 
         icon: <Mountain />, 
         color: 'green' 
       });
     }
 
-    // Add more if we have space (up to 4)
-    if (items.length < 4 && areaSeg.job_business_areas?.length > 1) {
+    // Add a 4th card from a second business area if available
+    if (items.length < 4 && areaSeg.business_areas?.length > 1) {
       items.push({ 
         title: 'Industrial Center', 
-        content: areaSeg.job_business_areas[1], 
+        content: getName(areaSeg.business_areas[1]), 
         icon: <Factory />, 
         color: 'blue' 
       });
     }
 
-    // Fallbacks if data is missing
+    // Fallbacks if API returned no usable segmentation data
     const fallbacks = [
       { title: 'Job & Business', content: 'Major Industrial Hubs', icon: <Briefcase />, color: 'orange' },
       { title: 'Institutions', content: 'Education & Research Centers', icon: <GraduationCap />, color: 'purple' },
@@ -425,7 +428,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                 <div className="icon-wrap bg-orange-soft"><Briefcase className="text-orange-main" /></div>
                 <div>
                   <h2 className="title-split">Potential <span className="text-pink-main">of the Area</span></h2>
-                  <p className="subtitle-small">The Coimbatore to Chennai corridor has a diverse range of attractions and industries, including:</p>
+                  <p className="subtitle-small">The {routeSummary.path} corridor has a diverse range of attractions and industries, including:</p>
                 </div>
               </div>
               <div className="growth-visual-top">
@@ -658,14 +661,14 @@ export default function PremiumReportPage({ routeData, isLoading }) {
           </div>
         </section>
 
-        {/* Concept 6: Distance Matrix - Redesigned */}
+        {/* Concept 6: Distance Matrix - Dynamic API-Driven */}
         <section className="analysis-section-box section-spacing distance-matrix-container">
           <div className="visitor-header-flex">
             <div className="visitor-title-box">
               <div className="icon-wrap bg-orange-light"><Navigation className="text-orange-main" /></div>
               <div>
                 <h2>Distance Matrix (km)</h2>
-                <p className="subtitle-small">Distance between major cities in Tamil Nadu</p>
+                <p className="subtitle-small">Distance between major cities along the {routeSummary.path} corridor</p>
               </div>
             </div>
             <div className="route-visual-top">
@@ -697,12 +700,12 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                     </div>
                   </th>
                   {matrixData.cities.map((city, idx) => {
-                    const node = dynamicTimelineNodes[idx];
-                    const isHoveredCol = hoveredMatrixCell?.col === idx;
+                    const icons = [Landmark, Activity, Building2];
+                    const CityIcon = icons[idx % icons.length];
                     return (
-                      <th key={idx} className={isHoveredCol ? "hovered-header" : ""}>
+                      <th key={idx}>
                         <div className="city-header-icon">
-                          <img src={node?.icon} alt="" style={{ width: '20px', height: '20px', marginBottom: '4px' }} />
+                          <CityIcon size={20} className="text-orange-main" />
                           <br/>{matrixData.getAbbr(city)}
                         </div>
                       </th>
@@ -712,110 +715,40 @@ export default function PremiumReportPage({ routeData, isLoading }) {
               </thead>
               <tbody>
                 {matrixData.matrix.map((row, i) => {
-                  const isHoveredRow = hoveredMatrixCell?.row === i;
+                  const icons = [Landmark, Activity, Building2];
+                  const RowIcon = icons[i % icons.length];
                   return (
-                  <tr key={i} className={`dist-row ${isHoveredRow ? "hovered-row-container" : ""}`}>
-                    <td className={`row-label ${isHoveredRow ? "hovered-header" : ""}`}>
-                      <div className="city-label">
-                        <img src={dynamicTimelineNodes[i]?.icon} alt="" style={{ width: '18px', height: '18px', marginRight: '8px' }} />
-                        {matrixData.cities[i]}
-                      </div>
-                    </td>
-                    {row.map((dist, j) => {
-                      const isHovered = hoveredMatrixCell?.row === i || hoveredMatrixCell?.col === j;
-                      const isSelected = selectedMatrixCell?.row === i && selectedMatrixCell?.col === j;
-                      const intensity = matrixData.maxDistance > 0 ? (dist / matrixData.maxDistance) : 0;
-                      
-                      // Using a safe heat map color gradient calculation
-                      const bgOpacity = intensity * 0.4; // Max 40% opacity for readability
-                      const heatColor = `rgba(249, 115, 22, ${bgOpacity})`;
-                      
-                      return (
-                        <td 
-                          key={j} 
-                          className={`
-                            ${dist === 0 ? "zero-cell" : "dist-cell"} 
-                            ${isHovered ? "hovered-cell" : ""}
-                            ${isSelected ? "selected-cell" : ""}
-                          `}
-                          style={{ backgroundColor: dist !== 0 ? heatColor : undefined }}
-                          onMouseEnter={() => setHoveredMatrixCell({ row: i, col: j, dist })}
-                          onMouseLeave={() => setHoveredMatrixCell(null)}
-                          onClick={() => setSelectedMatrixCell({ row: i, col: j, dist })}
-                        >
-                          {dist}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                )})}
+                    <tr key={i} className="dist-row">
+                      <td className="row-label">
+                        <div className="city-label">
+                          <RowIcon size={18} className="text-orange-main" />
+                          {matrixData.cities[i]}
+                        </div>
+                      </td>
+                      {row.map((dist, j) => {
+                        const intensity = matrixData.maxDistance > 0 ? (dist / matrixData.maxDistance) : 0;
+                        const bgOpacity = intensity * 0.35;
+                        const heatColor = `rgba(249, 115, 22, ${bgOpacity})`;
+                        return (
+                          <td
+                            key={j}
+                            className={dist === 0 ? "zero-cell" : "dist-cell"}
+                            style={dist !== 0 ? { backgroundColor: heatColor } : undefined}
+                          >
+                            {dist === 0 ? <strong>0</strong> : dist}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
-          
-          {/* Dynamic Details Panel for Distance Matrix */}
-          {(hoveredMatrixCell || selectedMatrixCell) && (
-            <div className="matrix-details-panel">
-              {(() => {
-                const activeCell = selectedMatrixCell || hoveredMatrixCell;
-                if (!activeCell || activeCell.row === activeCell.col) return null;
-                const origin = matrixData.cities[activeCell.row];
-                const destination = matrixData.cities[activeCell.col];
-                const distance = activeCell.dist;
-                // Assuming average speed of 50 km/h for estimated time
-                const estHours = (distance / 50).toFixed(1);
-                
-                return (
-                  <div className="details-panel-content animate-slide-up">
-                    <div className="details-header">
-                      <Navigation size={18} className="text-orange-main" />
-                      <h4>Route Segment Details</h4>
-                    </div>
-                    <div className="details-body">
-                      <div className="route-endpoints">
-                        <div className="endpoint">
-                          <span className="endpoint-label">From</span>
-                          <span className="endpoint-value">{origin}</span>
-                        </div>
-                        <div className="endpoint-connector">
-                          <ArrowRight size={16} className="text-slate-light" />
-                        </div>
-                        <div className="endpoint">
-                          <span className="endpoint-label">To</span>
-                          <span className="endpoint-value">{destination}</span>
-                        </div>
-                      </div>
-                      <div className="route-stats">
-                        <div className="stat-box">
-                          <MapPin size={16} className="text-orange-main" />
-                          <div>
-                            <span className="stat-val">{distance} km</span>
-                            <span className="stat-desc">Distance</span>
-                          </div>
-                        </div>
-                        <div className="stat-box">
-                          <Timer size={16} className="text-orange-main" />
-                          <div>
-                            <span className="stat-val">~{estHours} hrs</span>
-                            <span className="stat-desc">Est. Time</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    {selectedMatrixCell && (
-                       <button className="close-panel-btn" onClick={() => setSelectedMatrixCell(null)}>
-                         ✕
-                       </button>
-                    )}
-                  </div>
-                );
-              })()}
-            </div>
-          )}
 
           <div className="info-footer-banner orange">
             <Info size={16} className="text-orange-main" />
-            <span> All distances are approximate road distances in kilometers. Click a cell for segment details.</span>
+            <span>All distances are approximate road distances in kilometers.</span>
           </div>
         </section>
 
