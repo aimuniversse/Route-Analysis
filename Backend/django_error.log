@@ -817,3 +817,8 @@ Traceback (most recent call last):
 django.db.utils.OperationalError: no such table: accounts_user
 
 ------------------------------
+
+--- API ERROR AT 2026-05-11 08:31:28.696842+00:00 ---
+Source: Hyderabad, Dest: Vijayawada, Via: 
+Error: Unable to fetch route analysis at the moment (request timed out)
+------------------------------
