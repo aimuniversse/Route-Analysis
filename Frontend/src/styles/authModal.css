@@ -202,3 +202,52 @@
 .primary-glow {
     box-shadow: 0 8px 16px -4px rgba(216, 0, 0, 0.2);
 }
+
+.auth-error-message {
+    background: #fef2f2;
+    border: 1px solid #fee2e2;
+    color: #b91c1c;
+    padding: 12px;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.animate-shake {
+    animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes shake {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+    40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+.submit-btn.loading {
+    opacity: 0.8;
+    cursor: not-allowed;
+    background: var(--text-muted);
+}
+
+.loader-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.loader-text::before {
+    content: "";
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--white);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}

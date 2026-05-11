@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
-  Users, MapPin, Building2, Landmark, Mountain,
+  Users, MapPin, Building2, Landmark, Mountain, Map,
   Bus, Train, Car, Briefcase, Package, Navigation, Clock,
   CheckCircle2, ArrowRight, Plane, Activity, Calendar, Share2,
   TrendingUp, Sun, ChevronRight, Sparkles, MoreHorizontal, Info,
   GraduationCap, Factory, BarChart2, ShieldCheck, Timer, Globe, Headphones,
-  Leaf, Compass, Fuel, Mail, Phone
+  Leaf, Compass, Fuel, Mail, Phone, Truck
 } from 'lucide-react';
 import {
   PieChart, Pie, Cell, Tooltip as RechartsTooltip,
@@ -27,7 +27,9 @@ const heroImage = "file:///C:/Users/DELL/.gemini/antigravity/brain/6f074f9e-ba21
 
 
 export default function PremiumReportPage({ routeData, isLoading }) {
-  const routeName = routeData?.route_summary?.path || "Coimbatore to Chennai";
+  const routeName = Array.isArray(routeData?.route_summary?.path) 
+    ? routeData.route_summary.path.join(' → ') 
+    : (routeData?.route_summary?.path || "Coimbatore to Chennai");
   const [formData, setFormData] = useState({ name: '', busTravels: '', contactNo: '', message: '' });
   const [formStatus, setFormStatus] = useState(null); // null | 'success' | 'error'
   const [lastSyncTime, setLastSyncTime] = useState(new Date().toLocaleTimeString());
@@ -44,8 +46,8 @@ export default function PremiumReportPage({ routeData, isLoading }) {
     const { id, value } = e.target;
     const key = id === 'contact-name' ? 'name'
       : id === 'contact-email' ? 'busTravels'
-      : id === 'contact-subject' ? 'contactNo'
-      : 'message';
+        : id === 'contact-subject' ? 'contactNo'
+          : 'message';
     setFormData(prev => ({ ...prev, [key]: value }));
   };
 
@@ -72,7 +74,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
       else if (modeName.includes('Car')) icon = <Car size={18} />;
       else if (modeName.includes('Taxi')) icon = <Car size={18} />;
       else if (modeName.includes('Flight')) icon = <Plane size={18} />;
-      
+
       return {
         name: modeName,
         value,
@@ -84,20 +86,20 @@ export default function PremiumReportPage({ routeData, isLoading }) {
 
   const transportInsight = useMemo(() => {
     if (!dynamicTransportData?.length) return null;
-    
+
     const sorted = [...dynamicTransportData].sort((a, b) => b.value - a.value);
     const top = sorted[0];
     const second = sorted[1];
-    
+
     if (!top) return "Data on transport modes is currently unavailable.";
-    
+
     let text = `${top.name} transport dominates this corridor with ${top.value}% preference`;
     if (second) {
       text += `, followed by ${second.name.toLowerCase()} at ${second.value}% for efficient connectivity.`;
     } else {
       text += ".";
     }
-    
+
     return text;
   }, [dynamicTransportData]);
 
@@ -120,33 +122,92 @@ export default function PremiumReportPage({ routeData, isLoading }) {
 
   const dynamicBusFrequencies = useMemo(() => {
     if (!routeData?.transport_schedule) return [];
-    return routeData.transport_schedule.map(item => ({
-      from: item.from,
-      to: item.to,
-      label: 'Regular Service',
-      count: item.bus_trips,
-      icon: <Bus size={18} />
-    }));
+
+    const schedule = routeData.transport_schedule;
+    let details = [];
+
+    if (Array.isArray(schedule)) {
+      // New structure: filter by type
+      if (schedule.length > 0 && schedule[0].type) {
+        details = schedule.filter(s => s.type === 'bus').map(s => ({
+          from: s.from,
+          to: s.to,
+          label: 'Regular Service',
+          count: s.trips_per_day,
+          icon: <Bus size={18} />
+        }));
+      } else {
+        // Old list structure
+        details = schedule.map(item => ({
+          from: item.from,
+          to: item.to,
+          label: 'Regular Service',
+          count: item.bus_trips,
+          icon: <Bus size={18} />
+        }));
+      }
+    } else if (schedule.route_details) {
+      // Intermediate structure
+      details = schedule.route_details.map(item => ({
+        from: item.from,
+        to: item.to,
+        label: schedule.bus?.frequency_minutes ? `Every ${schedule.bus.frequency_minutes} mins` : 'Regular Service',
+        count: item.bus_trips,
+        icon: <Bus size={18} />
+      }));
+    }
+
+    return details;
   }, [routeData]);
 
   const dynamicTrainFrequencies = useMemo(() => {
     if (!routeData?.transport_schedule) return [];
-    return routeData.transport_schedule.map(item => ({
-      from: item.from,
-      to: item.to,
-      label: 'Scheduled Service',
-      count: item.train_trips,
-      icon: <Train size={18} />
-    }));
+
+    const schedule = routeData.transport_schedule;
+    let details = [];
+
+    if (Array.isArray(schedule)) {
+      // New structure: filter by type
+      if (schedule.length > 0 && schedule[0].type) {
+        details = schedule.filter(s => s.type === 'train').map(s => ({
+          from: s.from,
+          to: s.to,
+          label: 'Scheduled Service',
+          count: s.trips_per_day,
+          icon: <Train size={18} />
+        }));
+      } else {
+        // Old list structure
+        details = schedule.map(item => ({
+          from: item.from,
+          to: item.to,
+          label: 'Scheduled Service',
+          count: item.train_trips,
+          icon: <Train size={18} />
+        }));
+      }
+    } else if (schedule.route_details) {
+      // Intermediate structure
+      details = schedule.route_details.map(item => ({
+        from: item.from,
+        to: item.to,
+        label: schedule.train?.major_trains?.length ? `${schedule.train.major_trains.length} Major Trains` : 'Scheduled Service',
+        count: item.train_trips,
+        icon: <Train size={18} />
+      }));
+    }
+
+    return details;
   }, [routeData]);
 
   const dynamicTimelineNodes = useMemo(() => {
     if (!routeData?.route_summary?.path) return [];
-    
-    const cities = routeData.route_summary.path.split(' → ').map(c => c.trim());
+
+    const pathData = routeData.route_summary.path;
+    const cities = Array.isArray(pathData) ? pathData : pathData.split(' → ').map(c => c.trim());
     const segmentation = routeData.area_segmentation || {};
     const areaPotential = routeData.dashboard_data?.area_potential || [];
-    
+
     return cities.map((city, idx) => {
       let type = 'General';
       let icon = pointIcon;
@@ -154,11 +215,11 @@ export default function PremiumReportPage({ routeData, isLoading }) {
 
       // Check for detailed data in area_potential
       const districtData = areaPotential.find(d => d.district.toLowerCase().includes(city.toLowerCase()));
-      
+
       // Assign type and icon based on segmentation data
-      const isIndustrial = (segmentation.business_areas || []).some(s => s?.name?.toLowerCase().includes(city.toLowerCase()));
-      const isTourist = (segmentation.tourist_areas || []).some(s => s?.name?.toLowerCase().includes(city.toLowerCase()));
-      const isStudent = (segmentation.student_areas || []).some(s => s?.name?.toLowerCase().includes(city.toLowerCase()));
+      const isIndustrial = (segmentation.job_business_areas || []).some(s => (s?.name || s)?.toLowerCase().includes(city.toLowerCase()));
+      const isTourist = (segmentation.tourist_places || []).some(s => (s?.name || s)?.toLowerCase().includes(city.toLowerCase()));
+      const isStudent = (segmentation.student_areas || []).some(s => (s?.name || s)?.toLowerCase().includes(city.toLowerCase()));
 
       if (idx === 0) {
         type = 'Origin';
@@ -178,7 +239,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
         desc = districtData ? `${city}: Popular tourist destination with a potential score of ${districtData.potential_score}%.` : `${city}: Known for its attractions and scenic beauty.`;
       } else if (isStudent) {
         type = 'Education Hub';
-        icon = pointIcon; 
+        icon = pointIcon;
         desc = districtData ? `${city}: Education center with a projected growth rate of ${districtData.growth_rate}%.` : `${city}: A center for educational institutions.`;
       }
 
@@ -190,48 +251,51 @@ export default function PremiumReportPage({ routeData, isLoading }) {
     const areaSeg = routeData?.area_segmentation || {};
     const corridorPot = routeData?.dashboard_data?.corridor_potential || {};
     const items = [];
-    
+
+    // Helper: area entries can be objects {name,...} or plain strings
+    const getName = (entry) => (entry?.name ?? entry ?? '');
+
     if (areaSeg.job_business_areas?.length) {
       const businessScore = corridorPot.business ? ` (Potential: ${corridorPot.business}%)` : "";
-      items.push({ 
-        title: 'Job & Business', 
-        content: `${areaSeg.job_business_areas[0]}${businessScore}`, 
-        icon: <Briefcase />, 
-        color: 'orange' 
+      items.push({
+        title: 'Job & Business',
+        content: `${getName(areaSeg.job_business_areas[0])}${businessScore}`,
+        icon: <Briefcase />,
+        color: 'orange'
       });
     }
-    
+
     if (areaSeg.student_areas?.length) {
       const studentScore = corridorPot.student ? ` (Potential: ${corridorPot.student}%)` : "";
-      items.push({ 
-        title: 'Education Hubs', 
-        content: `${areaSeg.student_areas[0]}${studentScore}`, 
-        icon: <GraduationCap />, 
-        color: 'purple' 
+      items.push({
+        title: 'Education Hubs',
+        content: `${getName(areaSeg.student_areas[0])}${studentScore}`,
+        icon: <GraduationCap />,
+        color: 'purple'
       });
     }
-    
-    if (areaSeg.tourist_areas?.length) {
+
+    if (areaSeg.tourist_places?.length) {
       const touristScore = corridorPot.tourist ? ` (Potential: ${corridorPot.tourist}%)` : "";
-      items.push({ 
-        title: 'Tourist Hotspots', 
-        content: `${areaSeg.tourist_areas[0]}${touristScore}`, 
-        icon: <Mountain />, 
-        color: 'green' 
+      items.push({
+        title: 'Tourist Hotspots',
+        content: `${getName(areaSeg.tourist_places[0])}${touristScore}`,
+        icon: <Mountain />,
+        color: 'green'
       });
     }
 
-    // Add more if we have space (up to 4)
+    // Add a 4th card from a second business area if available
     if (items.length < 4 && areaSeg.job_business_areas?.length > 1) {
-      items.push({ 
-        title: 'Industrial Center', 
-        content: areaSeg.job_business_areas[1], 
-        icon: <Factory />, 
-        color: 'blue' 
+      items.push({
+        title: 'Industrial Center',
+        content: getName(areaSeg.job_business_areas[1]),
+        icon: <Factory />,
+        color: 'blue'
       });
     }
 
-    // Fallbacks if data is missing
+    // Fallbacks if API returned no usable segmentation data
     const fallbacks = [
       { title: 'Job & Business', content: 'Major Industrial Hubs', icon: <Briefcase />, color: 'orange' },
       { title: 'Institutions', content: 'Education & Research Centers', icon: <GraduationCap />, color: 'purple' },
@@ -246,8 +310,9 @@ export default function PremiumReportPage({ routeData, isLoading }) {
   const matrixData = useMemo(() => {
     if (!routeData?.route_summary?.path) return { cities: [], matrix: [] };
 
-    const cities = routeData.route_summary.path.split(' → ').map(c => c.trim());
-    const segments = routeData.distance_details || [];
+    const pathData = routeData.route_summary.path;
+    const cities = Array.isArray(pathData) ? pathData : pathData.split(' → ').map(c => c.trim());
+    const segments = Array.isArray(routeData.distance_details) ? routeData.distance_details : [];
     
     // Create a cumulative distance map
     const cumulativeDistances = [0];
@@ -257,11 +322,12 @@ export default function PremiumReportPage({ routeData, isLoading }) {
       const from = cities[i];
       const to = cities[i + 1];
       const segment = segments.find(s => 
-        (s.segment.includes(from) && s.segment.includes(to)) || 
-        (s.segment.includes(to) && s.segment.includes(from))
+        (s.segment?.includes(from) && s.segment?.includes(to)) || 
+        (s.segment?.includes(to) && s.segment?.includes(from))
       );
-      
-      const dist = segment ? segment.distance_km : Math.round((routeData.route_summary.total_distance / (cities.length - 1)));
+
+      const totalDist = routeData.route_summary.total_distance_km || routeData.route_summary.total_distance;
+      const dist = segment ? segment.distance_km : Math.round((totalDist / (cities.length - 1)));
       currentTotal += dist;
       cumulativeDistances.push(currentTotal);
     }
@@ -285,13 +351,44 @@ export default function PremiumReportPage({ routeData, isLoading }) {
     return { cities, matrix, getAbbr, maxDistance };
   }, [routeData]);
 
+  const dynamicDistanceDetails = useMemo(() => {
+    if (!routeData?.distance_details) return [];
+
+    // Handle single object format
+    if (!Array.isArray(routeData.distance_details)) {
+      const d = routeData.distance_details;
+      return [{ from: d.from, to: d.to, distance_km: d.distance_km }];
+    }
+
+    // Fallback for old array format
+    return routeData.distance_details.map(item => ({
+      from: item.from,
+      to: item.to,
+      distance_km: item.distance_km
+    }));
+  }, [routeData]);
+
   const dynamicLogisticsData = useMemo(() => {
-    const parcelData = routeData?.logistics_services?.parcel_movement || { bus: 40, train: 30, courier: 20, taxi: 10 };
+    if (!routeData?.logistics_services) return [];
+
+    const logs = routeData.logistics_services;
+
+    // Handle new percentage-based object structure
+    if (typeof logs.bus === 'number') {
+      return [
+        { name: 'Bus Parcel', value: logs.bus, color: 'blue', icon: <Truck size={20} />, tag: 'Fast' },
+        { name: 'Train Parcel', value: logs.train, color: 'green', icon: <Train size={20} />, tag: 'Bulk' },
+        { name: 'Courier', value: logs.courier, color: 'purple', icon: <Package size={20} />, tag: 'Express' },
+        { name: 'Taxi Parcel', value: logs.taxi, color: 'orange', icon: <Navigation size={20} />, tag: 'Instant' }
+      ];
+    }
+
+    // Fallback for old structure (arrays)
     return [
-      { name: 'Bus Parcels', value: parcelData.bus, icon: <Bus size={24} />, color: 'blue', tag: 'WIDE COVERAGE' },
-      { name: 'Train Parcels', value: parcelData.train, icon: <Train size={24} />, color: 'green', tag: 'EXTENSIVE NETWORK' },
-      { name: 'Couriers', value: parcelData.courier, icon: <Briefcase size={24} />, color: 'orange', tag: 'TRUSTED PARTNERS' },
-      { name: 'Taxi Delivery', value: parcelData.taxi, icon: <Car size={24} />, color: 'purple', tag: 'DOOR-TO-DOOR' },
+      { name: 'Bus Parcel', value: 40, color: 'blue', icon: <Truck size={20} />, tag: 'Fast' },
+      { name: 'Train Parcel', value: 20, color: 'green', icon: <Train size={20} />, tag: 'Bulk' },
+      { name: 'Courier Services', value: 30, color: 'purple', icon: <Package size={20} />, tag: 'Express' },
+      { name: 'Luggage / Parcel', value: 10, color: 'orange', icon: <Package size={20} />, tag: 'General' }
     ];
   }, [routeData]);
 
@@ -304,10 +401,10 @@ export default function PremiumReportPage({ routeData, isLoading }) {
     );
   }
 
-  const routeSummary = routeData?.route_summary || { path: "Bangalore to Chennai", total_distance: 350, estimated_time: 6 };
+  const routeSummary = routeData?.route_summary || { path: "Bangalore to Chennai", total_distance_km: 350, estimated_time_hours: 6 };
   const popData = routeData?.population_data || {};
   const areaSeg = routeData?.area_segmentation || {};
-  const visitors = routeData?.visitor_data || [];
+  const visitors = routeData?.visitor_data || {};
   const demandDist = routeData?.demand_distribution || [];
 
   return (
@@ -324,9 +421,9 @@ export default function PremiumReportPage({ routeData, isLoading }) {
               Live Sync: {lastSyncTime}
             </div>
           </div>
-          <h1>{routeSummary.path}</h1>
+          <h1>{Array.isArray(routeSummary.path) ? routeSummary.path.join(' → ') : routeSummary.path}</h1>
           <p className="subtitle">
-            Comprehensive Route Analysis & Travel Intelligence | {routeSummary.total_distance} km | Approx. {routeSummary.estimated_time} hours
+            Comprehensive Route Analysis & Travel Intelligence | {routeSummary.total_distance_km || routeSummary.total_distance} km | Approx. {routeSummary.estimated_time_hours || routeSummary.estimated_time} hours
           </p>
         </header>
 
@@ -357,7 +454,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                   <Users className="user-icon user-1" size={32} />
                   <Users className="user-icon user-2" size={44} />
                   <Users className="user-icon user-3" size={32} />
-                 
+
                 </div>
               </div>
             </div>
@@ -413,7 +510,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
               <div className="total-right">
                 <div className="vertical-dotted-sep"></div>
                 <span className="total-value">
-                  {(( (popData.source?.count || 0) + (popData.via?.count || 0) + (popData.destination?.count || 0) ) / 1000000).toFixed(1)}M
+                  {(((popData.source?.count || 0) + (popData.via?.count || 0) + (popData.destination?.count || 0)) / 1000000).toFixed(1)}M
                 </span>
               </div>
             </div>
@@ -425,7 +522,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                 <div className="icon-wrap bg-orange-soft"><Briefcase className="text-orange-main" /></div>
                 <div>
                   <h2 className="title-split">Potential <span className="text-pink-main">of the Area</span></h2>
-                  <p className="subtitle-small">The Coimbatore to Chennai corridor has a diverse range of attractions and industries, including:</p>
+                  <p className="subtitle-small">The {Array.isArray(routeSummary.path) ? routeSummary.path.join(' → ') : routeSummary.path} corridor has a diverse range of attractions and industries, including:</p>
                 </div>
               </div>
               <div className="growth-visual-top">
@@ -482,7 +579,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
           <div className="segmentation-model-container">
             <div className="timeline-horizontal-line"></div>
             <div className="timeline-nodes-wrapper">
-              
+
               {dynamicTimelineNodes.map((node, idx) => (
                 <div key={idx} className={`model-timeline-node ${idx % 2 === 0 ? 'is-top' : 'is-bottom'}`}>
                   <div className="node-content-box">
@@ -537,16 +634,20 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                 <div className="mini-icon bg-pink-soft"><TrendingUp size={16} className="text-pink" /></div>
                 <span>Yearly Total</span>
               </div>
-              <div className="stat-value">{(visitors.reduce((acc, curr) => acc + curr.yearly, 0) / 1000000).toFixed(1)}M</div>
+              <div className="stat-value">
+                {(((visitors.source?.yearly_total || 0) + (visitors.destination?.yearly_total || 0)) / 1000000).toFixed(1)}M
+              </div>
               <div className="stat-underline"></div>
             </div>
-            
+
             <div className="stat-card-modern">
               <div className="stat-card-header">
                 <div className="mini-icon bg-pink-soft"><Clock size={16} className="text-pink" /></div>
                 <span>Daily (Normal)</span>
               </div>
-              <div className="stat-value">{(visitors.reduce((acc, curr) => acc + curr.daily, 0) / 1000).toFixed(0)}K</div>
+              <div className="stat-value">
+                {(((visitors.source?.daily_normal || 0) + (visitors.destination?.daily_normal || 0)) / 1000).toFixed(0)}K
+              </div>
               <div className="stat-underline"></div>
             </div>
 
@@ -555,7 +656,9 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                 <div className="mini-icon bg-pink-soft"><TrendingUp size={16} className="text-pink" /></div>
                 <span>Daily (Peak)</span>
               </div>
-              <div className="stat-value">{(visitors.reduce((acc, curr) => acc + curr.daily * 1.5, 0) / 1000).toFixed(0)}K</div>
+              <div className="stat-value">
+                {(((visitors.source?.daily_peak || 0) + (visitors.destination?.daily_peak || 0)) / 1000).toFixed(0)}K
+              </div>
               <div className="stat-underline"></div>
             </div>
           </div>
@@ -571,23 +674,26 @@ export default function PremiumReportPage({ routeData, isLoading }) {
             </div>
 
             <div className="attraction-items">
-              {visitors.map((item, idx) => (
+              {[
+                { name: routeData?.population_data?.source?.name || 'Origin', data: visitors.source },
+                { name: routeData?.population_data?.destination?.name || 'Destination', data: visitors.destination }
+              ].map((item, idx) => (
                 <div key={idx} className="attraction-item-row">
                   <div className="attraction-main">
                     <div className="attraction-img-circle">
-                      {idx % 3 === 0 ? <Mountain size={24} className="text-pink" /> : idx % 3 === 1 ? <Activity size={24} className="text-pink" /> : <Plane size={24} className="text-pink" />}
+                      {idx === 0 ? <Mountain size={24} className="text-pink" /> : <Activity size={24} className="text-pink" />}
                     </div>
-                    <span className="attraction-name">{item.place_name}</span>
+                    <span className="attraction-name">{item.name}</span>
                   </div>
                   <div className="attraction-stats-box">
                     <div className="stat-sub">
                       <Users size={14} className="text-pink" />
-                      <span>{(item.yearly / 1000000).toFixed(1)}M</span>
+                      <span>{((item.data?.yearly_total || 0) / 1000000).toFixed(1)}M</span>
                     </div>
                     <div className="stat-sep"></div>
                     <div className="stat-sub">
                       <Sun size={14} className="text-pink" />
-                      <span>{(item.daily / 1000).toFixed(1)}K</span>
+                      <span>{((item.data?.daily_normal || 0) / 1000).toFixed(1)}K</span>
                     </div>
                   </div>
                   <ChevronRight className="text-slate-light" size={20} />
@@ -599,85 +705,63 @@ export default function PremiumReportPage({ routeData, isLoading }) {
 
         {/* Concept 5: Top Visitors by State - Redesigned */}
         <section className="analysis-section-box section-spacing state-visitors-container">
-          <div className="visitor-header-flex">
-            <div className="visitor-title-box">
-              <div className="icon-wrap bg-pink-light"><Share2 className="text-pink" /></div>
-              <div>
-                <h2>Top Visitors by State</h2>
-                <p className="subtitle-small">Distribution of visitors across different states</p>
-              </div>
-            </div>
-            <div className="map-visual-top">
-              {/* Simplified India Map representation */}
-              <div className="mini-map-container">
-                <MapPin className="pin pin-1" size={14} />
-                <MapPin className="pin pin-2" size={14} />
-                <MapPin className="pin pin-3" size={14} />
-                <div className="user-icons-group">
-                  <Users size={12} />
-                  <Users size={12} />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="custom-bar-chart">
-            {demandDist.map((item, idx) => (
-              <div key={idx} className="chart-row">
-                <div className="state-info">
-                  <div className="state-icon-circle bg-pink-soft">
-                    {idx === 0 ? <Landmark size={22} className="text-pink" /> : idx === 1 ? <Building2 size={22} className="text-pink" /> : <Activity size={22} className="text-pink" />}
+          <div className="demographics-main-content">
+            <div className="demographics-grid">
+              {routeData.demand_distribution.map((stateData, sIdx) => (
+                <div key={sIdx} className="state-distribution-card">
+                  <div className="state-header">
+                    <div className="state-title-wrap">
+                      <Map className="text-blue-main" size={20} />
+                      <h3>{stateData.state}</h3>
+                    </div>
+                    <div className="state-perc-badge bg-blue-soft text-blue-main">
+                      {stateData.percentage}% Total Share
+                    </div>
                   </div>
-                  <div className="state-name-box">
-                    <span className="state-name">{item.state}</span>
-                    <span className="state-pct">{item.percentage}%</span>
+
+                  <div className="cities-list">
+                    {(stateData.top_cities || stateData.cities || []).map((city, cIdx) => (
+                      <div key={cIdx} className="city-row">
+                        <div className="city-info">
+                          <span className="city-name">{city.name}</span>
+                          <span className="city-stats">
+                            {city.percentage}% share • {(city.visitor_count || 0).toLocaleString()} visitors
+                          </span>
+                        </div>
+                        <div className="city-bar-container">
+                          <div className="city-bar-bg">
+                            <div className="city-bar-fill bg-blue-main" style={{ width: `${city.percentage * 2}%` }}></div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-                <div className="bar-container">
-                  <div className="bar-fill" style={{ width: `${item.percentage}%` }}></div>
-                  <span className="bar-label">{item.percentage}%</span>
-                </div>
-              </div>
-            ))}
-
-            <div className="chart-axis">
-              <span>0%</span>
-              <span>25%</span>
-              <span>50%</span>
-              <span>75%</span>
-              <span>100%</span>
-              <div className="axis-lines">
-                <span></span><span></span><span></span><span></span><span></span>
-              </div>
+              ))}
             </div>
-          </div>
-
-          <div className="info-footer-banner">
-            <Info size={16} className="text-pink" />
-            <span>* {demandDist.map(d => `${d.state} (${d.percentage}%)`).join(', ')}</span>
           </div>
         </section>
 
-        {/* Concept 6: Distance Matrix - Redesigned */}
+        {/* Concept 6: Distance Matrix - Dynamic API-Driven */}
         <section className="analysis-section-box section-spacing distance-matrix-container">
           <div className="visitor-header-flex">
             <div className="visitor-title-box">
               <div className="icon-wrap bg-orange-light"><Navigation className="text-orange-main" /></div>
               <div>
                 <h2>Distance Matrix (km)</h2>
-                <p className="subtitle-small">Distance between major cities in Tamil Nadu</p>
+                <p className="subtitle-small">Distance between major cities along the {routeSummary.path} corridor</p>
               </div>
             </div>
             <div className="route-visual-top">
               <div className="dotted-route-container">
                 <MapPin className="pin pin-start" size={18} />
                 <svg className="curvy-path-svg" viewBox="0 0 100 40">
-                  <path 
-                    d="M 5,30 Q 25,5 50,20 T 95,10" 
-                    fill="none" 
-                    stroke="#ff9800" 
-                    strokeWidth="2.5" 
-                    strokeDasharray="4 6" 
+                  <path
+                    d="M 5,30 Q 25,5 50,20 T 95,10"
+                    fill="none"
+                    stroke="#ff9800"
+                    strokeWidth="2.5"
+                    strokeDasharray="4 6"
                     strokeLinecap="round"
                   />
                 </svg>
@@ -697,13 +781,13 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                     </div>
                   </th>
                   {matrixData.cities.map((city, idx) => {
-                    const node = dynamicTimelineNodes[idx];
-                    const isHoveredCol = hoveredMatrixCell?.col === idx;
+                    const icons = [Landmark, Activity, Building2];
+                    const CityIcon = icons[idx % icons.length];
                     return (
-                      <th key={idx} className={isHoveredCol ? "hovered-header" : ""}>
+                      <th key={idx}>
                         <div className="city-header-icon">
-                          <img src={node?.icon} alt="" style={{ width: '20px', height: '20px', marginBottom: '4px' }} />
-                          <br/>{matrixData.getAbbr(city)}
+                          <CityIcon size={20} className="text-orange-main" />
+                          <br />{matrixData.getAbbr(city)}
                         </div>
                       </th>
                     );
@@ -712,110 +796,40 @@ export default function PremiumReportPage({ routeData, isLoading }) {
               </thead>
               <tbody>
                 {matrixData.matrix.map((row, i) => {
-                  const isHoveredRow = hoveredMatrixCell?.row === i;
+                  const icons = [Landmark, Activity, Building2];
+                  const RowIcon = icons[i % icons.length];
                   return (
-                  <tr key={i} className={`dist-row ${isHoveredRow ? "hovered-row-container" : ""}`}>
-                    <td className={`row-label ${isHoveredRow ? "hovered-header" : ""}`}>
-                      <div className="city-label">
-                        <img src={dynamicTimelineNodes[i]?.icon} alt="" style={{ width: '18px', height: '18px', marginRight: '8px' }} />
-                        {matrixData.cities[i]}
-                      </div>
-                    </td>
-                    {row.map((dist, j) => {
-                      const isHovered = hoveredMatrixCell?.row === i || hoveredMatrixCell?.col === j;
-                      const isSelected = selectedMatrixCell?.row === i && selectedMatrixCell?.col === j;
-                      const intensity = matrixData.maxDistance > 0 ? (dist / matrixData.maxDistance) : 0;
-                      
-                      // Using a safe heat map color gradient calculation
-                      const bgOpacity = intensity * 0.4; // Max 40% opacity for readability
-                      const heatColor = `rgba(249, 115, 22, ${bgOpacity})`;
-                      
-                      return (
-                        <td 
-                          key={j} 
-                          className={`
-                            ${dist === 0 ? "zero-cell" : "dist-cell"} 
-                            ${isHovered ? "hovered-cell" : ""}
-                            ${isSelected ? "selected-cell" : ""}
-                          `}
-                          style={{ backgroundColor: dist !== 0 ? heatColor : undefined }}
-                          onMouseEnter={() => setHoveredMatrixCell({ row: i, col: j, dist })}
-                          onMouseLeave={() => setHoveredMatrixCell(null)}
-                          onClick={() => setSelectedMatrixCell({ row: i, col: j, dist })}
-                        >
-                          {dist}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                )})}
+                    <tr key={i} className="dist-row">
+                      <td className="row-label">
+                        <div className="city-label">
+                          <RowIcon size={18} className="text-orange-main" />
+                          {matrixData.cities[i]}
+                        </div>
+                      </td>
+                      {row.map((dist, j) => {
+                        const intensity = matrixData.maxDistance > 0 ? (dist / matrixData.maxDistance) : 0;
+                        const bgOpacity = intensity * 0.35;
+                        const heatColor = `rgba(249, 115, 22, ${bgOpacity})`;
+                        return (
+                          <td
+                            key={j}
+                            className={dist === 0 ? "zero-cell" : "dist-cell"}
+                            style={dist !== 0 ? { backgroundColor: heatColor } : undefined}
+                          >
+                            {dist === 0 ? <strong>0</strong> : dist}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
-          
-          {/* Dynamic Details Panel for Distance Matrix */}
-          {(hoveredMatrixCell || selectedMatrixCell) && (
-            <div className="matrix-details-panel">
-              {(() => {
-                const activeCell = selectedMatrixCell || hoveredMatrixCell;
-                if (!activeCell || activeCell.row === activeCell.col) return null;
-                const origin = matrixData.cities[activeCell.row];
-                const destination = matrixData.cities[activeCell.col];
-                const distance = activeCell.dist;
-                // Assuming average speed of 50 km/h for estimated time
-                const estHours = (distance / 50).toFixed(1);
-                
-                return (
-                  <div className="details-panel-content animate-slide-up">
-                    <div className="details-header">
-                      <Navigation size={18} className="text-orange-main" />
-                      <h4>Route Segment Details</h4>
-                    </div>
-                    <div className="details-body">
-                      <div className="route-endpoints">
-                        <div className="endpoint">
-                          <span className="endpoint-label">From</span>
-                          <span className="endpoint-value">{origin}</span>
-                        </div>
-                        <div className="endpoint-connector">
-                          <ArrowRight size={16} className="text-slate-light" />
-                        </div>
-                        <div className="endpoint">
-                          <span className="endpoint-label">To</span>
-                          <span className="endpoint-value">{destination}</span>
-                        </div>
-                      </div>
-                      <div className="route-stats">
-                        <div className="stat-box">
-                          <MapPin size={16} className="text-orange-main" />
-                          <div>
-                            <span className="stat-val">{distance} km</span>
-                            <span className="stat-desc">Distance</span>
-                          </div>
-                        </div>
-                        <div className="stat-box">
-                          <Timer size={16} className="text-orange-main" />
-                          <div>
-                            <span className="stat-val">~{estHours} hrs</span>
-                            <span className="stat-desc">Est. Time</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    {selectedMatrixCell && (
-                       <button className="close-panel-btn" onClick={() => setSelectedMatrixCell(null)}>
-                         ✕
-                       </button>
-                    )}
-                  </div>
-                );
-              })()}
-            </div>
-          )}
 
           <div className="info-footer-banner orange">
             <Info size={16} className="text-orange-main" />
-            <span> All distances are approximate road distances in kilometers. Click a cell for segment details.</span>
+            <span>All distances are approximate road distances in kilometers.</span>
           </div>
         </section>
 
@@ -836,13 +850,13 @@ export default function PremiumReportPage({ routeData, isLoading }) {
               <div className="donut-wrapper">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie 
-                      data={dynamicTransportData} 
-                      cx="50%" 
-                      cy="50%" 
-                      innerRadius={80} 
-                      outerRadius={110} 
-                      paddingAngle={5} 
+                    <Pie
+                      data={dynamicTransportData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={80}
+                      outerRadius={110}
+                      paddingAngle={5}
                       dataKey="value"
                       stroke="none"
                     >
@@ -985,7 +999,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                 </div>
                 <div className="header-badge-outline"><Activity size={12} /> High Coverage</div>
               </div>
-              
+
               <div className="freq-list">
                 {dynamicBusFrequencies.length > 0 ? dynamicBusFrequencies.map((item, idx) => (
                   <div key={idx} className="freq-item">

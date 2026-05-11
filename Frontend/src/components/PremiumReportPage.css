@@ -55,7 +55,7 @@
 }
 
 .report-content-wrapper {
-  max-width: 1100px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 50px 20px;
 }
@@ -2005,6 +2005,7 @@
   padding: 80px 0 30px;
   margin-top: 60px;
   font-family: 'Inter', sans-serif;
+  
 }
 
 .footer-container {

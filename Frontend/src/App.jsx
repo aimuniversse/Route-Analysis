@@ -134,9 +134,13 @@ function App() {
     });
   };
 
-  // Real-time synchronization (Polling)
+  // Real-time synchronization (Polling — every 5 minutes to avoid API overload)
+  const consecutiveFailures = React.useRef(0);
+
   const refreshRouteData = async () => {
     if (!hasSearched || !routeQuery || isLoading) return;
+    // Pause polling after 2 consecutive backend failures
+    if (consecutiveFailures.current >= 2) return;
 
     const parts = routeQuery.split(" to ");
     const source = parts[0]?.trim();
@@ -145,7 +149,7 @@ function App() {
     if (!source || !destination) return;
 
     try {
-      const response = await fetch("http://localhost:8000/api/route-analysis/", {
+      const response = await fetch("/api/route-analysis/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ source, destination, via: viaCity }),
@@ -155,21 +159,26 @@ function App() {
         const result = await response.json();
         if (result.status === "success") {
           setRouteData(result.data);
-          console.log("Real-time data synced:", new Date().toLocaleTimeString());
+          consecutiveFailures.current = 0; // Reset on success
+          console.debug("Real-time data synced:", new Date().toLocaleTimeString());
         }
+      } else {
+        consecutiveFailures.current += 1;
+        console.warn(`Background sync returned ${response.status} (${consecutiveFailures.current}/2 failures)`);
       }
     } catch (err) {
-      console.error("Background sync failed:", err);
+      consecutiveFailures.current += 1;
+      console.warn("Background sync failed:", err.message);
     }
   };
 
   useEffect(() => {
     let interval;
     if (hasSearched && routeQuery && isLoggedIn) {
-      // Poll every 45 seconds for real-time updates
+      // Poll every 5 minutes — route data doesn't change frequently
       interval = setInterval(() => {
         refreshRouteData();
-      }, 45000);
+      }, 300000);
     }
     return () => {
       if (interval) clearInterval(interval);

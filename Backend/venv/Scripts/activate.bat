@@ -8,7 +8,15 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
+<<<<<<< HEAD
 set VIRTUAL_ENV=E:\aim universee\route\Route-Analysis\Backend\venv
+=======
+<<<<<<< HEAD
+set "VIRTUAL_ENV=D:\Route-Analysis\Backend\venv"
+=======
+set "VIRTUAL_ENV=C:\Users\DELL\Music\Route-Analysis\Backend\venv"
+>>>>>>> 329d11a57b52498db0ca1b11e5e2e7481a050ea8
+>>>>>>> 168331f8ff12945a136473ccc60e72ea8c96b6b7
 
 if not defined PROMPT set PROMPT=$P$G
 
