@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
-  Users, MapPin, Building2, Landmark, Mountain,
+  Users, MapPin, Building2, Landmark, Mountain, Map,
   Bus, Train, Car, Briefcase, Package, Navigation, Clock,
   CheckCircle2, ArrowRight, Plane, Activity, Calendar, Share2,
   TrendingUp, Sun, ChevronRight, Sparkles, MoreHorizontal, Info,
   GraduationCap, Factory, BarChart2, ShieldCheck, Timer, Globe, Headphones,
-  Leaf, Compass, Fuel, Mail, Phone
+  Leaf, Compass, Fuel, Mail, Phone, Truck
 } from 'lucide-react';
 import {
   PieChart, Pie, Cell, Tooltip as RechartsTooltip,
@@ -26,15 +26,10 @@ const heroImage = "file:///C:/Users/DELL/.gemini/antigravity/brain/6f074f9e-ba21
 
 
 
-<<<<<<< HEAD
-export default function PremiumReportPage({ routeData }) {
+export default function PremiumReportPage({ routeData, isLoading }) {
   const routeName = Array.isArray(routeData?.route_summary?.path) 
     ? routeData.route_summary.path.join(' → ') 
     : (routeData?.route_summary?.path || "Coimbatore to Chennai");
-=======
-export default function PremiumReportPage({ routeData, isLoading }) {
-  const routeName = routeData?.route_summary?.path || "Coimbatore to Chennai";
->>>>>>> 60abf5066aea624cfd14785be3f4b4577a83019c
   const [formData, setFormData] = useState({ name: '', busTravels: '', contactNo: '', message: '' });
   const [formStatus, setFormStatus] = useState(null); // null | 'success' | 'error'
   const [lastSyncTime, setLastSyncTime] = useState(new Date().toLocaleTimeString());
@@ -51,8 +46,8 @@ export default function PremiumReportPage({ routeData, isLoading }) {
     const { id, value } = e.target;
     const key = id === 'contact-name' ? 'name'
       : id === 'contact-email' ? 'busTravels'
-      : id === 'contact-subject' ? 'contactNo'
-      : 'message';
+        : id === 'contact-subject' ? 'contactNo'
+          : 'message';
     setFormData(prev => ({ ...prev, [key]: value }));
   };
 
@@ -79,7 +74,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
       else if (modeName.includes('Car')) icon = <Car size={18} />;
       else if (modeName.includes('Taxi')) icon = <Car size={18} />;
       else if (modeName.includes('Flight')) icon = <Plane size={18} />;
-      
+
       return {
         name: modeName,
         value,
@@ -91,20 +86,20 @@ export default function PremiumReportPage({ routeData, isLoading }) {
 
   const transportInsight = useMemo(() => {
     if (!dynamicTransportData?.length) return null;
-    
+
     const sorted = [...dynamicTransportData].sort((a, b) => b.value - a.value);
     const top = sorted[0];
     const second = sorted[1];
-    
+
     if (!top) return "Data on transport modes is currently unavailable.";
-    
+
     let text = `${top.name} transport dominates this corridor with ${top.value}% preference`;
     if (second) {
       text += `, followed by ${second.name.toLowerCase()} at ${second.value}% for efficient connectivity.`;
     } else {
       text += ".";
     }
-    
+
     return text;
   }, [dynamicTransportData]);
 
@@ -127,10 +122,10 @@ export default function PremiumReportPage({ routeData, isLoading }) {
 
   const dynamicBusFrequencies = useMemo(() => {
     if (!routeData?.transport_schedule) return [];
-    
+
     const schedule = routeData.transport_schedule;
     let details = [];
-    
+
     if (Array.isArray(schedule)) {
       // New structure: filter by type
       if (schedule.length > 0 && schedule[0].type) {
@@ -161,13 +156,13 @@ export default function PremiumReportPage({ routeData, isLoading }) {
         icon: <Bus size={18} />
       }));
     }
-    
+
     return details;
   }, [routeData]);
 
   const dynamicTrainFrequencies = useMemo(() => {
     if (!routeData?.transport_schedule) return [];
-    
+
     const schedule = routeData.transport_schedule;
     let details = [];
 
@@ -207,12 +202,12 @@ export default function PremiumReportPage({ routeData, isLoading }) {
 
   const dynamicTimelineNodes = useMemo(() => {
     if (!routeData?.route_summary?.path) return [];
-    
+
     const pathData = routeData.route_summary.path;
     const cities = Array.isArray(pathData) ? pathData : pathData.split(' → ').map(c => c.trim());
     const segmentation = routeData.area_segmentation || {};
     const areaPotential = routeData.dashboard_data?.area_potential || [];
-    
+
     return cities.map((city, idx) => {
       let type = 'General';
       let icon = pointIcon;
@@ -220,11 +215,11 @@ export default function PremiumReportPage({ routeData, isLoading }) {
 
       // Check for detailed data in area_potential
       const districtData = areaPotential.find(d => d.district.toLowerCase().includes(city.toLowerCase()));
-      
+
       // Assign type and icon based on segmentation data
-      const isIndustrial = (segmentation.business_areas || []).some(s => s?.name?.toLowerCase().includes(city.toLowerCase()));
-      const isTourist = (segmentation.tourist_areas || []).some(s => s?.name?.toLowerCase().includes(city.toLowerCase()));
-      const isStudent = (segmentation.student_areas || []).some(s => s?.name?.toLowerCase().includes(city.toLowerCase()));
+      const isIndustrial = (segmentation.job_business_areas || []).some(s => (s?.name || s)?.toLowerCase().includes(city.toLowerCase()));
+      const isTourist = (segmentation.tourist_places || []).some(s => (s?.name || s)?.toLowerCase().includes(city.toLowerCase()));
+      const isStudent = (segmentation.student_areas || []).some(s => (s?.name || s)?.toLowerCase().includes(city.toLowerCase()));
 
       if (idx === 0) {
         type = 'Origin';
@@ -244,7 +239,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
         desc = districtData ? `${city}: Popular tourist destination with a potential score of ${districtData.potential_score}%.` : `${city}: Known for its attractions and scenic beauty.`;
       } else if (isStudent) {
         type = 'Education Hub';
-        icon = pointIcon; 
+        icon = pointIcon;
         desc = districtData ? `${city}: Education center with a projected growth rate of ${districtData.growth_rate}%.` : `${city}: A center for educational institutions.`;
       }
 
@@ -259,44 +254,44 @@ export default function PremiumReportPage({ routeData, isLoading }) {
 
     // Helper: area entries can be objects {name,...} or plain strings
     const getName = (entry) => (entry?.name ?? entry ?? '');
-    
-    if (areaSeg.business_areas?.length) {
+
+    if (areaSeg.job_business_areas?.length) {
       const businessScore = corridorPot.business ? ` (Potential: ${corridorPot.business}%)` : "";
-      items.push({ 
-        title: 'Job & Business', 
-        content: `${getName(areaSeg.business_areas[0])}${businessScore}`, 
-        icon: <Briefcase />, 
-        color: 'orange' 
+      items.push({
+        title: 'Job & Business',
+        content: `${getName(areaSeg.job_business_areas[0])}${businessScore}`,
+        icon: <Briefcase />,
+        color: 'orange'
       });
     }
-    
+
     if (areaSeg.student_areas?.length) {
       const studentScore = corridorPot.student ? ` (Potential: ${corridorPot.student}%)` : "";
-      items.push({ 
-        title: 'Education Hubs', 
-        content: `${getName(areaSeg.student_areas[0])}${studentScore}`, 
-        icon: <GraduationCap />, 
-        color: 'purple' 
+      items.push({
+        title: 'Education Hubs',
+        content: `${getName(areaSeg.student_areas[0])}${studentScore}`,
+        icon: <GraduationCap />,
+        color: 'purple'
       });
     }
-    
-    if (areaSeg.tourist_areas?.length) {
+
+    if (areaSeg.tourist_places?.length) {
       const touristScore = corridorPot.tourist ? ` (Potential: ${corridorPot.tourist}%)` : "";
-      items.push({ 
-        title: 'Tourist Hotspots', 
-        content: `${getName(areaSeg.tourist_areas[0])}${touristScore}`, 
-        icon: <Mountain />, 
-        color: 'green' 
+      items.push({
+        title: 'Tourist Hotspots',
+        content: `${getName(areaSeg.tourist_places[0])}${touristScore}`,
+        icon: <Mountain />,
+        color: 'green'
       });
     }
 
     // Add a 4th card from a second business area if available
-    if (items.length < 4 && areaSeg.business_areas?.length > 1) {
-      items.push({ 
-        title: 'Industrial Center', 
-        content: getName(areaSeg.business_areas[1]), 
-        icon: <Factory />, 
-        color: 'blue' 
+    if (items.length < 4 && areaSeg.job_business_areas?.length > 1) {
+      items.push({
+        title: 'Industrial Center',
+        content: getName(areaSeg.job_business_areas[1]),
+        icon: <Factory />,
+        color: 'blue'
       });
     }
 
@@ -317,7 +312,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
 
     const pathData = routeData.route_summary.path;
     const cities = Array.isArray(pathData) ? pathData : pathData.split(' → ').map(c => c.trim());
-    const segments = routeData.distance_details || [];
+    const segments = Array.isArray(routeData.distance_details) ? routeData.distance_details : [];
     
     // Create a cumulative distance map
     const cumulativeDistances = [0];
@@ -330,7 +325,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
         (s.segment?.includes(from) && s.segment?.includes(to)) || 
         (s.segment?.includes(to) && s.segment?.includes(from))
       );
-      
+
       const totalDist = routeData.route_summary.total_distance_km || routeData.route_summary.total_distance;
       const dist = segment ? segment.distance_km : Math.round((totalDist / (cities.length - 1)));
       currentTotal += dist;
@@ -358,13 +353,13 @@ export default function PremiumReportPage({ routeData, isLoading }) {
 
   const dynamicDistanceDetails = useMemo(() => {
     if (!routeData?.distance_details) return [];
-    
+
     // Handle single object format
     if (!Array.isArray(routeData.distance_details)) {
       const d = routeData.distance_details;
       return [{ from: d.from, to: d.to, distance_km: d.distance_km }];
     }
-    
+
     // Fallback for old array format
     return routeData.distance_details.map(item => ({
       from: item.from,
@@ -375,9 +370,9 @@ export default function PremiumReportPage({ routeData, isLoading }) {
 
   const dynamicLogisticsData = useMemo(() => {
     if (!routeData?.logistics_services) return [];
-    
+
     const logs = routeData.logistics_services;
-    
+
     // Handle new percentage-based object structure
     if (typeof logs.bus === 'number') {
       return [
@@ -387,7 +382,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
         { name: 'Taxi Parcel', value: logs.taxi, color: 'orange', icon: <Navigation size={20} />, tag: 'Instant' }
       ];
     }
-    
+
     // Fallback for old structure (arrays)
     return [
       { name: 'Bus Parcel', value: 40, color: 'blue', icon: <Truck size={20} />, tag: 'Fast' },
@@ -459,7 +454,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                   <Users className="user-icon user-1" size={32} />
                   <Users className="user-icon user-2" size={44} />
                   <Users className="user-icon user-3" size={32} />
-                 
+
                 </div>
               </div>
             </div>
@@ -515,7 +510,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
               <div className="total-right">
                 <div className="vertical-dotted-sep"></div>
                 <span className="total-value">
-                  {(( (popData.source?.count || 0) + (popData.via?.count || 0) + (popData.destination?.count || 0) ) / 1000000).toFixed(1)}M
+                  {(((popData.source?.count || 0) + (popData.via?.count || 0) + (popData.destination?.count || 0)) / 1000000).toFixed(1)}M
                 </span>
               </div>
             </div>
@@ -527,7 +522,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                 <div className="icon-wrap bg-orange-soft"><Briefcase className="text-orange-main" /></div>
                 <div>
                   <h2 className="title-split">Potential <span className="text-pink-main">of the Area</span></h2>
-                  <p className="subtitle-small">The {routeSummary.path} corridor has a diverse range of attractions and industries, including:</p>
+                  <p className="subtitle-small">The {Array.isArray(routeSummary.path) ? routeSummary.path.join(' → ') : routeSummary.path} corridor has a diverse range of attractions and industries, including:</p>
                 </div>
               </div>
               <div className="growth-visual-top">
@@ -584,7 +579,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
           <div className="segmentation-model-container">
             <div className="timeline-horizontal-line"></div>
             <div className="timeline-nodes-wrapper">
-              
+
               {dynamicTimelineNodes.map((node, idx) => (
                 <div key={idx} className={`model-timeline-node ${idx % 2 === 0 ? 'is-top' : 'is-bottom'}`}>
                   <div className="node-content-box">
@@ -639,16 +634,20 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                 <div className="mini-icon bg-pink-soft"><TrendingUp size={16} className="text-pink" /></div>
                 <span>Yearly Total</span>
               </div>
-              <div className="stat-value">{(visitors.reduce((acc, curr) => acc + curr.yearly, 0) / 1000000).toFixed(1)}M</div>
+              <div className="stat-value">
+                {(((visitors.source?.yearly_total || 0) + (visitors.destination?.yearly_total || 0)) / 1000000).toFixed(1)}M
+              </div>
               <div className="stat-underline"></div>
             </div>
-            
+
             <div className="stat-card-modern">
               <div className="stat-card-header">
                 <div className="mini-icon bg-pink-soft"><Clock size={16} className="text-pink" /></div>
                 <span>Daily (Normal)</span>
               </div>
-              <div className="stat-value">{(visitors.reduce((acc, curr) => acc + curr.daily, 0) / 1000).toFixed(0)}K</div>
+              <div className="stat-value">
+                {(((visitors.source?.daily_normal || 0) + (visitors.destination?.daily_normal || 0)) / 1000).toFixed(0)}K
+              </div>
               <div className="stat-underline"></div>
             </div>
 
@@ -657,7 +656,9 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                 <div className="mini-icon bg-pink-soft"><TrendingUp size={16} className="text-pink" /></div>
                 <span>Daily (Peak)</span>
               </div>
-              <div className="stat-value">{(visitors.reduce((acc, curr) => acc + curr.daily * 1.5, 0) / 1000).toFixed(0)}K</div>
+              <div className="stat-value">
+                {(((visitors.source?.daily_peak || 0) + (visitors.destination?.daily_peak || 0)) / 1000).toFixed(0)}K
+              </div>
               <div className="stat-underline"></div>
             </div>
           </div>
@@ -673,23 +674,26 @@ export default function PremiumReportPage({ routeData, isLoading }) {
             </div>
 
             <div className="attraction-items">
-              {visitors.map((item, idx) => (
+              {[
+                { name: routeData?.population_data?.source?.name || 'Origin', data: visitors.source },
+                { name: routeData?.population_data?.destination?.name || 'Destination', data: visitors.destination }
+              ].map((item, idx) => (
                 <div key={idx} className="attraction-item-row">
                   <div className="attraction-main">
                     <div className="attraction-img-circle">
-                      {idx % 3 === 0 ? <Mountain size={24} className="text-pink" /> : idx % 3 === 1 ? <Activity size={24} className="text-pink" /> : <Plane size={24} className="text-pink" />}
+                      {idx === 0 ? <Mountain size={24} className="text-pink" /> : <Activity size={24} className="text-pink" />}
                     </div>
-                    <span className="attraction-name">{item.place_name}</span>
+                    <span className="attraction-name">{item.name}</span>
                   </div>
                   <div className="attraction-stats-box">
                     <div className="stat-sub">
                       <Users size={14} className="text-pink" />
-                      <span>{(item.yearly / 1000000).toFixed(1)}M</span>
+                      <span>{((item.data?.yearly_total || 0) / 1000000).toFixed(1)}M</span>
                     </div>
                     <div className="stat-sep"></div>
                     <div className="stat-sub">
                       <Sun size={14} className="text-pink" />
-                      <span>{(item.daily / 1000).toFixed(1)}K</span>
+                      <span>{((item.data?.daily_normal || 0) / 1000).toFixed(1)}K</span>
                     </div>
                   </div>
                   <ChevronRight className="text-slate-light" size={20} />
@@ -701,41 +705,41 @@ export default function PremiumReportPage({ routeData, isLoading }) {
 
         {/* Concept 5: Top Visitors by State - Redesigned */}
         <section className="analysis-section-box section-spacing state-visitors-container">
-            <div className="demographics-main-content">
-              <div className="demographics-grid">
-                {routeData.demand_distribution.map((stateData, sIdx) => (
-                  <div key={sIdx} className="state-distribution-card">
-                    <div className="state-header">
-                      <div className="state-title-wrap">
-                        <Map className="text-blue-main" size={20} />
-                        <h3>{stateData.state}</h3>
-                      </div>
-                      <div className="state-perc-badge bg-blue-soft text-blue-main">
-                        {stateData.percentage}% Total Share
-                      </div>
+          <div className="demographics-main-content">
+            <div className="demographics-grid">
+              {routeData.demand_distribution.map((stateData, sIdx) => (
+                <div key={sIdx} className="state-distribution-card">
+                  <div className="state-header">
+                    <div className="state-title-wrap">
+                      <Map className="text-blue-main" size={20} />
+                      <h3>{stateData.state}</h3>
                     </div>
-                    
-                    <div className="cities-list">
-                      {(stateData.top_cities || stateData.cities || []).map((city, cIdx) => (
-                        <div key={cIdx} className="city-row">
-                          <div className="city-info">
-                            <span className="city-name">{city.name}</span>
-                            <span className="city-stats">
-                              {city.percentage}% share • {(city.visitor_count || 0).toLocaleString()} visitors
-                            </span>
-                          </div>
-                          <div className="city-bar-container">
-                            <div className="city-bar-bg">
-                              <div className="city-bar-fill bg-blue-main" style={{ width: `${city.percentage * 2}%` }}></div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+                    <div className="state-perc-badge bg-blue-soft text-blue-main">
+                      {stateData.percentage}% Total Share
                     </div>
                   </div>
-                ))}
-              </div>
+
+                  <div className="cities-list">
+                    {(stateData.top_cities || stateData.cities || []).map((city, cIdx) => (
+                      <div key={cIdx} className="city-row">
+                        <div className="city-info">
+                          <span className="city-name">{city.name}</span>
+                          <span className="city-stats">
+                            {city.percentage}% share • {(city.visitor_count || 0).toLocaleString()} visitors
+                          </span>
+                        </div>
+                        <div className="city-bar-container">
+                          <div className="city-bar-bg">
+                            <div className="city-bar-fill bg-blue-main" style={{ width: `${city.percentage * 2}%` }}></div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
+          </div>
         </section>
 
         {/* Concept 6: Distance Matrix - Dynamic API-Driven */}
@@ -752,12 +756,12 @@ export default function PremiumReportPage({ routeData, isLoading }) {
               <div className="dotted-route-container">
                 <MapPin className="pin pin-start" size={18} />
                 <svg className="curvy-path-svg" viewBox="0 0 100 40">
-                  <path 
-                    d="M 5,30 Q 25,5 50,20 T 95,10" 
-                    fill="none" 
-                    stroke="#ff9800" 
-                    strokeWidth="2.5" 
-                    strokeDasharray="4 6" 
+                  <path
+                    d="M 5,30 Q 25,5 50,20 T 95,10"
+                    fill="none"
+                    stroke="#ff9800"
+                    strokeWidth="2.5"
+                    strokeDasharray="4 6"
                     strokeLinecap="round"
                   />
                 </svg>
@@ -783,7 +787,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                       <th key={idx}>
                         <div className="city-header-icon">
                           <CityIcon size={20} className="text-orange-main" />
-                          <br/>{matrixData.getAbbr(city)}
+                          <br />{matrixData.getAbbr(city)}
                         </div>
                       </th>
                     );
@@ -846,13 +850,13 @@ export default function PremiumReportPage({ routeData, isLoading }) {
               <div className="donut-wrapper">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie 
-                      data={dynamicTransportData} 
-                      cx="50%" 
-                      cy="50%" 
-                      innerRadius={80} 
-                      outerRadius={110} 
-                      paddingAngle={5} 
+                    <Pie
+                      data={dynamicTransportData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={80}
+                      outerRadius={110}
+                      paddingAngle={5}
                       dataKey="value"
                       stroke="none"
                     >
@@ -995,7 +999,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                 </div>
                 <div className="header-badge-outline"><Activity size={12} /> High Coverage</div>
               </div>
-              
+
               <div className="freq-list">
                 {dynamicBusFrequencies.length > 0 ? dynamicBusFrequencies.map((item, idx) => (
                   <div key={idx} className="freq-item">

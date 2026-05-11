@@ -5,18 +5,20 @@ import routeMap from "../assets/image/maparea.png";
 
 const MapArea = ({ routeData, routeQuery, isLoading }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
-<<<<<<< HEAD
-  const pathData = routeData?.route_summary?.path;
-  const parsedPath = Array.isArray(pathData) ? pathData : (pathData?.split(" → ") || routeQuery?.split(" to "));
-=======
-  const routePath = routeData?.route_summary?.path || routeQuery;
-  const parsedPath = routePath?.includes(' → ')
-    ? routePath.split(' → ').map(c => c.trim())
-    : routePath?.includes(' to ')
-      ? routePath.split(' to ').map(c => c.trim())
-      : [routePath?.trim()];
+  const routePath = routeData?.route_summary?.path || routeQuery || '';
+  let parsedPath = [];
+  if (Array.isArray(routePath)) {
+    parsedPath = routePath;
+  } else if (typeof routePath === 'string') {
+    if (routePath.includes(' → ')) {
+      parsedPath = routePath.split(' → ').map(c => c.trim());
+    } else if (routePath.includes(' to ')) {
+      parsedPath = routePath.split(' to ').map(c => c.trim());
+    } else {
+      parsedPath = [routePath.trim()];
+    }
+  }
 
->>>>>>> 60abf5066aea624cfd14785be3f4b4577a83019c
   const startLabel = parsedPath?.[0] || routeData?.population_data?.source?.name || 'Origin';
   const endLabel = parsedPath?.[parsedPath.length - 1] || routeData?.population_data?.destination?.name || 'Destination';
   const viaName = parsedPath?.length === 3 ? parsedPath[1] : routeData?.population_data?.via?.name;
