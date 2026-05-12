@@ -172,3 +172,71 @@ def get_popular_searches(request):
         "status": "success",
         "popular_searches": data
     })
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def get_search_data(request):
+    """
+    Returns data needed for the SearchBox and SearchingOverlay: 
+    cities, shortcuts, popular searches, and insights.
+    """
+    cities = [
+        "Ariyalur", "Chengalpattu", "Chennai", "Coimbatore", "Cuddalore", "Dharmapuri",
+        "Dindigul", "Erode", "Kallakurichi", "Kanchipuram", "Kanyakumari", "Karur",
+        "Krishnagiri", "Madurai", "Mayiladuthurai", "Nagapattinam", "Namakkal", "Nilgiris",
+        "Perambalur", "Pudukkottai", "Ramanathapuram", "Ranipet", "Salem", "Sivaganga",
+        "Tenkasi", "Thanjavur", "Theni", "Thoothukudi", "Tiruchirappalli", "Tirunelveli",
+        "Tirupathur", "Tiruppur", "Tiruvallur", "Tiruvannamalai", "Tiruvarur", "Vellore",
+        "Viluppuram", "Virudhunagar", "Bangalore", "Hyderabad", "Vijayawada", "Pune",
+        "Mumbai", "Delhi", "Kochi", "Goa", "Mysore"
+    ]
+    
+    shortcuts = {
+        "cbe": "Coimbatore",
+        "blr": "Bangalore",
+        "hyd": "Hyderabad",
+        "maa": "Chennai",
+        "bom": "Mumbai",
+        "del": "Delhi",
+        "pnq": "Pune",
+        "tjy": "Thanjavur",
+        "trichi": "Tiruchirappalli",
+        "try": "Tiruchirappalli",
+        "trz": "Tiruchirappalli",
+        "tpj": "Tiruchirappalli",
+        "tpy": "Tirupathur",
+        "vlr": "Vellore",
+        "slm": "Salem",
+        "mdu": "Madurai",
+        "tcr": "Tiruppur",
+        "kchi": "Kochi",
+        "cok": "Kochi"
+    }
+
+    popular = PopularSearch.objects.all()[:5]
+    popular_searches = [p.route_text for p in popular]
+    
+    if not popular_searches:
+        popular_searches = [
+            "Bangalore → Chennai",
+            "Hyderabad → Vijayawada",
+            "Pune → Mumbai",
+            "Delhi → Manali",
+            "Ahmedabad → Surat"
+        ]
+
+    insights = [
+        {"label": "AI Tip", "text": "Routes analyzed by AI typically arrive 15% faster by avoiding mid-journey congestion hotspots."},
+        {"label": "Did You Know?", "text": "Tickmybus AI scans over 500 data points per second to ensure your journey is safe and on time."},
+        {"label": "Travel Fact", "text": "The Hyderabad to Vijayawada route is most scenic during the early morning AI-suggested slots."},
+        {"label": "Smart Choice", "text": "Choosing 'Eco-Routes' helps reduce carbon emissions by up to 12% without increasing travel time."},
+        {"label": "Security", "text": "Every booking is monitored by our 24/7 AI Security Layer for your peace of mind."}
+    ]
+
+    return Response({
+        "status": "success",
+        "cities": cities,
+        "shortcuts": shortcuts,
+        "popular_searches": popular_searches,
+        "insights": insights
+    })

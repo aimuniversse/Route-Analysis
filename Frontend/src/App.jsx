@@ -18,6 +18,7 @@ import BottomWidgets from "./components/BottomWidgets";
 import RouteInsights from "./components/RouteInsights";
 import PremiumReportPage from "./components/PremiumReportPage";
 import SearchingOverlay from "./components/SearchingOverlay";
+import HelpFooter from "./components/HelpFooter";
 
 import "./App.css";
 
@@ -46,21 +47,38 @@ function App() {
     return saved ? JSON.parse(saved) : null;
   });
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  // Pending scroll target — resolved in useEffect after DOM paint
+  const [pendingScroll, setPendingScroll] = useState(null);
 
   // Splash screen timer
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
     }, 3000);
-
     return () => clearTimeout(timer);
   }, []);
+
+  // Scroll handler — runs after render when pendingScroll is set
+  useEffect(() => {
+    if (!pendingScroll) return;
+    if (pendingScroll === "bottom") {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    } else {
+      const el = document.getElementById(pendingScroll);
+      if (el) {
+        const top = el.getBoundingClientRect().top + window.scrollY - 80;
+        window.scrollTo({ top, behavior: "smooth" });
+      }
+    }
+    setPendingScroll(null);
+  }, [pendingScroll]);
 
   // Auth Handlers
   const handleAuthClick = (isLogin = true) => {
     setAuthInitialMode(isLogin);
     setIsAuthModalOpen(true);
   };
+
 
   const handleLoginSuccess = (data) => {
     setUserData(data);
@@ -185,6 +203,18 @@ function App() {
     };
   }, [hasSearched, routeQuery, isLoggedIn, viaCity]);
 
+  // Scroll utility: scrolls .app-wrapper (the real scroll container) to an element
+  const scrollToElement = (elementId) => {
+    const wrapper = document.querySelector(".app-wrapper");
+    const el = document.getElementById(elementId);
+    if (wrapper && el) {
+      const wrapperRect = wrapper.getBoundingClientRect();
+      const elRect = el.getBoundingClientRect();
+      const scrollOffset = wrapper.scrollTop + (elRect.top - wrapperRect.top) - 80;
+      wrapper.scrollTo({ top: scrollOffset, behavior: "smooth" });
+    }
+  };
+
   // Navbar handlers
   const handleHomeClick = () => {
     setHasSearched(false);
@@ -198,29 +228,13 @@ function App() {
       return;
     }
     setActiveTab("search");
-    if (!hasSearched) {
-      const searchBox = document.getElementById("hero-search");
-      if (searchBox) {
-        searchBox.scrollIntoView({ behavior: "smooth" });
-      } else {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-    } else {
-      const headerSearch = document.getElementById("header-search");
-      if (headerSearch) {
-        headerSearch.scrollIntoView({ behavior: "smooth" });
-      } else {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-    }
+    setPendingScroll(hasSearched ? "header-search" : "hero-search");
   };
 
   const handleHelpClick = () => {
+    if (hasSearched) setHasSearched(false);
     setActiveTab("help");
-    const footer = document.getElementById("app-footer");
-    if (footer) {
-      footer.scrollIntoView({ behavior: "smooth" });
-    }
+    setPendingScroll("bottom");
   };
 
   return (
@@ -384,26 +398,7 @@ function App() {
       )}
 
       {/* Footer / Help Section */}
-      {!hasSearched && (
-        <footer className="app-footer" id="app-footer">
-          <div className="footer-help-section">
-            <h3>Need Help?</h3>
-            <p>Get the most out of our AI-powered route intelligence. Whether you're looking for new route opportunities or analyzing existing ones, we're here to help.</p>
-            <div className="help-links">
-              <a href="mailto:support@tickmybus.com" className="help-link">Contact Support</a>
-              <span className="separator">|</span>
-              <a href="#" className="help-link">Documentation</a>
-              <span className="separator">|</span>
-              <a href="#" className="help-link">FAQs</a>
-            </div>
-          </div>
-          <div className="footer-bottom">
-            <p>
-              © {new Date().getFullYear()} Route Analysis AI | Powered by AIM UNIVERSSE
-            </p>
-          </div>
-        </footer>
-      )}
+      {!hasSearched && <HelpFooter />}
     </div>
   );
 }
