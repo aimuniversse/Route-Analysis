@@ -92,8 +92,9 @@ function StateVisitorsPanel({ demandDistribution = [], lastSyncTime }) {
             <Map size={22} />
           </div>
           <div>
-            <h2 className="svp-heading">Top Visitors by State</h2>
+           <h2 className="svp-heading">Top Visitors by State</h2>
             <p className="svp-subheading">Visitor distribution by state with share and visitor count</p>
+           
           </div>
         </div>
         <div className="svp-sync-badge">
@@ -733,7 +734,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                     <span className="dot bg-blue-main"></span>
                     <span className="city-name">{popData.source.name}</span>
                   </div>
-                  <div className="pop-badge bg-blue-light text-blue-main">{(popData.source.count / 1000000).toFixed(1)}M</div>
+                  <div className="pop-badge bg-blue-light text-blue-main">{((popData.source.count || popData.source.population || 0) / 1000000).toFixed(1)}M</div>
                 </div>
               )}
 
@@ -746,7 +747,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                     <span className="dot bg-purple-main"></span>
                     <span className="city-name">{popData.via.name}</span>
                   </div>
-                  <div className="pop-badge bg-purple-light text-purple-main">{(popData.via.count / 1000000).toFixed(1)}M</div>
+                  <div className="pop-badge bg-purple-light text-purple-main">{((popData.via.count || popData.via.population || 0) / 1000000).toFixed(1)}M</div>
                 </div>
               )}
 
@@ -759,7 +760,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                     <span className="dot bg-indigo-main"></span>
                     <span className="city-name">{popData.destination.name}</span>
                   </div>
-                  <div className="pop-badge bg-indigo-light text-indigo-main">{(popData.destination.count / 1000000).toFixed(1)}M</div>
+                  <div className="pop-badge bg-indigo-light text-indigo-main">{((popData.destination.count || popData.destination.population || 0) / 1000000).toFixed(1)}M</div>
                 </div>
               )}
             </div>
@@ -774,7 +775,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
               <div className="total-right">
                 <div className="vertical-dotted-sep"></div>
                 <span className="total-value">
-                  {(((popData.source?.count || 0) + (popData.via?.count || 0) + (popData.destination?.count || 0)) / 1000000).toFixed(1)}M
+                  {(((popData.source?.count || popData.source?.population || 0) + (popData.via?.count || popData.via?.population || 0) + (popData.destination?.count || popData.destination?.population || 0)) / 1000000).toFixed(1)}M
                 </span>
               </div>
             </div>
