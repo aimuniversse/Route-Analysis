@@ -25,12 +25,28 @@ const defaultTravelTimeData = [
 ];
 
 const Charts = ({ routeData }) => {
-  // Use backend data for potential values
-  const potentialValues = {
-    business: routeData?.dashboard_data?.corridor_potential?.business || 90,
-    student: routeData?.dashboard_data?.corridor_potential?.student || 60,
-    tourist: routeData?.dashboard_data?.corridor_potential?.tourist || 85
-  };
+  // Derive potential values from backend data
+  const potentialValues = React.useMemo(() => {
+    if (!routeData) return { business: 0, student: 0, tourist: 0 };
+    
+    const seg = routeData.area_segmentation || {};
+    const demand = routeData.demand_distribution || [];
+    const avgDemand = demand.length > 0 
+      ? demand.reduce((acc, s) => acc + s.percentage, 0) / demand.length 
+      : 50;
+
+    return {
+      business: seg.job_business_areas?.length 
+        ? Math.min(100, 40 + seg.job_business_areas.length * 12) 
+        : Math.round(avgDemand * 1.1),
+      student: seg.student_areas?.length 
+        ? Math.min(100, 30 + seg.student_areas.length * 15) 
+        : Math.round(avgDemand * 0.9),
+      tourist: seg.tourist_places?.length 
+        ? Math.min(100, 35 + seg.tourist_places.length * 13) 
+        : Math.round(avgDemand * 0.95)
+    };
+  }, [routeData]);
 
   // Use real data from backend if available
   const trafficTrends = routeData?.dashboard_data?.traffic_trends?.length > 0 
@@ -73,7 +89,7 @@ const Charts = ({ routeData }) => {
 
   return (
     <>
-      {/* Traffic Trends */}
+      {/* Traffic Trends 
       <div className="glass-panel chart-widget hover-lift">
         <div className="widget-header">
           <h3>Traffic Trends</h3>
@@ -102,7 +118,7 @@ const Charts = ({ routeData }) => {
             </AreaChart>
           </ResponsiveContainer>
         </div>
-      </div>
+      </div> */}
 
       {/* Dynamic Bar Chart: Travel Time OR Transport Mode Share */}
       <div className="glass-panel chart-widget hover-lift">
@@ -131,7 +147,7 @@ const Charts = ({ routeData }) => {
             </BarChart>
           </ResponsiveContainer>
         </div>
-      </div>
+      </div> 
 
       {/* Area Potential Map - Redesigned to match requested style */}
       <div className="glass-panel chart-widget hover-lift redesigned-potential-map">
@@ -210,16 +226,16 @@ const Charts = ({ routeData }) => {
           {/* Overlay Bars Layer */}
           <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', display: 'flex', justifyContent: 'space-around', padding: '10px 30px 0 30px', alignItems: 'flex-end' }}>
             {[
-              potentialValues.business,
-              potentialValues.student,
-              potentialValues.tourist
-            ].map((val, idx) => (
+              { label: 'Business', value: potentialValues.business, color: '#e11d48' },
+              { label: 'Student', value: potentialValues.student, color: '#3b82f6' },
+              { label: 'Tourist', value: potentialValues.tourist, color: '#10b981' }
+            ].map((item, idx) => (
               <div key={idx} style={{ 
                 width: '18px', 
-                height: `${val}%`, 
-                backgroundColor: '#e11d48', 
+                height: `${item.value}%`, 
+                backgroundColor: item.color, 
                 borderRadius: '4px 4px 0 0',
-                boxShadow: '0 4px 12px rgba(225, 29, 72, 0.4)',
+                boxShadow: `0 4px 12px ${item.color}66`,
                 transition: 'all 0.3s ease'
               }}></div>
             ))}

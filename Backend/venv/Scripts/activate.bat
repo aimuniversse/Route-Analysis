@@ -9,18 +9,22 @@ if defined _OLD_CODEPAGE (
 )
 
 <<<<<<< HEAD
+set VIRTUAL_ENV=E:\aim universee\route\Route-Analysis\Backend\venv
+=======
+<<<<<<< HEAD
 set "VIRTUAL_ENV=D:\Route-Analysis\Backend\venv"
 =======
 set "VIRTUAL_ENV=C:\Users\DELL\Music\Route-Analysis\Backend\venv"
 >>>>>>> 329d11a57b52498db0ca1b11e5e2e7481a050ea8
+>>>>>>> 168331f8ff12945a136473ccc60e72ea8c96b6b7
 
 if not defined PROMPT set PROMPT=$P$G
 
 if defined _OLD_VIRTUAL_PROMPT set PROMPT=%_OLD_VIRTUAL_PROMPT%
 if defined _OLD_VIRTUAL_PYTHONHOME set PYTHONHOME=%_OLD_VIRTUAL_PYTHONHOME%
 
-set "_OLD_VIRTUAL_PROMPT=%PROMPT%"
-set "PROMPT=(venv) %PROMPT%"
+set _OLD_VIRTUAL_PROMPT=%PROMPT%
+set PROMPT=(venv) %PROMPT%
 
 if defined PYTHONHOME set _OLD_VIRTUAL_PYTHONHOME=%PYTHONHOME%
 set PYTHONHOME=
@@ -28,8 +32,8 @@ set PYTHONHOME=
 if defined _OLD_VIRTUAL_PATH set PATH=%_OLD_VIRTUAL_PATH%
 if not defined _OLD_VIRTUAL_PATH set _OLD_VIRTUAL_PATH=%PATH%
 
-set "PATH=%VIRTUAL_ENV%\Scripts;%PATH%"
-set "VIRTUAL_ENV_PROMPT=venv"
+set PATH=%VIRTUAL_ENV%\Scripts;%PATH%
+set VIRTUAL_ENV_PROMPT=(venv) 
 
 :END
 if defined _OLD_CODEPAGE (

@@ -741,6 +741,20 @@ Error: Unable to fetch route analysis at the moment (invalid response format)
 >>>>>>> bcf10137420b53ed1f82d74cd4551117f1f11585
 ------------------------------
 
+<<<<<<< HEAD
+--- API ERROR AT 2026-05-11 10:14:03.440954+00:00 ---
+Source: coimbatore, Dest: Thanjavur, Via: 
+Error: Unable to fetch route analysis at the moment (request timed out)
+------------------------------
+
+--- API ERROR AT 2026-05-11 10:16:21.322950+00:00 ---
+Source: coimbatore, Dest: Thanjavur, Via: 
+Error: Unable to fetch route analysis at the moment (request timed out)
+------------------------------
+
+--- API ERROR AT 2026-05-11 10:17:29.412439+00:00 ---
+Source: coimbatore, Dest: Thanjavur, Via: 
+=======
 --- API ERROR AT 2026-05-11 08:42:36.541827+00:00 ---
 Source: Coimbatore, Dest: Chennai, Via: 
 Error: Unable to fetch route analysis at the moment (request timed out)
@@ -2285,5 +2299,6 @@ Error: Unable to fetch route analysis at the moment
 
 --- API ERROR AT 2026-05-11 10:16:26.909506+00:00 ---
 Source: Chennai, Dest: Coimbatore, Via: 
+>>>>>>> 168331f8ff12945a136473ccc60e72ea8c96b6b7
 Error: Unable to fetch route analysis at the moment
 ------------------------------

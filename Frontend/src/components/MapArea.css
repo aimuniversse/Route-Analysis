@@ -310,6 +310,97 @@
   letter-spacing: 0.05em;
 }
 
+/* Map Info Panel for hover on source/destination */
+.map-info-panel {
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 12px 14px;
+  min-width: 220px;
+  max-width: 300px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  z-index: 20;
+  animation: infoFadeIn 0.2s ease-out;
+  pointer-events: auto;
+}
+
+.map-info-panel.below {
+  position: absolute;
+  top: calc(100% + 36px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.map-info-panel.above {
+  position: absolute;
+  bottom: calc(100% + 36px);
+  left: 50%;
+  transform: translateX(-50%);
+  animation: infoFadeInAbove 0.2s ease-out;
+}
+
+@keyframes infoFadeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes infoFadeInAbove {
+  from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes infoFadeInAbove {
+  from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.info-panel-header {
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.info-panel-city {
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.info-panel-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.info-row svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.info-label {
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 600;
+  min-width: 60px;
+}
+
+.info-value {
+  color: #fff;
+  font-weight: 500;
+}
+
 @media (max-width: 900px) {
   .route-map-header {
     flex-direction: column;
