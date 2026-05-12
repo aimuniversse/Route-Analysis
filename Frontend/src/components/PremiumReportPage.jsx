@@ -26,7 +26,272 @@ const heroImage = "file:///C:/Users/DELL/.gemini/antigravity/brain/6f074f9e-ba21
 
 
 
+// ─── StateVisitorsPanel ─────────────────────────────────────────────────────
+function StateVisitorsPanel({ demandDistribution = [], lastSyncTime }) {
+  const [activeIdx, setActiveIdx]     = useState(0);
+  const [search,    setSearch]        = useState('');
+  const [sortBy,    setSortBy]        = useState('visitors'); // 'visitors' | 'share'
+  const [hoveredCity, setHoveredCity] = useState(null);
+  const [animated,  setAnimated]      = useState(false);
+
+  // Re-trigger bar animation whenever the active tab changes
+  useEffect(() => {
+    setAnimated(false);
+    setSearch('');
+    const t = setTimeout(() => setAnimated(true), 80);
+    return () => clearTimeout(t);
+  }, [activeIdx]);
+
+  if (!demandDistribution || demandDistribution.length === 0) {
+    return (
+      <section className="analysis-section-box section-spacing svp-container">
+        <p style={{ color: '#94a3b8', textAlign: 'center', padding: '40px 0' }}>
+          No visitor data available.
+        </p>
+      </section>
+    );
+  }
+
+  const palette = [
+    { accent: '#3b82f6', soft: '#eff6ff', ring: '#2563eb' },
+    { accent: '#10b981', soft: '#ecfdf5', ring: '#059669' },
+    { accent: '#8b5cf6', soft: '#f5f3ff', ring: '#7c3aed' },
+    { accent: '#f59e0b', soft: '#fffbeb', ring: '#d97706' },
+    { accent: '#ec4899', soft: '#fdf2f8', ring: '#db2777' },
+  ];
+
+  const activeState  = demandDistribution[activeIdx];
+  const color        = palette[activeIdx % palette.length];
+  const rawCities    = activeState?.top_cities || activeState?.cities || [];
+
+  // Filter + sort
+  const filtered = rawCities
+    .filter(c => c.name.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) =>
+      sortBy === 'visitors'
+        ? (b.visitor_count || 0) - (a.visitor_count || 0)
+        : (b.percentage || 0) - (a.percentage || 0)
+    );
+
+  const maxVisitors = Math.max(...rawCities.map(c => c.visitor_count || 0), 1);
+  const totalShare  = demandDistribution.reduce((s, d) => s + (d.percentage || 0), 0);
+
+  // Radial ring SVG
+  const R = 44, CX = 50, CY = 50;
+  const circ = 2 * Math.PI * R;
+  const pct  = (activeState?.percentage || 0) / Math.max(totalShare, 100);
+  const dash = pct * circ;
+
+  return (
+    <section className="analysis-section-box section-spacing svp-container">
+
+      {/* ── Header ── */}
+      <div className="svp-header">
+        <div className="svp-title-block">
+          <div className="svp-icon-wrap" style={{ background: color.soft, color: color.accent }}>
+            <Map size={22} />
+          </div>
+          <div>
+           <h2 className="svp-heading">Top Visitors by State</h2>
+            <p className="svp-subheading">Visitor distribution by state with share and visitor count</p>
+           
+          </div>
+        </div>
+        <div className="svp-sync-badge">
+          <span className="svp-sync-dot" />
+          Live · {lastSyncTime}
+        </div>
+      </div>
+
+      {/* ── State Tabs ── */}
+      <div className="svp-tabs">
+        {demandDistribution.map((s, i) => {
+          const c = palette[i % palette.length];
+          return (
+            <button
+              key={i}
+              className={`svp-tab ${i === activeIdx ? 'svp-tab--active' : ''}`}
+              style={i === activeIdx
+                ? { borderColor: c.accent, color: c.accent, background: c.soft }
+                : {}
+              }
+              onClick={() => setActiveIdx(i)}
+            >
+              <span className="svp-tab-dot" style={{ background: c.accent }} />
+              {s.state}
+              <span
+                className="svp-tab-pill"
+                style={i === activeIdx ? { background: c.accent, color: '#fff' } : {}}
+              >
+                {s.percentage}%
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* ── Main Panel ── */}
+      <div className="svp-panel">
+
+        {/* Left: Ring + state summary */}
+        <div className="svp-ring-side">
+          <div className="svp-ring-wrap">
+            <svg viewBox="0 0 100 100" className="svp-ring-svg">
+              {/* Background track */}
+              <circle cx={CX} cy={CY} r={R} fill="none" stroke="#f1f5f9" strokeWidth="10" />
+              {/* Filled arc */}
+              <circle
+                cx={CX} cy={CY} r={R}
+                fill="none"
+                stroke={color.accent}
+                strokeWidth="10"
+                strokeDasharray={`${dash} ${circ - dash}`}
+                strokeDashoffset={circ / 4}
+                strokeLinecap="round"
+                style={{ transition: 'stroke-dasharray 0.8s cubic-bezier(.4,0,.2,1)' }}
+              />
+              <text x="50" y="46" textAnchor="middle" className="svp-ring-pct" fill={color.accent}>
+                {activeState?.percentage || 0}%
+              </text>
+              <text x="50" y="60" textAnchor="middle" className="svp-ring-label" fill="#94a3b8">
+                Share
+              </text>
+            </svg>
+          </div>
+          <div className="svp-state-meta">
+            <div className="svp-meta-stat" style={{ borderColor: color.soft }}>
+              <Users size={15} style={{ color: color.accent }} />
+              <span>
+                {rawCities.reduce((s, c) => s + (c.visitor_count || 0), 0).toLocaleString()}
+              </span>
+              <small>Total Visitors</small>
+            </div>
+            <div className="svp-meta-stat" style={{ borderColor: color.soft }}>
+              <MapPin size={15} style={{ color: color.accent }} />
+              <span>{rawCities.length}</span>
+              <small>Cities</small>
+            </div>
+          </div>
+
+          {/* All-states mini legend */}
+          <div className="svp-mini-legend">
+            {demandDistribution.map((s, i) => {
+              const c = palette[i % palette.length];
+              const w = (s.percentage / Math.max(totalShare, 1)) * 100;
+              return (
+                <div key={i} className="svp-legend-row" onClick={() => setActiveIdx(i)} style={{ cursor: 'pointer' }}>
+                  <span className="svp-legend-dot" style={{ background: c.accent }} />
+                  <span className="svp-legend-name">{s.state}</span>
+                  <div className="svp-legend-bar-bg">
+                    <div className="svp-legend-bar-fill" style={{ width: `${w}%`, background: c.accent }} />
+                  </div>
+                  <span className="svp-legend-pct">{s.percentage}%</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Right: City breakdown */}
+        <div className="svp-cities-side">
+
+          {/* Controls */}
+          <div className="svp-controls">
+            <div className="svp-search-wrap">
+              <MapPin size={14} style={{ color: '#94a3b8' }} />
+              <input
+                className="svp-search"
+                placeholder="Search city…"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
+            </div>
+            <div className="svp-sort-group">
+              <button
+                className={`svp-sort-btn ${sortBy === 'visitors' ? 'svp-sort-btn--active' : ''}`}
+                style={sortBy === 'visitors' ? { background: color.accent, color: '#fff', borderColor: color.accent } : {}}
+                onClick={() => setSortBy('visitors')}
+              >
+                <Users size={12} /> Visitors
+              </button>
+              <button
+                className={`svp-sort-btn ${sortBy === 'share' ? 'svp-sort-btn--active' : ''}`}
+                style={sortBy === 'share' ? { background: color.accent, color: '#fff', borderColor: color.accent } : {}}
+                onClick={() => setSortBy('share')}
+              >
+                <TrendingUp size={12} /> Share
+              </button>
+            </div>
+          </div>
+
+          {/* City rows */}
+          <div className="svp-city-list">
+            {filtered.length === 0 && (
+              <p className="svp-no-results">No cities match your search.</p>
+            )}
+            {filtered.map((city, ci) => {
+              const barW = animated
+                ? `${((city.visitor_count || 0) / maxVisitors) * 100}%`
+                : '0%';
+              const isHov = hoveredCity === ci;
+              return (
+                <div
+                  key={ci}
+                  className={`svp-city-row ${isHov ? 'svp-city-row--hovered' : ''}`}
+                  style={isHov ? { borderColor: color.accent, background: color.soft } : {}}
+                  onMouseEnter={() => setHoveredCity(ci)}
+                  onMouseLeave={() => setHoveredCity(null)}
+                >
+                  <div className="svp-city-rank" style={{ background: color.soft, color: color.accent }}>
+                    {ci + 1}
+                  </div>
+                  <div className="svp-city-info">
+                    <div className="svp-city-top-row">
+                      <span className="svp-city-name">{city.name}</span>
+                      <span className="svp-city-share" style={{ color: color.accent }}>
+                        {city.percentage}%
+                      </span>
+                    </div>
+                    <div className="svp-city-bar-bg">
+                      <div
+                        className="svp-city-bar-fill"
+                        style={{
+                          width: barW,
+                          background: `linear-gradient(90deg, ${color.accent}, ${color.ring})`,
+                          transitionDelay: `${ci * 60}ms`
+                        }}
+                      />
+                    </div>
+                    <div className="svp-city-bottom-row">
+                      <span className="svp-city-count">
+                        <Users size={11} /> {(city.visitor_count || 0).toLocaleString()} visitors
+                      </span>
+                      {isHov && (
+                        <span className="svp-city-hover-tip" style={{ color: color.accent }}>
+                          {((city.visitor_count / maxVisitors) * 100).toFixed(0)}% of top city
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Footer note */}
+          <div className="svp-footer-note">
+            <Info size={13} />
+            <span>Share percentages are calculated based on total visitors from each state.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+// ────────────────────────────────────────────────────────────────────────────
+
 export default function PremiumReportPage({ routeData, isLoading }) {
+
   const routeName = Array.isArray(routeData?.route_summary?.path) 
     ? routeData.route_summary.path.join(' → ') 
     : (routeData?.route_summary?.path || "Coimbatore to Chennai");
@@ -469,7 +734,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                     <span className="dot bg-blue-main"></span>
                     <span className="city-name">{popData.source.name}</span>
                   </div>
-                  <div className="pop-badge bg-blue-light text-blue-main">{(popData.source.count / 1000000).toFixed(1)}M</div>
+                  <div className="pop-badge bg-blue-light text-blue-main">{((popData.source.count || popData.source.population || 0) / 1000000).toFixed(1)}M</div>
                 </div>
               )}
 
@@ -482,7 +747,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                     <span className="dot bg-purple-main"></span>
                     <span className="city-name">{popData.via.name}</span>
                   </div>
-                  <div className="pop-badge bg-purple-light text-purple-main">{(popData.via.count / 1000000).toFixed(1)}M</div>
+                  <div className="pop-badge bg-purple-light text-purple-main">{((popData.via.count || popData.via.population || 0) / 1000000).toFixed(1)}M</div>
                 </div>
               )}
 
@@ -495,7 +760,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                     <span className="dot bg-indigo-main"></span>
                     <span className="city-name">{popData.destination.name}</span>
                   </div>
-                  <div className="pop-badge bg-indigo-light text-indigo-main">{(popData.destination.count / 1000000).toFixed(1)}M</div>
+                  <div className="pop-badge bg-indigo-light text-indigo-main">{((popData.destination.count || popData.destination.population || 0) / 1000000).toFixed(1)}M</div>
                 </div>
               )}
             </div>
@@ -510,7 +775,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
               <div className="total-right">
                 <div className="vertical-dotted-sep"></div>
                 <span className="total-value">
-                  {(((popData.source?.count || 0) + (popData.via?.count || 0) + (popData.destination?.count || 0)) / 1000000).toFixed(1)}M
+                  {(((popData.source?.count || popData.source?.population || 0) + (popData.via?.count || popData.via?.population || 0) + (popData.destination?.count || popData.destination?.population || 0)) / 1000000).toFixed(1)}M
                 </span>
               </div>
             </div>
@@ -703,44 +968,8 @@ export default function PremiumReportPage({ routeData, isLoading }) {
           </div>
         </section>
 
-        {/* Concept 5: Top Visitors by State - Redesigned */}
-        <section className="analysis-section-box section-spacing state-visitors-container">
-          <div className="demographics-main-content">
-            <div className="demographics-grid">
-              {routeData.demand_distribution.map((stateData, sIdx) => (
-                <div key={sIdx} className="state-distribution-card">
-                  <div className="state-header">
-                    <div className="state-title-wrap">
-                      <Map className="text-blue-main" size={20} />
-                      <h3>{stateData.state}</h3>
-                    </div>
-                    <div className="state-perc-badge bg-blue-soft text-blue-main">
-                      {stateData.percentage}% Total Share
-                    </div>
-                  </div>
-
-                  <div className="cities-list">
-                    {(stateData.top_cities || stateData.cities || []).map((city, cIdx) => (
-                      <div key={cIdx} className="city-row">
-                        <div className="city-info">
-                          <span className="city-name">{city.name}</span>
-                          <span className="city-stats">
-                            {city.percentage}% share • {(city.visitor_count || 0).toLocaleString()} visitors
-                          </span>
-                        </div>
-                        <div className="city-bar-container">
-                          <div className="city-bar-bg">
-                            <div className="city-bar-fill bg-blue-main" style={{ width: `${city.percentage * 2}%` }}></div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        {/* Concept 5: Top Visitors by State - Dynamic Interactive */}
+        <StateVisitorsPanel demandDistribution={routeData.demand_distribution} lastSyncTime={lastSyncTime} />
 
         {/* Concept 6: Distance Matrix - Dynamic API-Driven */}
         <section className="analysis-section-box section-spacing distance-matrix-container">
