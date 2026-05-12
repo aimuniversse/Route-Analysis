@@ -18,9 +18,9 @@ const RouteInsights = ({ routeQuery, routeData }) => {
   // 1. Demographics Data
   const aiPop = routeData?.population_data;
   const popData = aiPop ? [
-    { name: aiPop.source?.name || 'Origin', value: aiPop.source?.count / 1000000 || 0, fill: 'url(#colorTrafficRed)' },
-    { name: aiPop.destination?.name || 'Destination', value: aiPop.destination?.count / 1000000 || 0, fill: 'var(--accent-blue-light)' },
-    ...(aiPop.via ? [{ name: aiPop.via.name || 'Via', value: aiPop.via.count / 1000000 || 0, fill: 'var(--text-muted)' }] : [])
+    { name: aiPop.source?.name || 'Origin', value: aiPop.source?.population / 1000000 || 0, fill: '#e11d48' },
+    { name: aiPop.destination?.name || 'Destination', value: aiPop.destination?.population / 1000000 || 0, fill: '#3b82f6' },
+    ...(aiPop.via ? [{ name: aiPop.via.name || 'Via', value: aiPop.via.population / 1000000 || 0, fill: '#10b981' }] : [])
   ] : [];
 
   // 2. Transport Data
