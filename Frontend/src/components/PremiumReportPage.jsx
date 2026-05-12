@@ -18,8 +18,7 @@ import industryIcon from '../assets/image/industry.png';
 import touristIcon from '../assets/image/tourist.png';
 import pointIcon from '../assets/image/point.png';
 import destinationIcon from '../assets/image/destination.png';
-// import logoImg from '../assets/image/logo.webp';
-import logo1Img from '../assets/image/logo1.jpeg';
+import logoImg from '../assets/image/logo.webp';
 
 const heroImage = "file:///C:/Users/DELL/.gemini/antigravity/brain/6f074f9e-ba21-4fd9-b5df-56ac4a6fbd6b/corridor_analysis_hero_1778234321074.png";
 
@@ -686,7 +685,10 @@ export default function PremiumReportPage({ routeData, isLoading }) {
               Live Sync: {lastSyncTime}
             </div>
           </div>
-          <h1>{Array.isArray(routeSummary.path) ? routeSummary.path.join(' → ') : routeSummary.path}</h1>
+          <div className="main-title-wrapper" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px', marginBottom: '16px' }}>
+            <img src={logoImg} alt="Brand Logo" className="brand-logo-main" style={{ height: '48px', width: 'auto' }} />
+            <h1>{Array.isArray(routeSummary.path) ? routeSummary.path.join(' → ') : routeSummary.path}</h1>
+          </div>
           <p className="subtitle">
             Comprehensive Route Analysis & Travel Intelligence | {routeSummary.total_distance_km || routeSummary.total_distance} km | Approx. {routeSummary.estimated_time_hours || routeSummary.estimated_time} hours
           </p>
@@ -706,10 +708,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
               <div className="visitor-title-box">
                 <div className="icon-wrap bg-blue-soft"><Users className="text-blue-main" /></div>
                 <div className="title-text-group">
-                  <div className="title-with-logo">
-                    <h2>Population Overview</h2>
-                    <img src={logo1Img} alt="Company Logo" className="inline-brand-logo" />
-                  </div>
+                  <h2>Population Overview</h2>
                   <p className="subtitle-small">Population range by major cities</p>
                 </div>
               </div>
@@ -1364,7 +1363,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
         <div className="contact-inner">
           <div className="contact-heading">
             <h2 className="contact-title">Say Hello, Get in touch</h2>
-            <p className="contact-subtitle">For bookings, route details, or service enquiries, please complete the form below. Our team will respond promptly to ensure a seamless and reliable travel experience.</p>
+            <p className="contact-subtitle">For route details, or service enquiries, please complete the form below.</p>
           </div>
 
           {formStatus === 'success' && (
@@ -1450,7 +1449,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
         <div className="footer-container">
           <div className="footer-top">
             <div className="footer-brand-section">
-              <img src={logo1Img} alt="TickMyBus Logo" className="footer-logo" />
+              <img src={logoImg} alt="TickMyBus Logo" className="footer-logo" />
               <p className="brand-desc">TICK MY BUS is the best way to Transport bus tickets online on the website or from your mobile in a few easy steps Go to My Bookings to manage your account..</p>
               <div className="social-links">
                 <a href="#"><Globe size={20} /></a>
