@@ -7,14 +7,23 @@
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  align-items: center;
 }
 
 .app-stack {
   width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 40px;
-  padding-bottom: 60px;
+  padding: 0 20px 60px;
+}
+
+.results-view-header {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
 }
 
 .dashboard-container {
@@ -30,13 +39,12 @@
 .app-section {
   width: 100%;
   margin: 0 auto;
-  padding: 0 20px;
 }
 
 /* Large screen optimizations */
 @media (min-width: 1440px) {
   .app-section {
-    padding: 0 40px;
+    padding: 0;
   }
 }
 
