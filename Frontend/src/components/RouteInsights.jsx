@@ -13,99 +13,100 @@ const RouteInsights = ({ routeQuery, routeData }) => {
   }, []);
 
   if (!isMounted) return <div className="route-insights-container glass-panel mt-4" style={{ minHeight: '400px' }} />;
-  // --- Data Definitions ---
+  // --- Data Definitions (Dynamic from Backend) ---
+  const {
+    popData,
+    transportData,
+    tourismData,
+    areaData,
+    suggestedRoutes,
+    primaryDistance
+  } = React.useMemo(() => {
+    // 1. Demographics
+    const aiPop = routeData?.population_data;
+    const pData = aiPop ? [
+      { name: aiPop.source?.name || 'Origin', value: Number(aiPop.source?.population) / 1000000 || 0, fill: '#e11d48' },
+      { name: aiPop.destination?.name || 'Destination', value: Number(aiPop.destination?.population) / 1000000 || 0, fill: '#3b82f6' },
+      ...(aiPop.via ? [{ name: aiPop.via.name || 'Via', value: Number(aiPop.via.population) / 1000000 || 0, fill: '#10b981' }] : [])
+    ] : [];
 
-  // 1. Demographics Data
-  const aiPop = routeData?.population_data;
-  const popData = aiPop ? [
-    { name: aiPop.source?.name || 'Origin', value: aiPop.source?.population / 1000000 || 0, fill: '#e11d48' },
-    { name: aiPop.destination?.name || 'Destination', value: aiPop.destination?.population / 1000000 || 0, fill: '#3b82f6' },
-    ...(aiPop.via ? [{ name: aiPop.via.name || 'Via', value: aiPop.via.population / 1000000 || 0, fill: '#10b981' }] : [])
-  ] : [];
-
-  // 2. Transport Data
-  const aiTransport = routeData?.transport_distribution || routeData?.transport_pattern;
-  const transportData = aiTransport ? Object.entries(aiTransport).map(([key, value]) => {
+    // 2. Transport Distribution
+    const aiTransport = routeData?.transport_distribution || routeData?.transport_pattern;
     const transportColors = {
       bus: 'var(--accent-blue)',
       train: '#f59e0b',
       car: '#10b981',
-      flight: '#10b981',
-      private: '#10b981',
-      taxi: '#10b981'
+      flight: '#8b5cf6',
+      taxi: '#06b6d4',
+      private: '#10b981'
     };
 
-    const transportNames = {
-      bus: 'Bus',
-      train: 'Train',
-      car: 'Car',
-      flight: 'Flight',
-      private: 'Private',
-      taxi: 'Taxi'
-    };
+    const tData = (aiTransport && Object.keys(aiTransport).length > 0) ? Object.entries(aiTransport)
+      .filter(([key, value]) => Number(value) > 0)
+      .map(([key, value]) => ({
+        name: key.charAt(0).toUpperCase() + key.slice(1),
+        value: Number(value),
+        color: transportColors[key.toLowerCase()] || 'var(--accent-blue)'
+      })) : [
+        { name: 'Bus', value: 60, color: 'var(--accent-blue)' },
+        { name: 'Train', value: 30, color: '#f59e0b' },
+        { name: 'Car/Air', value: 10, color: '#10b981' },
+      ];
 
-    // Group car-related modes into Car/Air
-    if (['car', 'flight', 'private', 'taxi'].includes(key.toLowerCase())) {
-      return null; // Will be handled separately
-    }
+    // 3. Tourism / Visitor Data
+    const aiTourism = routeData?.visitor_data;
+    const tourData = aiTourism ? [
+      { subject: routeData?.population_data?.source?.name || 'Origin', A: Number(aiTourism.source?.daily_normal) || 0 },
+      { subject: routeData?.population_data?.destination?.name || 'Destination', A: Number(aiTourism.destination?.daily_normal) || 0 }
+    ] : [];
+
+    // 4. Area Segmentation
+    const aiArea = routeData?.area_segmentation;
+    const getName = (entry) => (entry?.name ?? entry ?? '');
+    const aData = aiArea ? [
+      {
+        name: getName(aiArea.job_business_areas?.[0]) || 'Business Hubs',
+        potential: 90,
+        activity: 85,
+        type: 'Industry'
+      },
+      {
+        name: getName(aiArea.student_areas?.[0]) || 'Academic Zones',
+        potential: 60,
+        activity: 50,
+        type: 'Education'
+      },
+      {
+        name: getName(aiArea.tourist_places?.[0]) || 'Leisure Spots',
+        potential: 85,
+        activity: 80,
+        type: 'Tourism'
+      },
+    ] : [
+      { name: 'Business', potential: 90, activity: 85, type: 'Jobs' },
+      { name: 'Student', potential: 60, activity: 50, type: 'Education' },
+      { name: 'Tourist', potential: 85, activity: 80, type: 'Leisure' },
+    ];
+
+    // 5. Suggested Routes
+    const distance = routeData?.route_summary?.total_distance_km || 
+                     routeData?.distance_details?.distance_km || 505;
+    const time = routeData?.route_summary?.estimated_time_hours || 8.5;
+
+    const routes = routeData?.suggested_routes || [
+      { option: 1, path: routeData?.route_summary?.path?.join(' → ') || 'Primary Highway', distance, time },
+      { option: 2, path: 'Alternative Route', distance: Math.round(distance * 1.05), time: Number((time * 1.1).toFixed(1)) },
+    ];
 
     return {
-      name: transportNames[key.toLowerCase()] || key.charAt(0).toUpperCase() + key.slice(1),
-      value: value || 0,
-      color: transportColors[key.toLowerCase()] || 'var(--accent-blue)'
+      popData: pData,
+      transportData: tData,
+      tourismData: tourData,
+      areaData: aData,
+      suggestedRoutes: routes,
+      primaryDistance: distance
     };
-  }).filter(Boolean).concat([
-    // Add combined Car/Air category
-    {
-      name: 'Car/Air',
-      value: (aiTransport.car || 0) + (aiTransport.flight || 0) + (aiTransport.private || 0) + (aiTransport.taxi || 0),
-      color: '#10b981'
-    }
-  ]).filter(item => item.value > 0) : [
-    { name: 'Bus', value: 60, color: 'var(--accent-blue)' },
-    { name: 'Train', value: 30, color: '#f59e0b' },
-    { name: 'Car/Air', value: 10, color: '#10b981' },
-  ];
-
-  // 3. Tourism Data
-  const aiTourism = routeData?.visitor_data;
-  const tourismData = aiTourism ? [
-    { subject: routeData?.population_data?.source?.name || 'Origin', A: aiTourism.source?.daily_normal || 0 },
-    { subject: routeData?.population_data?.destination?.name || 'Destination', A: aiTourism.destination?.daily_normal || 0 }
-  ] : [];
-
-  // 4. Area Data (Segmentation)
-  const aiArea = routeData?.area_segmentation;
-  const getName = (entry) => (entry?.name ?? entry ?? '');
-  const areaData = aiArea ? [
-    {
-      name: getName(aiArea.job_business_areas?.[0]) || 'Business',
-      potential: 90,
-      activity: 85,
-      type: 'Jobs'
-    },
-    {
-      name: getName(aiArea.student_areas?.[0]) || 'Student',
-      potential: 60,
-      activity: 50,
-      type: 'Education'
-    },
-    {
-      name: getName(aiArea.tourist_places?.[0]) || 'Tourist',
-      potential: 85,
-      activity: 80,
-      type: 'Leisure'
-    },
-  ] : [
-    { name: 'Business', potential: 90, activity: 85, type: 'Jobs' },
-    { name: 'Student', potential: 60, activity: 50, type: 'Education' },
-    { name: 'Tourist', potential: 85, activity: 80, type: 'Leisure' },
-  ];
-
-  const suggestedRoutes = routeData?.suggested_routes || [
-    { option: 1, path: 'NH 544', distance: 505, time: 8.5 },
-    { option: 2, path: 'NH 48', distance: 530, time: 9.7 },
-  ];
+  }, [routeData]);
 
   // --- Render ---
 
@@ -159,12 +160,12 @@ const RouteInsights = ({ routeQuery, routeData }) => {
           </div>
           <div className="mt-2 pt-2 border-t" style={{ borderColor: 'var(--border-light)' }}>
             <div className="flex justify-between items-center text-xs">
-              <span className="text-muted">Primary Route (NH 544)</span>
-              <span className="font-bold text-primary">505 KM</span>
+              <span className="text-muted">{suggestedRoutes[0]?.path || 'Primary Route'}</span>
+              <span className="font-bold text-primary">{suggestedRoutes[0]?.distance || primaryDistance} KM</span>
             </div>
             <div className="flex justify-between items-center text-xs mt-1">
-              <span className="text-muted">Alternative (NH 48)</span>
-              <span className="font-medium text-secondary">530 KM</span>
+              <span className="text-muted">{suggestedRoutes[1]?.path || 'Alternative'}</span>
+              <span className="font-medium text-secondary">{suggestedRoutes[1]?.distance || Math.round(primaryDistance * 1.05)} KM</span>
             </div>
           </div>
         </div>
