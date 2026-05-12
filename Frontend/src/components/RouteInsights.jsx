@@ -12,7 +12,6 @@ const RouteInsights = ({ routeQuery, routeData }) => {
     return () => clearTimeout(timer);
   }, []);
 
-  if (!isMounted) return <div className="route-insights-container glass-panel mt-4" style={{ minHeight: '400px' }} />;
   // --- Data Definitions (Dynamic from Backend) ---
   const {
     popData,
@@ -107,6 +106,8 @@ const RouteInsights = ({ routeQuery, routeData }) => {
       primaryDistance: distance
     };
   }, [routeData]);
+
+  if (!isMounted) return <div className="route-insights-container glass-panel mt-4" style={{ minHeight: '400px' }} />;
 
   // --- Render ---
 
