@@ -4,7 +4,7 @@ import { Bus } from "lucide-react";
 import Scene from "./Scene";
 import "../styles/searchingoverlay.css";
 
-const TOTAL_DURATION = 10; // seconds — short splash; button unlocks as soon as API responds
+const TOTAL_DURATION = 300; // 5 minutes in seconds
 
 const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
     const [progress, setProgress] = useState(0);
@@ -13,6 +13,9 @@ const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
     const [apiData, setApiData] = useState(null);
     const [error, setError] = useState(null);
     const [timerDone, setTimerDone] = useState(false);
+    const [insights, setInsights] = useState([
+        { label: "AI Tip", text: "Analyzing optimal route..." }
+    ]);
 
     // Refs so intervals always read the latest values
     const startTimeRef = useRef(Date.now());
@@ -20,14 +23,7 @@ const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
 
     const isReady = apiData !== null && timerDone;
 
-    const getViaCities = (f, v, t) => {
-        let route = [];
-        if (f === "Chennai" && t === "Coimbatore") route = ["Vellore", "Salem", "Erode"];
-        if (v && !route.includes(v)) route.push(v);
-        return route;
-    };
-
-    const viaCities = getViaCities(from, via, to);
+    const viaCities = via ? [via] : [];
 
     const statuses = [
         "Initializing Neural Route Engine...",
@@ -40,14 +36,6 @@ const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
         "Optimizing multi-operator schedules...",
         "Applying AI-driven price protection...",
         "Finalizing smart route selection..."
-    ];
-
-    const insights = [
-        { label: "AI Tip", text: "Routes analyzed by AI typically arrive 15% faster by avoiding mid-journey congestion hotspots." },
-        { label: "Did You Know?", text: "Tickmybus AI scans over 500 data points per second to ensure your journey is safe and on time." },
-        { label: "Travel Fact", text: "The Hyderabad to Vijayawada route is most scenic during the early morning AI-suggested slots." },
-        { label: "Smart Choice", text: "Choosing 'Eco-Routes' helps reduce carbon emissions by up to 12% without increasing travel time." },
-        { label: "Security", text: "Every booking is monitored by our 24/7 AI Security Layer for your peace of mind." }
     ];
 
     // Growth stage label (0–4) based on progress
@@ -64,7 +52,17 @@ const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
         // Lock body scroll
         document.body.style.overflow = "hidden";
 
-        // ── Real-time progress clock (runs every 1 second) ──────────────────
+        // Fetch insights first
+        fetch("/api/search-data/")
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success" && data.insights) {
+                    setInsights(data.insights);
+                }
+            })
+            .catch(err => console.error("Error fetching insights:", err));
+
+        // ── Fixed 5-minute progress clock ──────────────────
         const progressInterval = setInterval(() => {
             const elapsed = (Date.now() - startTimeRef.current) / 1000;
             const newProgress = Math.min((elapsed / TOTAL_DURATION) * 100, 100);
@@ -78,17 +76,17 @@ const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
             }
         }, 1000);
 
-        // ── Rotate status messages ───────────────────────────────────────────
+        // ── Rotate status messages every 30s (10 statuses * 30s = 300s) ─────────────────
         const statusInterval = setInterval(() => {
             setStatusIndex((prev) => (prev + 1) % statuses.length);
-        }, 4000);
+        }, 30000);
 
-        // ── Rotate insight cards ─────────────────────────────────────────────
+        // ── Rotate insight cards every 60s (5 insights * 60s = 300s) ───────────────────
         const insightInterval = setInterval(() => {
-            setInsightIndex((prev) => (prev + 1) % insights.length);
-        }, 8000);
+            setInsightIndex((prev) => (prev + 1));
+        }, 60000);
 
-        // ── Fetch backend data ───────────────────────────────────────────────
+        // ── Fetch backend data (runs in background) ───────────────────────────
         const fetchData = async () => {
             try {
                 const response = await fetch("/api/route-analysis/", {
@@ -189,8 +187,8 @@ const SearchingOverlay = ({ from, via, to, onCancel, onDataReady }) => {
                         <p className="status-text">{statusText()}</p>
 
                         <div className="insight-box">
-                            <div className="insight-label">{insights[insightIndex].label}</div>
-                            <div className="insight-text">{insights[insightIndex].text}</div>
+                            <div className="insight-label">{insights[insightIndex % insights.length].label}</div>
+                            <div className="insight-text">{insights[insightIndex % insights.length].text}</div>
                         </div>
                     </div>
                 </div>
