@@ -342,3 +342,124 @@
   .ls-header { flex-direction: column; align-items: flex-start; gap: 10px; }
   .ls-body { padding: 16px; }
 }
+
+/* ── Live badge ── */
+.ls-live-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.73rem;
+  font-weight: 600;
+  color: #16a34a;
+  background: #dcfce7;
+  border: 1px solid #bbf7d0;
+  border-radius: 999px;
+  padding: 5px 12px;
+}
+.ls-live-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #16a34a;
+  animation: ls-pulse 1.4s ease-in-out infinite;
+}
+@keyframes ls-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.75); }
+}
+
+/* ── Route legs ── */
+.ls-legs-list { display: flex; flex-direction: column; gap: 10px; }
+.ls-leg-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 10px;
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 10px;
+}
+.ls-leg-route {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ls-leg-city {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-primary, #1e293b);
+}
+.ls-leg-arr { color: var(--text-muted, #94a3b8); flex-shrink: 0; }
+.ls-leg-stats {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.ls-leg-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+.ls-leg-chip.bus   { background: #dcfce7; color: #15803d; }
+.ls-leg-chip.train { background: #dbeafe; color: #1d4ed8; }
+
+/* ── Item chips with icon ── */
+.ls-item-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: #dbeafe;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+/* ── No data ── */
+.ls-no-data {
+  font-size: 0.82rem;
+  color: var(--text-muted, #94a3b8);
+  text-align: center;
+  padding: 12px 0;
+  margin: 0;
+}
+
+/* ── Route footer pill ── */
+.ls-route-footer {
+  display: flex;
+  justify-content: center;
+  padding-top: 4px;
+}
+.ls-route-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--bg-panel, #f8fafc);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary, #1e293b);
+}
+.ls-route-pin.src { color: #3b82f6; }
+.ls-route-pin.dst { color: #10b981; }
+.ls-route-arr     { color: var(--text-muted, #94a3b8); }
+.ls-route-tag {
+  background: linear-gradient(90deg, #3b82f6, #6366f1);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 9px;
+  border-radius: 999px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-left: 4px;
+}

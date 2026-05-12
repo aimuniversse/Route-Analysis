@@ -12,10 +12,10 @@ import ProfileModal from "./components/ProfileModal";
 // Route Analysis Components
 import Header from "./components/Header";
 import MapArea from "./components/MapArea";
+import LuggageShare from "./components/LuggageShare";
 import Charts from "./components/Charts";
 import BottomWidgets from "./components/BottomWidgets";
 import RouteInsights from "./components/RouteInsights";
-//import AreaPotentialMap from "./components/AreaPotentialMap";
 import PremiumReportPage from "./components/PremiumReportPage";
 import SearchingOverlay from "./components/SearchingOverlay";
 
@@ -319,13 +319,25 @@ function App() {
             />
           </section>
 
-          {/* Area Potential Map */}
-          {/* <section className="app-section potential-map-section animate-fade-in-up">
-            <AreaPotentialMap
-              routeData={routeData}
-              isLoading={isLoading}
-            />
-          </section> */}
+          {/* Luggage Share */}
+          {routeData && (
+            <section className="app-section luggage-section animate-fade-in-up">
+              <div className="section-header">
+                <h2 className="section-title">Luggage &amp; Parcel Share</h2>
+              </div>
+              <LuggageShare
+                routeData={routeData}
+                sourceName={
+                  routeData?.population_data?.source?.name ||
+                  routeQuery?.split(' to ')[0]?.trim()
+                }
+                destName={
+                  routeData?.population_data?.destination?.name ||
+                  routeQuery?.split(' to ')[1]?.trim()
+                }
+              />
+            </section>
+          )}
 
           {/* Dashboard */}
           <section className="app-section dashboard-section animate-fade-in-up">
