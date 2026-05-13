@@ -42,59 +42,62 @@ export default function LuggageShare({ routeData, sourceName, destName }) {
     hasData,
   } = useMemo(() => {
     const logistics = routeData?.logistics_services || {};
+    const schedule = routeData?.transport_schedule || [];
+    const visitorData = routeData?.visitor_data || {};
     
-    // The backend structure might have keys directly in logistics_services or in parcel_movement
+    // 1. Carriers / Parcel Movement
     const hasDirectKeys = ['bus', 'train', 'courier', 'taxi'].some(k => k in logistics);
-    const parcel    = hasDirectKeys ? logistics : (logistics.parcel_movement || {});
-    const modes     = logistics.modes_used || (hasDirectKeys ? Object.keys(logistics).filter(k => Number(logistics[k]) > 0) : []);
+    const parcel = hasDirectKeys ? logistics : (logistics.parcel_movement || {});
     
-    const schedule  = routeData?.transport_schedule || [];
-    const distrib   = routeData?.transport_distribution || {};
-
-    // Carrier rows from parcel data
     const carrierList = Object.entries(parcel)
       .filter(([mode, v]) => ['bus', 'train', 'courier', 'taxi', 'truck'].includes(mode.toLowerCase()) && Number(v) > 0)
       .sort(([, a], [, b]) => Number(b) - Number(a))
       .map(([mode, share]) => ({
-        mode,
+        mode: mode.toLowerCase(),
         name: mode.charAt(0).toUpperCase() + mode.slice(1),
-        share_percent: Number(share),
+        share_percent: Math.round(Number(share)),
       }));
 
-    // Trip totals from schedule
-    const busTrips   = schedule.reduce((s, r) => s + (Number(r.trips_per_day || r.bus_trips)   || 0), 0);
-    const trainTrips = schedule.reduce((s, r) => s + (Number(r.trips_per_day || r.train_trips) || 0), 0);
+    // 2. Transport Trips (Filtering by type correctly)
+    const busTrips = schedule
+      .filter(r => r.type?.toLowerCase() === 'bus')
+      .reduce((s, r) => s + (Number(r.trips_per_day) || 0), 0);
+    const trainTrips = schedule
+      .filter(r => r.type?.toLowerCase() === 'train')
+      .reduce((s, r) => s + (Number(r.trips_per_day) || 0), 0);
 
-    // Direction volumes
-    const src = Math.round((Number(distrib.bus) || 0) + (Number(distrib.train) || 0));
-    const dst = Math.min(100, 100 - src);
+    // 3. Direction flow balance (Based on visitor demand ratio)
+    const srcDemand = Number(visitorData.source?.daily_normal) || 50;
+    const dstDemand = Number(visitorData.destination?.daily_normal) || 50;
+    const totalDemand = srcDemand + dstDemand;
+    const srcPct = Math.round((srcDemand / totalDemand) * 100) || 50;
+    const dstPct = 100 - srcPct;
 
-    // Route legs
+    // 4. Logistics Modes Used
+    const modes = hasDirectKeys 
+      ? Object.keys(logistics).filter(k => Number(logistics[k]) > 0)
+      : (logistics.modes_used || carrierList.map(c => c.mode));
+
+    // 5. Route Legs
     const legList = schedule.map(leg => ({
-      from:  leg.from,
-      to:    leg.to,
-      bus:   leg.type === 'bus' ? leg.trips_per_day : (leg.bus_trips || 0),
-      train: leg.type === 'train' ? leg.trips_per_day : (leg.train_trips || 0),
+      from: leg.from,
+      to: leg.to,
+      bus: leg.type?.toLowerCase() === 'bus' ? (Number(leg.trips_per_day) || 0) : 0,
+      train: leg.type?.toLowerCase() === 'train' ? (Number(leg.trips_per_day) || 0) : 0,
     }));
 
-    // Is there ANY logistics data at all?
-    const dataExists =
-      carrierList.length > 0 ||
-      busTrips > 0 ||
-      trainTrips > 0 ||
-      modes.length > 0 ||
-      Object.keys(logistics).length > 0;
+    const dataExists = carrierList.length > 0 || busTrips > 0 || trainTrips > 0 || Object.keys(logistics).length > 0;
 
     return {
-      carriers:       carrierList,
-      totalBusTrips:  busTrips,
-      totalTrainTrips:trainTrips,
-      totalTrips:     busTrips + trainTrips,
-      modesUsed:      modes,
-      srcToDest:      src,
-      dstToSrc:       dst,
-      legs:           legList,
-      hasData:        dataExists,
+      carriers: carrierList,
+      totalBusTrips: busTrips,
+      totalTrainTrips: trainTrips,
+      totalTrips: busTrips + trainTrips,
+      modesUsed: modes,
+      srcToDest: srcPct,
+      dstToSrc: dstPct,
+      legs: legList,
+      hasData: dataExists,
     };
   }, [routeData]);
 

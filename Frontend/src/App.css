@@ -6,18 +6,20 @@
   color: var(--text-primary);
   display: flex;
   flex-direction: column;
-<<<<<<< HEAD
-  overflow-y: auto;
-  align-items: center;
-=======
->>>>>>> 2d0da05a0dc5c2726a00580c9b4347c081a945d9
 }
 
 
-.app-stack {
+.app-stack, #hero-search {
   width: 100%;
   max-width: 1440px;
   margin: 0 auto;
+}
+
+#hero-search {
+  max-width: none; /* Hero should be full width */
+}
+
+.app-stack {
   display: flex;
   flex-direction: column;
   gap: 40px;
