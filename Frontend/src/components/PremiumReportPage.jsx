@@ -18,7 +18,7 @@ import industryIcon from '../assets/image/industry.png';
 import touristIcon from '../assets/image/tourist.png';
 import pointIcon from '../assets/image/point.png';
 import destinationIcon from '../assets/image/destination.png';
-import logoImg from '../assets/image/logo.webp';
+import logoImg from '../assets/image/logo.jpeg';
 
 const heroImage = "file:///C:/Users/DELL/.gemini/antigravity/brain/6f074f9e-ba21-4fd9-b5df-56ac4a6fbd6b/corridor_analysis_hero_1778234321074.png";
 
@@ -516,44 +516,61 @@ export default function PremiumReportPage({ routeData, isLoading }) {
     const corridorPot = routeData?.dashboard_data?.corridor_potential || {};
     const items = [];
 
-    // Helper: area entries can be objects {name,...} or plain strings
-    const getName = (entry) => (entry?.name ?? entry ?? '');
+    // Helper: Safely get the first name from an array of strings/objects, or from a string
+    const getFirstName = (entries) => {
+      if (!entries) return '';
+      if (Array.isArray(entries)) {
+        if (entries.length === 0) return '';
+        const entry = entries[0];
+        return entry?.name ?? entry ?? '';
+      }
+      if (typeof entries === 'string') return entries;
+      if (typeof entries === 'object') return entries.name || '';
+      return '';
+    };
 
-    if (areaSeg.job_business_areas?.length) {
+    const hasValue = (entries) => {
+      if (!entries) return false;
+      if (Array.isArray(entries)) return entries.length > 0;
+      return typeof entries === 'string' ? entries.length > 0 : true;
+    };
+
+    if (hasValue(areaSeg.job_business_areas)) {
       const businessScore = corridorPot.business ? ` (Potential: ${corridorPot.business}%)` : "";
       items.push({
         title: 'Job & Business',
-        content: `${getName(areaSeg.job_business_areas[0])}${businessScore}`,
+        content: `${getFirstName(areaSeg.job_business_areas)}${businessScore}`,
         icon: <Briefcase />,
         color: 'orange'
       });
     }
 
-    if (areaSeg.student_areas?.length) {
+    if (hasValue(areaSeg.student_areas)) {
       const studentScore = corridorPot.student ? ` (Potential: ${corridorPot.student}%)` : "";
       items.push({
         title: 'Education Hubs',
-        content: `${getName(areaSeg.student_areas[0])}${studentScore}`,
+        content: `${getFirstName(areaSeg.student_areas)}${studentScore}`,
         icon: <GraduationCap />,
         color: 'purple'
       });
     }
 
-    if (areaSeg.tourist_places?.length) {
+    if (hasValue(areaSeg.tourist_places)) {
       const touristScore = corridorPot.tourist ? ` (Potential: ${corridorPot.tourist}%)` : "";
       items.push({
         title: 'Tourist Hotspots',
-        content: `${getName(areaSeg.tourist_places[0])}${touristScore}`,
+        content: `${getFirstName(areaSeg.tourist_places)}${touristScore}`,
         icon: <Mountain />,
         color: 'green'
       });
     }
 
     // Add a 4th card from a second business area if available
-    if (items.length < 4 && areaSeg.job_business_areas?.length > 1) {
+    if (items.length < 4 && Array.isArray(areaSeg.job_business_areas) && areaSeg.job_business_areas.length > 1) {
+      const entry = areaSeg.job_business_areas[1];
       items.push({
         title: 'Industrial Center',
-        content: getName(areaSeg.job_business_areas[1]),
+        content: entry?.name ?? entry ?? '',
         icon: <Factory />,
         color: 'blue'
       });
@@ -733,7 +750,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                     <span className="dot bg-blue-main"></span>
                     <span className="city-name">{popData.source.name}</span>
                   </div>
-                  <div className="pop-badge bg-blue-light text-blue-main">{((popData.source.count || popData.source.population || 0) / 1000000).toFixed(1)}M</div>
+                  <div className="pop-badge bg-blue-light text-blue-main">{((popData.source.count || popData.source.population || 0) ).toFixed(0)}</div>
                 </div>
               )}
 
@@ -746,7 +763,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                     <span className="dot bg-purple-main"></span>
                     <span className="city-name">{popData.via.name}</span>
                   </div>
-                  <div className="pop-badge bg-purple-light text-purple-main">{((popData.via.count || popData.via.population || 0) / 1000000).toFixed(1)}M</div>
+                  <div className="pop-badge bg-purple-light text-purple-main">{((popData.via.count || popData.via.population || 0) ).toFixed(0)}</div>
                 </div>
               )}
 
@@ -759,7 +776,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                     <span className="dot bg-indigo-main"></span>
                     <span className="city-name">{popData.destination.name}</span>
                   </div>
-                  <div className="pop-badge bg-indigo-light text-indigo-main">{((popData.destination.count || popData.destination.population || 0) / 1000000).toFixed(1)}M</div>
+                  <div className="pop-badge bg-indigo-light text-indigo-main">{((popData.destination.count || popData.destination.population || 0) ).toFixed(0)}</div>
                 </div>
               )}
             </div>
@@ -774,7 +791,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
               <div className="total-right">
                 <div className="vertical-dotted-sep"></div>
                 <span className="total-value">
-                  {(((popData.source?.count || popData.source?.population || 0) + (popData.via?.count || popData.via?.population || 0) + (popData.destination?.count || popData.destination?.population || 0)) / 1000000).toFixed(1)}M
+                  {(((popData.source?.count || popData.source?.population || 0) + (popData.via?.count || popData.via?.population || 0) + (popData.destination?.count || popData.destination?.population || 0)) ).toFixed(0)}
                 </span>
               </div>
             </div>
@@ -830,9 +847,9 @@ export default function PremiumReportPage({ routeData, isLoading }) {
         </div>
 
         {/* Concept 3: Area Segmentation Map */}
-        <section className="section-spacing animate-fade-in">
+        {/* <section className="section-spacing animate-fade-in">
           <AreaPotentialMap routeData={routeData} isLoading={false} />
-        </section>
+        </section> */}
 
         {/* Concept 3: Area Segmentation Timeline */}
         <section className="analysis-section-box section-spacing">
@@ -896,10 +913,10 @@ export default function PremiumReportPage({ routeData, isLoading }) {
             <div className="stat-card-modern">
               <div className="stat-card-header">
                 <div className="mini-icon bg-pink-soft"><TrendingUp size={16} className="text-pink" /></div>
-                <span>Yearly Total</span>
+                <span>Annual Visitor Count</span>
               </div>
               <div className="stat-value">
-                {(((visitors.source?.yearly_total || 0) + (visitors.destination?.yearly_total || 0)) / 1000000).toFixed(1)}M
+                {(((Number(visitors.source?.yearly_total) || 0) + (Number(visitors.destination?.yearly_total) || 0)) ).toFixed(0)}
               </div>
               <div className="stat-underline"></div>
             </div>
@@ -907,10 +924,10 @@ export default function PremiumReportPage({ routeData, isLoading }) {
             <div className="stat-card-modern">
               <div className="stat-card-header">
                 <div className="mini-icon bg-pink-soft"><Clock size={16} className="text-pink" /></div>
-                <span>Daily (Normal)</span>
+                <span>Daily Visitor Count</span>
               </div>
               <div className="stat-value">
-                {(((visitors.source?.daily_normal || 0) + (visitors.destination?.daily_normal || 0)) / 1000).toFixed(0)}K
+                {(((Number(visitors.source?.daily_normal) || 0) + (Number(visitors.destination?.daily_normal) || 0)) ).toFixed(0)}
               </div>
               <div className="stat-underline"></div>
             </div>
@@ -918,10 +935,10 @@ export default function PremiumReportPage({ routeData, isLoading }) {
             <div className="stat-card-modern highlighted">
               <div className="stat-card-header">
                 <div className="mini-icon bg-pink-soft"><TrendingUp size={16} className="text-pink" /></div>
-                <span>Daily (Peak)</span>
+                <span>Daily Peak Visitor Count</span>
               </div>
               <div className="stat-value">
-                {(((visitors.source?.daily_peak || 0) + (visitors.destination?.daily_peak || 0)) / 1000).toFixed(0)}K
+                {(((Number(visitors.source?.daily_peak) || 0) + (Number(visitors.destination?.daily_peak) || 0)) ).toFixed(0)}
               </div>
               <div className="stat-underline"></div>
             </div>
@@ -931,7 +948,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
             <div className="attractions-header">
               <div className="title-row">
                 <MapPin className="text-pink" size={20} />
-                <h3>Key Locations (Yearly / Daily)</h3>
+                <h3>Key Locations (Annual Visitor Count / Daily Visitor Count)</h3>
                 <div className="header-line"></div>
                 <Sparkles className="text-pink" size={16} />
               </div>
@@ -952,12 +969,12 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                   <div className="attraction-stats-box">
                     <div className="stat-sub">
                       <Users size={14} className="text-pink" />
-                      <span>{((item.data?.yearly_total || 0) / 1000000).toFixed(1)}M</span>
+                      <span>{((Number(item.data?.yearly_total) || 0) ).toFixed(0)}</span>
                     </div>
                     <div className="stat-sep"></div>
                     <div className="stat-sub">
                       <Sun size={14} className="text-pink" />
-                      <span>{((item.data?.daily_normal || 0) / 1000).toFixed(1)}K</span>
+                      <span>{((Number(item.data?.daily_normal) || 0) ).toFixed()}</span>
                     </div>
                   </div>
                   <ChevronRight className="text-slate-light" size={20} />
@@ -1157,7 +1174,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                         <CheckCircle2 size={12} /> {service.tag}
                       </span>
                     </div>
-                    <p>{service.value}% share of parcel movement on this route.</p>
+                    <p>{service.value}% Track and manage parcel movement efficiently across this route with real-time visibility and seamless delivery coordination.</p>
                   </div>
                 </div>
                 <div className={`service-detail-box bg-${service.color}-light`}>
@@ -1496,7 +1513,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                   </div>
                   <div className="contact-item">
                     <Mail size={20} className="contact-icon" />
-                    <span>info@tockmybus.com</span>
+                    <span>info@tickmybus.com</span>
                   </div>
                 </div>
               </div>

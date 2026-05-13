@@ -2302,3 +2302,8 @@ Source: Chennai, Dest: Coimbatore, Via:
 >>>>>>> 168331f8ff12945a136473ccc60e72ea8c96b6b7
 Error: Unable to fetch route analysis at the moment
 ------------------------------
+
+--- API ERROR AT 2026-05-13 05:36:54.557980+00:00 ---
+Source: coimbatore, Dest: chennai, Via: 
+Error: Unable to fetch route analysis at the moment (request timed out)
+------------------------------
