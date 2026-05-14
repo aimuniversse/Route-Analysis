@@ -2307,3 +2307,43 @@ Error: Unable to fetch route analysis at the moment
 Source: coimbatore, Dest: chennai, Via: 
 Error: Unable to fetch route analysis at the moment (request timed out)
 ------------------------------
+
+--- API ERROR AT 2026-05-13 15:22:22.778824+00:00 ---
+Source: Coimbatore, Dest: Chennai, Via: 
+Error: Unable to fetch route analysis at the moment
+------------------------------
+
+--- API ERROR AT 2026-05-13 15:22:22.782032+00:00 ---
+Source: Coimbatore, Dest: Chennai, Via: 
+Error: Unable to fetch route analysis at the moment
+------------------------------
+
+--- API ERROR AT 2026-05-13 15:22:49.542141+00:00 ---
+Source: Coimbatore, Dest: Chennai, Via: 
+Error: Unable to fetch route analysis at the moment
+------------------------------
+
+--- API ERROR AT 2026-05-13 15:22:49.564111+00:00 ---
+Source: Coimbatore, Dest: Chennai, Via: 
+Error: Unable to fetch route analysis at the moment
+------------------------------
+
+--- API ERROR AT 2026-05-13 16:06:14.879016+00:00 ---
+Source: Hyderabad, Dest: Coimbatore, Via: 
+Error: Unable to fetch route analysis at the moment
+------------------------------
+
+--- API ERROR AT 2026-05-13 16:16:44.307394+00:00 ---
+Source: Hyderabad, Dest: Coimbatore, Via: 
+Error: Unable to fetch route analysis at the moment
+------------------------------
+
+--- API ERROR AT 2026-05-13 16:23:22.528068+00:00 ---
+Source: Coimbatore, Dest: Chennai, Via: 
+Error: Unable to fetch route analysis at the moment
+------------------------------
+
+--- API ERROR AT 2026-05-13 16:50:24.699239+00:00 ---
+Source: Coimbatore, Dest: Chennai, Via: 
+Error: Unable to fetch route analysis at the moment
+------------------------------

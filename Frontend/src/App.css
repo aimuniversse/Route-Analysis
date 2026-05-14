@@ -6,11 +6,6 @@
   color: var(--text-primary);
   display: flex;
   flex-direction: column;
-<<<<<<< HEAD
-  overflow-y: auto;
-  align-items: center;
-=======
->>>>>>> 2d0da05a0dc5c2726a00580c9b4347c081a945d9
 }
 
 
