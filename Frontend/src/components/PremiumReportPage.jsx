@@ -1073,7 +1073,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
           </div>
 
           <div className="info-footer-banner orange">
-            <Info size={16} className="text-orange-main" />
+            {/*<Info size={16} className="text-orange-main" />*/}
             <span>All distances are approximate road distances in kilometers.</span>
           </div>
         </section>
