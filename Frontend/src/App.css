@@ -9,10 +9,17 @@
 }
 
 
-.app-stack {
+.app-stack, #hero-search {
   width: 100%;
   max-width: 1440px;
   margin: 0 auto;
+}
+
+#hero-search {
+  max-width: none; /* Hero should be full width */
+}
+
+.app-stack {
   display: flex;
   flex-direction: column;
   gap: 40px;
