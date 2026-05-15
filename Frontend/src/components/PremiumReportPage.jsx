@@ -746,10 +746,10 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                   <div className="city-info-left">
                     <div className="city-icon-badge bg-blue-light">
                       <Landmark size={20} className="text-blue-main" />
-                    </div>
+                    </div><h5> Origin City</h5>
                     <span className="dot bg-blue-main"></span>
                     <span className="city-name">{popData.source.name}</span>
-                  </div>
+                  </div> <h5>City Population</h5>
                   <div className="pop-badge bg-blue-light text-blue-main">{((popData.source.count || popData.source.population || 0) ).toFixed(0)}</div>
                 </div>
               )}
@@ -759,10 +759,10 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                   <div className="city-info-left">
                     <div className="city-icon-badge bg-purple-light">
                       <Building2 size={20} className="text-purple-main" />
-                    </div>
+                    </div><h5> Via Cities </h5>
                     <span className="dot bg-purple-main"></span>
                     <span className="city-name">{popData.via.name}</span>
-                  </div>
+                  </div> <h5>City Population</h5>
                   <div className="pop-badge bg-purple-light text-purple-main">{((popData.via.count || popData.via.population || 0) ).toFixed(0)}</div>
                 </div>
               )}
@@ -770,13 +770,14 @@ export default function PremiumReportPage({ routeData, isLoading }) {
               {popData.destination && (
                 <div className="population-item">
                   <div className="city-info-left">
-                    <div className="city-icon-badge bg-indigo-light">
-                      <Landmark size={20} className="text-indigo-main" />
-                    </div>
-                    <span className="dot bg-indigo-main"></span>
+                    <div className="city-icon-badge bg-green-light">
+                      <Landmark size={20} className="text-green-main" />
+                    </div><h5> Destination City</h5>
+                    <span className="dot bg-green-main"></span>
                     <span className="city-name">{popData.destination.name}</span>
                   </div>
-                  <div className="pop-badge bg-indigo-light text-indigo-main">{((popData.destination.count || popData.destination.population || 0) ).toFixed(0)}</div>
+                  <h5>City Population</h5>
+                  <div className="pop-badge bg-green-light text-green-main">{((popData.destination.count || popData.destination.population || 0) ).toFixed(0)}</div>
                 </div>
               )}
             </div>
@@ -886,7 +887,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
               <div className="icon-wrap bg-pink-light"><Calendar className="text-pink" /></div>
               <div>
                 <h2>Total Visitor Count</h2>
-                <p className="subtitle-small">Overview of yearly and daily visitors</p>
+                <p className="subtitle-small">Overview of yearly and daily visitors</p> 
               </div>
             </div>
             <div className="visitor-graph-visual">
@@ -913,7 +914,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
             <div className="stat-card-modern">
               <div className="stat-card-header">
                 <div className="mini-icon bg-pink-soft"><TrendingUp size={16} className="text-pink" /></div>
-                <span>Annual Visitor Count</span>
+                <span>Both Places Total Annual Visitor Count</span>
               </div>
               <div className="stat-value">
                 {(((Number(visitors.source?.yearly_total) || 0) + (Number(visitors.destination?.yearly_total) || 0)) ).toFixed(0)}
@@ -924,7 +925,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
             <div className="stat-card-modern">
               <div className="stat-card-header">
                 <div className="mini-icon bg-pink-soft"><Clock size={16} className="text-pink" /></div>
-                <span>Daily Visitor Count</span>
+                <span>Both Places Total Daily Visitor Count</span>
               </div>
               <div className="stat-value">
                 {(((Number(visitors.source?.daily_normal) || 0) + (Number(visitors.destination?.daily_normal) || 0)) ).toFixed(0)}
@@ -935,7 +936,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
             <div className="stat-card-modern highlighted">
               <div className="stat-card-header">
                 <div className="mini-icon bg-pink-soft"><TrendingUp size={16} className="text-pink" /></div>
-                <span>Daily Peak Visitor Count</span>
+                <span>Both Places Total Daily Peak Visitor Count</span>
               </div>
               <div className="stat-value">
                 {(((Number(visitors.source?.daily_peak) || 0) + (Number(visitors.destination?.daily_peak) || 0)) ).toFixed(0)}
@@ -962,6 +963,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                 <div key={idx} className="attraction-item-row">
                   <div className="attraction-main">
                     <div className="attraction-img-circle">
+                      
                       {idx === 0 ? <Mountain size={24} className="text-pink" /> : <Activity size={24} className="text-pink" />}
                     </div>
                     <span className="attraction-name">{item.name}</span>
@@ -969,11 +971,13 @@ export default function PremiumReportPage({ routeData, isLoading }) {
                   <div className="attraction-stats-box">
                     <div className="stat-sub">
                       <Users size={14} className="text-pink" />
+                      <h5>Annual Visiter Count</h5>
                       <span>{((Number(item.data?.yearly_total) || 0) ).toFixed(0)}</span>
                     </div>
                     <div className="stat-sep"></div>
                     <div className="stat-sub">
                       <Sun size={14} className="text-pink" />
+                      <h5> Daily Visitor Count</h5>
                       <span>{((Number(item.data?.daily_normal) || 0) ).toFixed()}</span>
                     </div>
                   </div>
@@ -1523,7 +1527,7 @@ export default function PremiumReportPage({ routeData, isLoading }) {
           <div className="footer-bottom">
             <p>&copy; {new Date().getFullYear()} TickMyBus. All Rights Reserved.</p>
             <div className="footer-bottom-links">
-              <a href="#">Powered By AIM UNIVERSSE DEVELOPERS</a>
+              <a href="#">Powered By Anbu Transport Services | AIM UNIVERSSE DEVELOPERS</a>
               {/* <a href="#">Sitemap</a> */}
             </div>
           </div>

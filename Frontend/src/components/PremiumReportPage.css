@@ -55,7 +55,9 @@
 }
 
 .report-content-wrapper {
-  max-width: 1400px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   margin: 0 auto;
   padding: 50px 20px;
 }
@@ -1285,16 +1287,17 @@
   justify-content: center;
 }
 
-.dot {
+ .dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-}
+} 
 
 .city-name {
   font-weight: 600;
-  color: #1e293b;
+  color: #e01919;
   font-size: 15px;
+  
 }
 
 .pop-badge {
@@ -2000,7 +2003,7 @@
 
 /* Main Footer Styles */
 .main-footer {
-  background: linear-gradient(135deg, #ac337b, #bb9494);;
+  background: linear-gradient(135deg, #d52157, #bb9494);;
   color: #f8fafc;
   padding: 80px 0 30px;
   margin-top: 60px;

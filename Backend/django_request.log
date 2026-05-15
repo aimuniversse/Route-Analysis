@@ -11027,3 +11027,606 @@ Body: {"source":"coimbatore","destination":"Thanjavur","via":""}
 --- RESPONSE FOR /api/route-analysis/ ---
 Status: 200
 ------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"coimbatore","destination":"chennai","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"coimbatore","destination":"chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"coimbatore","destination":"chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"coimbatore","destination":"chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"coimbatore","destination":"chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"nambiyur","destination":"Coimbatore","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"nambiyur","destination":"Coimbatore","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"nambiyur","destination":"Coimbatore","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"nambiyur","destination":"Coimbatore","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"nambiyur","destination":"Coimbatore","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"coimbatore","destination":"arunachala prathesh","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"coimbatore","destination":"arunachala prathesh","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"coimbatore","destination":"arunachala prathesh","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"coimbatore","destination":"arunachala prathesh","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"karachi","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"karachi","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"karachi","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"karachi","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"somanur","destination":"lakshmipuram","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"somanur","destination":"lakshmipuram","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"tiruppur","destination":"dharamshala","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"tiruppur","destination":"dharamshala","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"tiruppur","destination":"dharamshala","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 500
+Content: {"status":"error","message":"Unable to fetch route analysis at the moment"}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"nambiyur","destination":"Coimbatore","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"nambiyur","destination":"Coimbatore","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"nambiyur","destination":"Coimbatore","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"nambiyur","destination":"Coimbatore","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Hyderabad","destination":"Coimbatore","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Hyderabad","destination":"Coimbatore","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Hyderabad","destination":"Coimbatore","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Hyderabad","destination":"Coimbatore","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Hyderabad","destination":"Coimbatore","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Hyderabad","destination":"Coimbatore","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Hyderabad","destination":"Coimbatore","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Hyderabad","destination":"Coimbatore","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Hyderabad","destination":"Coimbatore","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Hyderabad","destination":"Coimbatore","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Hyderabad","destination":"Coimbatore","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Hyderabad","destination":"Coimbatore","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Hyderabad","destination":"Coimbatore","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Hyderabad","destination":"Coimbatore","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"erode","destination":"tiruppur","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"erode","destination":"tiruppur","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"erode","destination":"tiruppur","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"erode","destination":"tiruppur","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"erode","destination":"tiruppur","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"erode","destination":"tiruppur","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"erode","destination":"tiruppur","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"erode","destination":"tiruppur","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"erode","destination":"tiruppur","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"erode","destination":"tiruppur","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"erode","destination":"tiruppur","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"coimbatore","destination":"chennai","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"coimbatore","destination":"chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"coimbatore","destination":"chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Hyderabad","destination":"Coimbatore","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Hyderabad","destination":"Coimbatore","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
+
+--- REQUEST AT /api/route-analysis/ ---
+Body: {"source":"Coimbatore","destination":"Chennai","via":""}
+------------------------------
+--- RESPONSE FOR /api/route-analysis/ ---
+Status: 200
+------------------------------
