@@ -56,6 +56,7 @@ const RouteInsights = ({ routeQuery, routeData }) => {
     // 3. Tourism / Visitor Data (Dynamic Pentagon Radar Chart)
     const aiTourism = routeData?.visitor_data;
     const aiArea = routeData?.area_segmentation;
+    const allSpots = aiArea?.tourist_places || [];
 
     const srcName = aiPop?.source?.name || 'Origin';
     const dstName = aiPop?.destination?.name || 'Destination';
@@ -63,47 +64,55 @@ const RouteInsights = ({ routeQuery, routeData }) => {
     const dstCity = dstName.split(',')[0].trim().toLowerCase();
     const formatSpot = (s) => s.trim();
 
-    // Gather and filter tourist spots
-    const allSpots = aiArea?.tourist_places || [];
-    const srcSpots = allSpots.filter(s => s.toLowerCase().includes(srcCity));
-    const dstSpots = allSpots.filter(s => s.toLowerCase().includes(dstCity));
-    const otherSpots = allSpots.filter(s => !s.toLowerCase().includes(srcCity) && !s.toLowerCase().includes(dstCity));
-
     const spotsToUse = [];
     
-    // Priority 1: Real tourist spots from backend
-    if (srcSpots[0]) spotsToUse.push({ name: formatSpot(srcSpots[0]), city: 'SOURCE', val: Number(aiTourism?.source?.daily_normal) || 78 });
-    if (dstSpots[0]) spotsToUse.push({ name: formatSpot(dstSpots[0]), city: 'DESTINATION', val: Number(aiTourism?.destination?.daily_normal) || 88 });
-    if (srcSpots[1]) spotsToUse.push({ name: formatSpot(srcSpots[1]), city: 'SOURCE', val: (Number(aiTourism?.source?.daily_normal) || 78) * 0.9 });
-    if (dstSpots[1]) spotsToUse.push({ name: formatSpot(dstSpots[1]), city: 'DESTINATION', val: (Number(aiTourism?.destination?.daily_normal) || 88) * 0.95 });
-    if (otherSpots[0]) spotsToUse.push({ name: formatSpot(otherSpots[0]), city: 'ROUTE', val: 65 });
+    // Priority 1: Use all available real tourist spots from backend (up to 5)
+    allSpots.forEach(spot => {
+      if (spotsToUse.length < 5) {
+        const sName = spot.toLowerCase();
+        let val = 65; // Default for route spots
+        let cityType = 'ROUTE';
+        
+        if (sName.includes(srcCity)) {
+          val = Number(aiTourism?.source?.daily_normal) || 78;
+          cityType = 'SOURCE';
+        } else if (sName.includes(dstCity)) {
+          val = Number(aiTourism?.destination?.daily_normal) || 88;
+          cityType = 'DESTINATION';
+        }
+        
+        // Adjust value slightly if we have multiple spots for the same city to make chart look better
+        const existingCount = spotsToUse.filter(s => s.cityType === cityType).length;
+        if (existingCount > 0) val = val * (1 - (existingCount * 0.1));
 
-    // Priority 2: Use city names if spots are missing
-    if (spotsToUse.length < 5) {
-      if (!spotsToUse.find(s => s.city === 'SOURCE')) {
-        spotsToUse.push({ name: srcName, city:srcName, val: Number(aiTourism?.source?.daily_normal) || 70 });
+        spotsToUse.push({ name: formatSpot(spot), cityType, val });
       }
-      if (!spotsToUse.find(s => s.city === 'DESTINATION')) {
-        spotsToUse.push({ name: dstName, city:dstName, val: Number(aiTourism?.destination?.daily_normal) || 80 });
-      }
+    });
+
+    // Priority 2: Fill with city names if still under 5
+    if (spotsToUse.length < 5 && !spotsToUse.find(s => s.cityType === 'SOURCE')) {
+      spotsToUse.push({ name: srcName, cityType: 'SOURCE', val: Number(aiTourism?.source?.daily_normal) || 70 });
+    }
+    if (spotsToUse.length < 5 && !spotsToUse.find(s => s.cityType === 'DESTINATION')) {
+      spotsToUse.push({ name: dstName, cityType: 'DESTINATION', val: Number(aiTourism?.destination?.daily_normal) || 80 });
     }
 
-    // Priority 3: Fallback to other backend data (Important Stops)
+    // Priority 3: Fallback to Important Stops
     const stops = aiArea?.important_stops || [];
     let stopIdx = 0;
     while (spotsToUse.length < 5 && stopIdx < stops.length) {
       const stop = stops[stopIdx++];
       if (!spotsToUse.find(u => u.name === stop)) {
-        spotsToUse.push({ name: stop, city: 'STOP', val: 60 });
+        spotsToUse.push({ name: stop, cityType: 'STOP', val: 60 });
       }
     }
 
-    // Priority 4: Final fallback using city names to maintain Pentagon shape
+    // Priority 4: Final synthetic fallback to maintain Pentagon shape
     while (spotsToUse.length < 5) {
       const isEven = spotsToUse.length % 2 === 0;
       spotsToUse.push({ 
         name: isEven ? srcName : dstName, 
-        city: isEven ? 'SOURCE' : 'DESTINATION', 
+        cityType: isEven ? 'SOURCE' : 'DESTINATION', 
         val: 50 + (Math.random() * 20) 
       });
     }

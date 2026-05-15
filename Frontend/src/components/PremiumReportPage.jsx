@@ -557,9 +557,14 @@ export default function PremiumReportPage({ routeData, isLoading }) {
 
     if (hasValue(areaSeg.tourist_places)) {
       const touristScore = corridorPot.tourist ? ` (Potential: ${corridorPot.tourist}%)` : "";
+      // Get up to 2 names
+      const places = Array.isArray(areaSeg.tourist_places) 
+        ? areaSeg.tourist_places.slice(0, 2).map(p => p?.name ?? p ?? '').join(', ')
+        : (areaSeg.tourist_places?.name ?? areaSeg.tourist_places ?? '');
+        
       items.push({
         title: 'Tourist Hotspots',
-        content: `${getFirstName(areaSeg.tourist_places)}${touristScore}`,
+        content: `${places}${touristScore}`,
         icon: <Mountain />,
         color: 'green'
       });
