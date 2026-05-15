@@ -269,6 +269,39 @@
 .mt-4 { margin-top: 24px; }
 .mb-1 { margin-bottom: 4px; }
 .mb-2 { margin-bottom: 8px; }
+.pt-2 { padding-top: 8px; }
+
+/* Transport Legend Row Layout */
+.transport-legend-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  padding: 0 4px;
+}
+
+.transport-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.transport-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.transport-legend-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
 
 /* Graphical Timeline Utilities for Suggested Routes */
 .flex-col { flex-direction: column; }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, Map, Train, Ticket, MapIcon } from 'lucide-react';
+import { Users, Map, Train, Ticket, MapIcon, Bus, Car } from 'lucide-react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar, ComposedChart, Area } from 'recharts';
 import './RouteInsights.css';
 
@@ -47,9 +47,10 @@ const RouteInsights = ({ routeQuery, routeData }) => {
         value: Number(value),
         color: transportColors[key.toLowerCase()] || 'var(--accent-blue)'
       })) : [
-        { name: 'Bus', value: 60, color: 'var(--accent-blue)' },
-        { name: 'Train', value: 30, color: '#f59e0b' },
-        { name: 'Car/Air', value: 10, color: '#10b981' },
+        { name: 'Bus', value: 45, color: 'var(--accent-blue)' },
+        { name: 'Train', value: 25, color: '#f59e0b' },
+        { name: 'Car', value: 20, color: '#10b981' },
+        { name: 'Taxi', value: 10, color: '#06b6d4' },
       ];
 
     // 3. Tourism / Visitor Data (Dynamic Pentagon Radar Chart)
@@ -265,7 +266,7 @@ const RouteInsights = ({ routeQuery, routeData }) => {
         {transportData.length > 0 && (
         <div className="insight-card hover-lift">
           <div className="insight-card-header">
-            <div className="insight-icon blue"><Train size={20} /></div>
+            <div className="insight-icon blue"><Bus size={20} /></div>
             <h3>Transport Share</h3>
           </div>
           <div className="insight-card-content flex items-center justify-center" style={{ width: '100%', minWidth: '0px' }}>
@@ -292,11 +293,11 @@ const RouteInsights = ({ routeQuery, routeData }) => {
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="flex justify-center items-center gap-6 text-xs font-medium flex-nowrap" style={{ flexWrap: 'nowrap' }}>
+          <div className="transport-legend-row">
             {transportData.map((d, i) => (
-              <div key={i} className="flex items-center gap-1 whitespace-nowrap">
-                <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: d.color, flexShrink: 0 }}></div>
-                <span className="font-medium">{d.name}</span>
+              <div key={i} className="transport-legend-item">
+                <div className="transport-legend-dot" style={{ backgroundColor: d.color }}></div>
+                <span className="transport-legend-text">{d.name}</span>
               </div>
             ))}
           </div>
@@ -358,7 +359,7 @@ const RouteInsights = ({ routeQuery, routeData }) => {
                 <Radar name="Visitors" dataKey="A" stroke="var(--purple-light)" fill="var(--purple-light)" fillOpacity={0.4} />
                 <Tooltip
                   contentStyle={{ borderRadius: '12px', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-md)' }}
-                  formatter={(value) => [`${value} Index`, 'Footfall']}
+                  formatter={(value) => [`${value} `, 'Footindex']}
                 />
               </RadarChart>
             </ResponsiveContainer>

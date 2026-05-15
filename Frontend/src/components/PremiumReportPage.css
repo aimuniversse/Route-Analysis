@@ -2005,16 +2005,16 @@
 .main-footer {
   background: linear-gradient(135deg, #d52157, #bb9494);;
   color: #f8fafc;
-  padding: 80px 0 30px;
-  margin-top: 60px;
+  padding: 60px 0 0px;
+  margin-top: 40px;
   font-family: 'Inter', sans-serif;
-  
 }
 
 .footer-container {
   max-width: 1100px;
   margin: 0 auto;
   padding: 0 24px;
+  padding-bottom:0px;
 }
 
 .footer-top {
